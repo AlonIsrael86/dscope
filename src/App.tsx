@@ -1671,10 +1671,18 @@ const Logo = ({ className = "", ['aria-label']: ariaLabel = "DeltaScope Home" }:
   const [logoState, setLogoState] = useState(0); // 0: Delta sym, 1: D, 2: Delta, 3: auto
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setLogoState((prev) => (prev + 1) % 4);
-    }, 10000);
-    return () => clearInterval(timer);
+    // First paint must be "Δ Scope" — delay the first cycle by 1.5s so the
+    // canonical wordmark is what every viewer sees on initial load.
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const delay = setTimeout(() => {
+      timer = setInterval(() => {
+        setLogoState((prev) => (prev + 1) % 4);
+      }, 10000);
+    }, 1500);
+    return () => {
+      clearTimeout(delay);
+      if (timer) clearInterval(timer);
+    };
   }, []);
 
   const getAnimatedPart = () => {
@@ -4810,16 +4818,17 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
 };
 
 const TeamSection = () => {
-  // Real team. Photos intentionally omitted — using initial-based generative
-  // portraits until Alexei approves real headshots. Each member's "former"
-  // role is what they did before joining Dscope; current role is their
-  // operational role inside the company.
+  // Real team. Portraits for Alexei, Alon, Nir are pulled from pr.geoscale.ai
+  // (the public GEO-PR / GeoScale brand site). Katia, Yoav, and Michael are
+  // generic Freepik placeholders until real headshots are supplied.
+  // Each member's "former" role is what they did before joining Dscope;
+  // current role is their operational role inside the company.
   const team = [
     {
       name: "Alexei Kogan",
       role: "Founder & CEO",
       oldRole: "Serial Entrepreneur",
-      img: "https://i.pravatar.cc/800?img=68",
+      img: "/team/alexei.jpg",
       agents: [
         { type: "Vision Agent", task: "Architecting Strategy", icon: Telescope, color: "bg-blue-500", position: "top-[20%] right-4" },
         { type: "Growth Bot", task: "Scaling Operations", icon: Rocket, color: "bg-purple-500", position: "bottom-[40%] left-4" }
@@ -4829,7 +4838,7 @@ const TeamSection = () => {
       name: "Alon Soler",
       role: "Co-Founder & CTO",
       oldRole: "Automation Architect",
-      img: "https://i.pravatar.cc/800?img=12",
+      img: "/team/alon.jpg",
       agents: [
         { type: "Build Agent", task: "Shipping Systems", icon: Cpu, color: "bg-blue-500", position: "top-[15%] left-4" },
         { type: "Workflow Bot", task: "Orchestrating Pipelines", icon: Webhook, color: "bg-emerald-500", position: "bottom-[30%] right-4" }
@@ -4839,7 +4848,7 @@ const TeamSection = () => {
       name: "Katia Yun",
       role: "Chief Product Officer",
       oldRole: "Product Designer",
-      img: "https://i.pravatar.cc/800?img=47",
+      img: "/team/katia.jpg",
       agents: [
         { type: "Design Agent", task: "Refining Surfaces", icon: Palette, color: "bg-purple-500", position: "top-[25%] right-4" },
         { type: "Quality Bot", task: "Auditing Experience", icon: Eye, color: "bg-emerald-500", position: "top-[40%] left-4" }
@@ -4849,7 +4858,7 @@ const TeamSection = () => {
       name: "Nir Zari",
       role: "Head of Engineering",
       oldRole: "Senior Full-Stack Engineer",
-      img: "https://i.pravatar.cc/800?img=33",
+      img: "/team/nir.jpg",
       agents: [
         { type: "Infra Agent", task: "Hardening Platform", icon: Server, color: "bg-blue-500", position: "top-[20%] left-4" },
         { type: "API Bot", task: "Wiring Integrations", icon: Database, color: "bg-emerald-500", position: "bottom-[40%] right-4" }
@@ -4859,7 +4868,7 @@ const TeamSection = () => {
       name: "Yoav Yellin",
       role: "Head of Delivery",
       oldRole: "Solutions Engineer",
-      img: "https://i.pravatar.cc/800?img=15",
+      img: "/team/yoav.jpg",
       agents: [
         { type: "Delivery Agent", task: "Tracking Milestones", icon: CheckCircle2, color: "bg-purple-500", position: "top-[18%] right-4" },
         { type: "Client Bot", task: "Aligning Stakeholders", icon: Users, color: "bg-blue-500", position: "bottom-[35%] left-4" }
@@ -4869,7 +4878,7 @@ const TeamSection = () => {
       name: "Michael Pavlov",
       role: "Lead Platform Engineer",
       oldRole: "Software Engineer",
-      img: "https://i.pravatar.cc/800?img=51",
+      img: "/team/michael.jpg",
       agents: [
         { type: "Code Agent", task: "Compiling Modules", icon: Layers, color: "bg-emerald-500", position: "top-[22%] left-4" },
         { type: "Deploy Bot", task: "Releasing Builds", icon: Rocket, color: "bg-blue-500", position: "bottom-[30%] right-4" }
