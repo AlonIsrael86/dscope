@@ -1,0 +1,7 @@
+{
+  "name": "Dscope — Enterprise AI Automation",
+  "description": "Planetary scale AI infrastructure architected for modern enterprises. Precision Target. Galactic Reach. Quantum Logic.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

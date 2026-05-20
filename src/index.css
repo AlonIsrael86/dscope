@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@1,6..72,200..800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-serif: "Newsreader", serif;
+}
+
+@layer base {
+  button, a, [role="button"], [role="tab"], [role="article"].cursor-pointer {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#00000a] focus-visible:bg-white/10 transition-all duration-200 cursor-pointer;
+  }
+
+  input, textarea, select {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#00000a] focus-visible:bg-white/10 transition-all duration-200;
+  }
+  
+  svg [role="button"] {
+    @apply focus-visible:ring-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500 focus-visible:outline-offset-2;
+  }
+
+  /* Interactive Hover states */
+  button:not([disabled]):hover, 
+  a:not([disabled]):hover, 
+  [role="button"]:not([disabled]):hover, 
+  [role="tab"]:not([disabled]):hover, 
+  .cursor-pointer:hover {
+    @apply scale-[1.02] bg-white/[0.02];
+  }
+  
+  /* Generic Cards Visual Feedback */
+  .bg-white\/5.border-white\/10.rounded-3xl:hover,
+  .bg-white\/5.border-white\/10.rounded-2xl:hover,
+  .bg-white\/5.border-white\/10.rounded-xl:hover {
+    @apply -translate-y-[2px] shadow-[0_8px_30px_rgba(59,130,246,0.08)] border-white/20;
+    transition: transform 0.5s ease-out, box-shadow 0.5s ease-out, border-color 0.3s ease;
+  }
+  
+  button:not([disabled]):active, a:not([disabled]):active, [role="button"]:not([disabled]):active, [role="tab"]:not([disabled]):active, .cursor-pointer:active {
+    @apply scale-[0.98] shadow-none transform-none;
+  }
+}
+
+@layer utilities {
+  .font-black {
+    font-weight: 900 !important;
+  }
+  .scanline-text {
+    @apply text-[10px] font-mono font-black uppercase tracking-[0.4em] text-blue-400 whitespace-nowrap block drop-shadow-[0_0_8px_rgba(59,130,246,0.5)];
+  }
+}
+
+/* P2-A (will-change on blur) was REVERTED 2026-05-19: it created a
+   visible square clip around blur-glow elements (planet-in-a-box).
+   GPU-layer promotion clips blur to layer bounds — a real visual
+   regression, violates the "0 visual change" constraint. Conclusion:
+   GPU-promoting blur is NOT visually safe in this design. */
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome/Safari/Brave */
+}
+
+body {
+  @apply bg-[#000000] text-white font-sans antialiased selection:bg-blue-500/30;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+
+body.theme-light {
+  filter: invert(1) hue-rotate(180deg);
+  background-color: #000;
+}
+
+body.theme-light img,
+body.theme-light video {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Fix for mobile Safari and others to prevent horizontal bounce/scroll */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(400%); }
+}
+
+@keyframes lightningGlow {
+  0%, 100% { text-shadow: 0 0 10px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.2); }
+  90% { text-shadow: 0 0 10px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.2); }
+  92% { text-shadow: 0 0 20px rgba(255,255,255,1), 0 0 40px rgba(100,200,255,1), 0 0 80px rgba(59,130,246,1); color: #fff; }
+  94% { text-shadow: 0 0 10px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.2); color: inherit; }
+  96% { text-shadow: 0 0 20px rgba(255,255,255,1), 0 0 60px rgba(100,200,255,1), 0 0 100px rgba(59,130,246,1); color: #fff; }
+  98% { text-shadow: 0 0 10px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.2); color: inherit; }
+}
+
+.lightning-font {
+  animation: lightningGlow 5s infinite;
+}
+
+.animate-scan {
+  animation: scan 2s linear infinite;
+}

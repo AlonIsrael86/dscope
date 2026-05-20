@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /
+
+# Dscope marketing site is in private launch mode.
+# Indexing is intentionally disabled until public release.

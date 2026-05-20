@@ -1,0 +1,14 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.vercel
+reference/
+screenshots/
+FINAL-REPORT.md
+ALEXEI-FEEDBACK.md
+BLOCKERS.md

@@ -1,0 +1,17 @@
+export const SPACE_TECH = [
+  { id: 'satellite', name: 'Orbital Satellite', desc: 'Geostationary data relay.' },
+  { id: 'starlink', name: 'Starlink Constellation', desc: 'Low-latency global web.' },
+  { id: 'spaceship', name: 'Interstellar Spaceship', desc: 'Deep space exploration vessel.' },
+  { id: 'ufo', name: 'Unidentified Flying Object', desc: 'Anomalous aerial phenomenon.' },
+  { id: 'telescope', name: 'Space Telescope', desc: 'Deep field galactic observation.' },
+  { id: 'meteorite', name: 'Meteorite', desc: 'Atmospheric entry projectile.' },
+  { id: 'comet', name: 'Icy Comet', desc: 'Elliptical orbit celestial body.' },
+  { id: 'astronaut', name: 'EVA Astronaut', desc: 'Extravehicular activity unit.' },
+  { id: 'spacestation', name: 'Space Station', desc: 'Orbital research hub.' },
+  { id: 'rover', name: 'Planetary Rover', desc: 'Autonomous surface exploration.' },
+  { id: 'mobile-phone', name: 'Mobile Interface', desc: 'Handheld communication terminal.' },
+  { id: 'robot', name: 'Autonomous Robot', desc: 'AI-driven mechanical unit.' },
+  { id: 'big-telescope', name: 'Observatory Telescope', desc: 'Ground-based massive aperture.' },
+  { id: 'water-waves', name: 'Fluid Dynamics', desc: 'Liquid surface wave propagation.' },
+  { id: 'space-laboratory', name: 'Orbital Laboratory', desc: 'Zero-G experimental facility.' },
+];
