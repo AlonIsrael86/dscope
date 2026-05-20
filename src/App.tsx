@@ -4874,7 +4874,7 @@ const TeamSection = () => {
       ]
     },
     {
-      name: "Katia Yun",
+      name: "Kateryna Dlugach",
       role: "Chief Product Officer",
       oldRole: "Product Designer",
       img: "/team/katia.jpg",
