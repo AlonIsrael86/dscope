@@ -4819,7 +4819,7 @@ const TeamSection = () => {
       name: "Alexei Kogan",
       role: "Founder & CEO",
       oldRole: "Serial Entrepreneur",
-      img: "https://ui-avatars.com/api/?name=Alexei+Kogan&size=800&background=0d1b3d&color=ffffff&bold=true&format=png&font-size=0.42",
+      img: "https://i.pravatar.cc/800?img=68",
       agents: [
         { type: "Vision Agent", task: "Architecting Strategy", icon: Telescope, color: "bg-blue-500", position: "top-[20%] right-4" },
         { type: "Growth Bot", task: "Scaling Operations", icon: Rocket, color: "bg-purple-500", position: "bottom-[40%] left-4" }
@@ -4829,7 +4829,7 @@ const TeamSection = () => {
       name: "Alon Soler",
       role: "Co-Founder & CTO",
       oldRole: "Automation Architect",
-      img: "https://ui-avatars.com/api/?name=Alon+Soler&size=800&background=0b1f3a&color=ffffff&bold=true&format=png&font-size=0.42",
+      img: "https://i.pravatar.cc/800?img=12",
       agents: [
         { type: "Build Agent", task: "Shipping Systems", icon: Cpu, color: "bg-blue-500", position: "top-[15%] left-4" },
         { type: "Workflow Bot", task: "Orchestrating Pipelines", icon: Webhook, color: "bg-emerald-500", position: "bottom-[30%] right-4" }
@@ -4839,7 +4839,7 @@ const TeamSection = () => {
       name: "Katia Yun",
       role: "Chief Product Officer",
       oldRole: "Product Designer",
-      img: "https://ui-avatars.com/api/?name=Katia+Yun&size=800&background=10142d&color=ffffff&bold=true&format=png&font-size=0.42",
+      img: "https://i.pravatar.cc/800?img=47",
       agents: [
         { type: "Design Agent", task: "Refining Surfaces", icon: Palette, color: "bg-purple-500", position: "top-[25%] right-4" },
         { type: "Quality Bot", task: "Auditing Experience", icon: Eye, color: "bg-emerald-500", position: "top-[40%] left-4" }
@@ -4849,7 +4849,7 @@ const TeamSection = () => {
       name: "Nir Zari",
       role: "Head of Engineering",
       oldRole: "Senior Full-Stack Engineer",
-      img: "https://ui-avatars.com/api/?name=Nir+Zari&size=800&background=0a1530&color=ffffff&bold=true&format=png&font-size=0.42",
+      img: "https://i.pravatar.cc/800?img=33",
       agents: [
         { type: "Infra Agent", task: "Hardening Platform", icon: Server, color: "bg-blue-500", position: "top-[20%] left-4" },
         { type: "API Bot", task: "Wiring Integrations", icon: Database, color: "bg-emerald-500", position: "bottom-[40%] right-4" }
@@ -4859,7 +4859,7 @@ const TeamSection = () => {
       name: "Yoav Yellin",
       role: "Head of Delivery",
       oldRole: "Solutions Engineer",
-      img: "https://ui-avatars.com/api/?name=Yoav+Yellin&size=800&background=0c1834&color=ffffff&bold=true&format=png&font-size=0.42",
+      img: "https://i.pravatar.cc/800?img=15",
       agents: [
         { type: "Delivery Agent", task: "Tracking Milestones", icon: CheckCircle2, color: "bg-purple-500", position: "top-[18%] right-4" },
         { type: "Client Bot", task: "Aligning Stakeholders", icon: Users, color: "bg-blue-500", position: "bottom-[35%] left-4" }
@@ -4869,7 +4869,7 @@ const TeamSection = () => {
       name: "Michael Pavlov",
       role: "Lead Platform Engineer",
       oldRole: "Software Engineer",
-      img: "https://ui-avatars.com/api/?name=Michael+Pavlov&size=800&background=0a1024&color=ffffff&bold=true&format=png&font-size=0.42",
+      img: "https://i.pravatar.cc/800?img=51",
       agents: [
         { type: "Code Agent", task: "Compiling Modules", icon: Layers, color: "bg-emerald-500", position: "top-[22%] left-4" },
         { type: "Deploy Bot", task: "Releasing Builds", icon: Rocket, color: "bg-blue-500", position: "bottom-[30%] right-4" }
@@ -7771,7 +7771,9 @@ export default function App() {
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <ErrorBoundary>
-        <FpsMeter />
+        {/* FpsMeter intentionally disabled for client-facing build.
+            Toggle on for performance investigation in dev. */}
+        {/* <FpsMeter /> */}
         <AppContent />
       </ErrorBoundary>
     </ThemeContext.Provider>
