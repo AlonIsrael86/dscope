@@ -1666,13 +1666,15 @@ const DeltaHover = ({ children, className = "" }: { children: React.ReactNode, c
   );
 };
 
-const Logo = ({ className = "", ['aria-label']: ariaLabel = "DeltaScope Home" }: { className?: string, ['aria-label']?: string }) => {
+const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "DeltaScope Home" }: { className?: string, cycling?: boolean, ['aria-label']?: string }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [logoState, setLogoState] = useState(0); // 0: Delta sym, 1: D, 2: Delta, 3: auto
 
   useEffect(() => {
-    // First paint must be "Δ Scope" — delay the first cycle by 1.5s so the
-    // canonical wordmark is what every viewer sees on initial load.
+    // The persistent nav/footer wordmark must ALWAYS read "Δ Scope" — the
+    // cycling transformation (Δ / D / Delta / auto) is reserved for the
+    // brand-book "Interactive State" showcase only. Opt-in via `cycling`.
+    if (!cycling) return;
     // PERF: pause the cycle when the tab is hidden, restart when visible.
     let timer: ReturnType<typeof setInterval> | null = null;
     const startCycle = () => {
@@ -1706,7 +1708,7 @@ const Logo = ({ className = "", ['aria-label']: ariaLabel = "DeltaScope Home" }:
         document.removeEventListener('visibilitychange', handleVisibility);
       }
     };
-  }, []);
+  }, [cycling]);
 
   const getAnimatedPart = () => {
     switch (logoState) {
@@ -8370,7 +8372,7 @@ const BrandBook = ({ globalBg, setGlobalBg }: any) => {
            <div className="p-8 md:p-12 bg-white/5 border border-white/10 rounded-3xl flex flex-col items-center justify-center overflow-hidden gap-8">
               <div className="text-sm font-mono text-white/40 uppercase tracking-widest text-center">Interactive State</div>
               <div className="w-full max-w-[200px] md:max-w-[400px]">
-                 <Logo className="w-full h-auto text-4xl md:text-8xl scale-125" aria-label="DeltaScope Logo" />
+                 <Logo className="w-full h-auto text-4xl md:text-8xl scale-125" cycling aria-label="DeltaScope Logo" />
               </div>
               <p className="text-white/40 font-mono text-xs text-center max-w-sm mt-4">Hover to trigger hover animation, text glow, and symbol transformation cycle.</p>
            </div>

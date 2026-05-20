@@ -309,7 +309,7 @@ export const SpaceObjectRenderer = ({ type }: { type: string }) => {
   }
 };
 
-export const BoomableSpaceObject = ({ type }: { type: string }) => {
+export const BoomableSpaceObject = ({ type, hideLabel = false }: { type: string, hideLabel?: boolean }) => {
   const [isBooming, setIsBooming] = useState(false);
 
   const handleBoom = () => {
@@ -343,7 +343,9 @@ export const BoomableSpaceObject = ({ type }: { type: string }) => {
 
         <SpaceObjectRenderer type={type} />
       </motion.div>
-      <div className="text-sm font-mono text-blue-400/60 uppercase tracking-widest">{type}</div>
+      {!hideLabel && (
+        <div className="text-sm font-mono text-blue-400/60 uppercase tracking-widest">{type}</div>
+      )}
     </div>
   );
 };

@@ -120,10 +120,11 @@ export const Pricing = () => {
             className="inline-flex flex-col items-center gap-6"
           >
             <div className="font-mono text-[10px] uppercase tracking-[0.4em] text-[#4facfe] p-3 border border-[#4facfe]/20 rounded-full bg-[#4facfe]/5 flex items-center gap-3">
-              <Hexagon className="w-4 h-4" /> DECAGON PRICELIST [V2.0]
+              <Hexagon className="w-4 h-4" /> DECAGON PRICELIST [V2.1]
             </div>
-            <h1 className="text-6xl md:text-8xl font-display font-black uppercase italic tracking-tighter leading-[0.9] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-              Sector <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4facfe] to-[#00f2fe]">Pricing</span>
+            <h1 className="text-6xl md:text-8xl font-display font-black uppercase italic tracking-tighter leading-[0.9] text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" style={{ wordSpacing: '0.15em' }}>
+              <span className="inline-block mr-[0.25em]">Sector</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4facfe] to-[#00f2fe]">Pricing</span>
             </h1>
             <p className="text-xl md:text-2xl text-blue-200/50 font-mono tracking-wide mt-4">
               Transparent telemetry constraints.
@@ -417,7 +418,7 @@ export const Pricing = () => {
                 <div className="w-2 h-2 bg-[#4facfe] animate-pulse shadow-[0_0_10px_rgba(79,172,254,0.8)]" />
                 System Integration
               </div>
-              <h2 className="text-4xl md:text-5xl font-display font-black uppercase tracking-tighter">
+              <h2 className="text-4xl md:text-5xl font-display font-black uppercase tracking-tighter" style={{ wordSpacing: '0.15em' }}>
                 Deploy Advanced Brand Identity
               </h2>
               <p className="font-sans text-white/60 text-lg leading-relaxed">
@@ -435,7 +436,7 @@ export const Pricing = () => {
                <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-emerald-400 opacity-50" />
                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-emerald-400 opacity-50" />
                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(79,172,254,0.1)_0%,_transparent_70%)] opacity-0 group-hover:opacity-100 transition-duration-700" />
-               <BoomableSpaceObject type="tech-2" />
+               <BoomableSpaceObject type="relay" hideLabel />
                <div className="absolute bottom-4 right-4 font-mono text-[9px] uppercase tracking-[0.4em] text-white/50 bg-black/50 px-2 py-1 backdrop-blur-md">
                  Fig. 1: Orbital Relay Object
                </div>
