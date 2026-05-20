@@ -119,3 +119,83 @@ html, body {
 .animate-scan {
   animation: scan 2s linear infinite;
 }
+
+/* ============================================================
+   PERF PASS 2026-05-20 — animation smoothness
+   Goal: keep visual identity, drop GPU/main-thread pressure.
+   ============================================================ */
+
+/* 1) Pause CSS animations whose host element is not currently rendered
+      (content-visibility:auto sections will set this). We can't pause
+      framer-motion this way, but every plain CSS @keyframes animation
+      on a hidden subtree stops eating frames. */
+[data-anim-paused="true"] *,
+[data-anim-paused="true"] {
+  animation-play-state: paused !important;
+}
+
+/* 2) Mobile: backdrop-filter is the single most expensive compositor
+      operation on low-end GPUs. The design uses ~50 backdrop-blur
+      elements. On phones we substitute a slightly more opaque solid
+      fallback so the panels still read as "frosted" but don't trigger
+      per-frame Gaussian blur passes. Desktop unchanged. */
+@media (max-width: 768px) {
+  .backdrop-blur-sm,
+  .backdrop-blur,
+  .backdrop-blur-md,
+  .backdrop-blur-lg,
+  .backdrop-blur-xl,
+  .backdrop-blur-2xl,
+  .backdrop-blur-3xl {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  /* Bump translucent panel opacity slightly so the surface still reads
+     as a card rather than transparent text on background. */
+  .bg-white\/5 { background-color: rgba(255,255,255,0.07); }
+  .bg-black\/30 { background-color: rgba(0,0,0,0.55); }
+  .bg-black\/40 { background-color: rgba(0,0,0,0.6); }
+  .bg-black\/50 { background-color: rgba(0,0,0,0.7); }
+}
+
+/* 3) prefers-reduced-motion — drop the cosmic motion to a static
+      gradient version. Three.js scenes will still mount (the design
+      relies on them), but they get frameloop="demand" via the Canvas
+      props and CSS keyframes go to 'paused'. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .lightning-font { animation: none !important; }
+  .animate-scan { animation: none !important; }
+  /* Drop backdrop-filter for accessibility — the heaviest GPU op. */
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+/* 4) When the document tab is hidden (window blur, other tab), pause
+      every CSS animation. Browser already throttles rAF in hidden
+      tabs but CSS keyframes keep running on some engines. */
+body.is-hidden *,
+body.is-hidden {
+  animation-play-state: paused !important;
+}
+
+/* 5) Prevent unnecessary repaints from hover scale on touch-only
+      devices — the Tailwind hover:scale-[1.02] would otherwise fire
+      on the very first tap and trigger a full composite. */
+@media (hover: none) {
+  button:not([disabled]):hover,
+  a:not([disabled]):hover,
+  [role="button"]:not([disabled]):hover,
+  [role="tab"]:not([disabled]):hover,
+  .cursor-pointer:hover {
+    transform: none !important;
+    background-color: transparent !important;
+  }
+}

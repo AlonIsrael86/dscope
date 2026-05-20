@@ -1673,15 +1673,38 @@ const Logo = ({ className = "", ['aria-label']: ariaLabel = "DeltaScope Home" }:
   useEffect(() => {
     // First paint must be "Δ Scope" — delay the first cycle by 1.5s so the
     // canonical wordmark is what every viewer sees on initial load.
+    // PERF: pause the cycle when the tab is hidden, restart when visible.
     let timer: ReturnType<typeof setInterval> | null = null;
-    const delay = setTimeout(() => {
+    const startCycle = () => {
+      if (timer) return;
       timer = setInterval(() => {
         setLogoState((prev) => (prev + 1) % 4);
       }, 10000);
+    };
+    const stopCycle = () => {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+    const handleVisibility = () => {
+      if (typeof document === 'undefined') return;
+      if (document.hidden) stopCycle();
+      else startCycle();
+    };
+    const delay = setTimeout(() => {
+      if (typeof document !== 'undefined' && document.hidden) return;
+      startCycle();
     }, 1500);
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', handleVisibility);
+    }
     return () => {
       clearTimeout(delay);
-      if (timer) clearInterval(timer);
+      stopCycle();
+      if (typeof document !== 'undefined') {
+        document.removeEventListener('visibilitychange', handleVisibility);
+      }
     };
   }, []);
 
@@ -4774,10 +4797,14 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
     >
       <div className="aspect-[3/4] md:aspect-[4/5] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar mix-blend-luminosity hover:mix-blend-normal transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.15)] hover:border-blue-500/30">
         {/* Realistic Portrait */}
-        <motion.img 
+        <motion.img
           style={{ y: yParallax, scale: 1.1 }}
-          src={member.img} 
+          src={member.img}
           alt={`${member.name}`}
+          loading="lazy"
+          decoding="async"
+          width={800}
+          height={1000}
           className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.2] saturate-[0.8] group-hover/avatar:saturate-100"
         />
         
@@ -6426,7 +6453,7 @@ const IntegrationsShowcase = () => {
     );
 };
 
-const ServiceItem = ({ service, i }: { service: any, i: number }) => {
+const ServiceItem = memo(({ service, i }: { service: any, i: number }) => {
   const [isHovered, setIsHovered] = useState(false);
   
   return (
@@ -6551,7 +6578,8 @@ const ServiceItem = ({ service, i }: { service: any, i: number }) => {
       )}
     </motion.div>
   );
-};
+});
+ServiceItem.displayName = 'ServiceItem';
 
 const DashboardHeader = ({ progress }: { progress?: any }) => {
   const headerOpacity = useTransform(progress || 0, [0, 0.05, 0.9, 1], [1, 1, 1, 0]);
@@ -9029,7 +9057,11 @@ const ServiceSupportSection = () => {
 
 function AppContent() {
   const { scrollYProgress } = useScroll();
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 50, damping: 25, mass: 1, restDelta: 0.001 });
+  // PERF: looser restDelta + lower stiffness slightly reduces spring update
+  // frequency without changing the perceived smoothness of scroll-linked
+  // animations. restDelta:0.01 means the spring "settles" earlier and
+  // stops emitting updates, killing dozens of micro re-renders per scroll.
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 40, damping: 22, mass: 0.8, restDelta: 0.01 });
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -9125,10 +9157,28 @@ function AppContent() {
       document.addEventListener('click', handleLinkClick);
     }
 
+    // PERF: tag <body> with .is-hidden when the tab is in the background
+    // so the CSS rule in index.css can pause every keyframes animation.
+    // Avoids burning GPU on parallax/blink/pulse loops while the user is
+    // on another tab.
+    const handleVisibility = () => {
+      if (typeof document === 'undefined') return;
+      if (document.hidden) {
+        document.body.classList.add('is-hidden');
+      } else {
+        document.body.classList.remove('is-hidden');
+      }
+    };
+    handleVisibility();
+    if (typeof document !== 'undefined' && document.addEventListener) {
+      document.addEventListener('visibilitychange', handleVisibility);
+    }
+
     return () => {
       clearTimeout(timer);
       if (typeof document !== 'undefined' && document.removeEventListener) {
         document.removeEventListener('click', handleLinkClick);
+        document.removeEventListener('visibilitychange', handleVisibility);
       }
     };
   }, []);
@@ -9220,48 +9270,54 @@ function AppContent() {
               <SecretarialBlueprint />
             </InViewGate>
 
-            <div className="relative" id="orbital-dispatch">
-               {/* Translucent separator with gradient glow */}
-               <div className="h-40 w-full bg-gradient-to-b from-transparent via-purple-500/10 to-transparent pointer-events-none" />
-               
-               {/* Background Glow for Contrast */}
-               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-96 bg-blue-600/5 blur-[120px] pointer-events-none" aria-hidden="true" />
-               <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-64 bg-purple-600/5 blur-[100px] pointer-events-none" aria-hidden="true" />
-               
-               <div className="relative z-10">
-                 <WritingTitle 
-                     text="Neural Integration Node"
-                     className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-blue-400 uppercase tracking-tighter mb-16 justify-center"
-                     lightning={true}
-                     pulse={true}
-                 />
-                 <LunarCommandHub />
-               </div>
-            </div>
-            <TestimonialsSection />
-            <motion.section 
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.1 }}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.2
+            <InViewGate minHeight="150vh">
+              <div className="relative" id="orbital-dispatch">
+                 {/* Translucent separator with gradient glow */}
+                 <div className="h-40 w-full bg-gradient-to-b from-transparent via-purple-500/10 to-transparent pointer-events-none" />
+
+                 {/* Background Glow for Contrast */}
+                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-96 bg-blue-600/5 blur-[120px] pointer-events-none" aria-hidden="true" />
+                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-64 bg-purple-600/5 blur-[100px] pointer-events-none" aria-hidden="true" />
+
+                 <div className="relative z-10">
+                   <WritingTitle
+                       text="Neural Integration Node"
+                       className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-blue-400 uppercase tracking-tighter mb-16 justify-center"
+                       lightning={true}
+                       pulse={true}
+                   />
+                   <LunarCommandHub />
+                 </div>
+              </div>
+            </InViewGate>
+            <InViewGate minHeight="80vh">
+              <TestimonialsSection />
+            </InViewGate>
+            <InViewGate minHeight="80vh">
+              <motion.section
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.2
+                    }
                   }
-                }
-              }}
-              className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-12"
-            >
-              {[
-                { title: 'Precision Target', desc: 'Identify operational inefficiencies with sub-millimeter data accuracy using our proprietary neural kernels.', type: 'robot' },
-                { title: 'Galactic Reach', desc: 'Seamlessly deploy automation clusters across multi-region cloud infrastructures without latency penalties.', type: 'spaceship' },
-                { title: 'Quantum Logic', desc: 'Our decision engines process multi-variate corporate structures in real-time, anticipating markets before they shift.', type: 'ufo' },
-              ].map((feature, i) => (
-                <FeatureObjectCard key={i} index={i} feature={feature} />
-              ))}
-            </motion.section>
+                }}
+                className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-12"
+              >
+                {[
+                  { title: 'Precision Target', desc: 'Identify operational inefficiencies with sub-millimeter data accuracy using our proprietary neural kernels.', type: 'robot' },
+                  { title: 'Galactic Reach', desc: 'Seamlessly deploy automation clusters across multi-region cloud infrastructures without latency penalties.', type: 'spaceship' },
+                  { title: 'Quantum Logic', desc: 'Our decision engines process multi-variate corporate structures in real-time, anticipating markets before they shift.', type: 'ufo' },
+                ].map((feature, i) => (
+                  <FeatureObjectCard key={i} index={i} feature={feature} />
+                ))}
+              </motion.section>
+            </InViewGate>
           </motion.main>
         )}
 
@@ -9361,7 +9417,9 @@ function AppContent() {
               )}
             </div>
             
-            <IntegrationsShowcase />
+            <InViewGate minHeight="80vh">
+              <IntegrationsShowcase />
+            </InViewGate>
           </motion.main>
         )}
 
@@ -9379,7 +9437,9 @@ function AppContent() {
 
             <TeamSection />
 
-            <DataClusterGallery />
+            <InViewGate minHeight="80vh">
+              <DataClusterGallery />
+            </InViewGate>
 
             <div className="h-[10vh]" /> {/* Relaxed spacer since there is no pinned height */}
           </motion.main>
@@ -9459,7 +9519,11 @@ function AppContent() {
         )}
       </AnimatePresence>
 
-      {activeTab === 'home' && <CollaborationDiorama />}
+      {activeTab === 'home' && (
+        <InViewGate minHeight="80vh" rootMargin="600px 0px">
+          <CollaborationDiorama />
+        </InViewGate>
+      )}
       <footer className="py-12 px-6 border-t border-white/5 relative z-10 overflow-hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
           <div className="flex flex-col gap-6 w-full md:w-auto items-center md:items-start">
