@@ -4927,6 +4927,26 @@ const TeamSection = () => {
         { type: "Code Agent", task: "Compiling Modules", icon: Layers, color: "bg-emerald-500", position: "top-[22%] left-4" },
         { type: "Deploy Bot", task: "Releasing Builds", icon: Rocket, color: "bg-blue-500", position: "bottom-[30%] right-4" }
       ]
+    },
+    {
+      name: "Vitalina Rebalsky",
+      role: "Customer Success Manager",
+      oldRole: "Client Relations Specialist",
+      img: "/team/vitalina.jpg",
+      agents: [
+        { type: "Loyalty Agent", task: "Nurturing Relationships", icon: HeartHandshake, color: "bg-purple-500", position: "top-[20%] right-4" },
+        { type: "Pulse Bot", task: "Mapping Sentiment", icon: MessageSquare, color: "bg-emerald-500", position: "bottom-[35%] left-4" }
+      ]
+    },
+    {
+      name: "Darren Rozowsky",
+      role: "Chairman",
+      oldRole: "Board Member",
+      img: "/team/darren.jpg",
+      agents: [
+        { type: "Compass Agent", task: "Plotting Direction", icon: Compass, color: "bg-blue-500", position: "top-[18%] left-4" },
+        { type: "Governance Bot", task: "Anchoring Vision", icon: Landmark, color: "bg-purple-500", position: "bottom-[40%] right-4" }
+      ]
     }
   ];
 
