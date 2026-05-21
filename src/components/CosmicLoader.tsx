@@ -20,7 +20,7 @@ export const CosmicLoader = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setLogoState((prev) => (prev + 1) % 4);
-    }, 10000);
+    }, 2000);
     return () => clearInterval(timer);
   }, []);
 
@@ -33,6 +33,10 @@ export const CosmicLoader = () => {
       default: return "Δ";
     }
   };
+
+  // Cycle accent color in lockstep with the symbol: green → blue → pink → ...
+  const LOGO_COLORS = ['text-emerald-400', 'text-blue-400', 'text-pink-400'];
+  const currentLogoColor = LOGO_COLORS[logoState % LOGO_COLORS.length];
 
   return (
     <motion.div 
@@ -111,13 +115,12 @@ export const CosmicLoader = () => {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.5 }}
-                  className="text-emerald-400 flex items-center"
+                  className={`${currentLogoColor} flex items-center`}
                 >
                   {getAnimatedPart()}
                 </motion.span>
               </AnimatePresence>
               <span className="ml-1 uppercase">Scope</span>
-              <span className="text-2xl md:text-4xl text-white/50 ml-1">.ai</span>
             </div>
             
             {/* Glimmer Animation Sweep */}

@@ -65,9 +65,9 @@ const REAL_CASES: ClientCase[] = [
     accent: 'text-cyan-300',
     glow: 'rgba(34, 211, 238, 0.25)',
     person: {
-      name: 'Netanel',
+      name: 'Netanel Simhaev',
       role: 'Techom',
-      photo: null, // placeholder until real photo arrives
+      photo: '/clients/people/netanel.jpg',
       quote:
         "Smart locks built for American or European doors don't fit ours — that's the gap we built the company on. Every Techom model is engineered for the Israeli market, certified by the Ministry of Communications, and installed by our own technicians.",
     },

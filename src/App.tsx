@@ -9,7 +9,7 @@ import { logger } from './lib/logger';
 import { featureFlags } from './lib/featureFlags';
 import { GoogleGenAI } from "@google/genai";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, animate, useSpring, useMotionValueEvent, useInView, useTime } from "motion/react";
-import { Menu, X, Zap, RefreshCw, Download, Share2, Sparkles, Shield, Rocket, Cpu, Bot, Users, Smartphone, Keyboard, Monitor, Brain, ArrowRight, CheckCircle2, Search, Mail, Calendar, MessageSquare, Database, Clock, TrendingUp, AlertCircle, DollarSign, Activity, Satellite, Telescope, MapPin, Package, Home, Truck, Globe, Radio, Orbit, Eye, Landmark, HeartPulse, Factory, Scale, Target, GraduationCap, Coffee, Hammer, Building2, Tractor, ShoppingCart, Car, Film, RadioTower, FlaskConical, Lock, Gem, Moon, Sun, Server, BarChart3, ScanText, Infinity as InfinityIcon, Dna, Webhook, History, Heart, BookOpen, Layers, Box, ShieldCheck, Star, Headset, Mic, Volume2, User, Plane, Gamepad2, Droplets, Anchor, Palette, Train, HeartHandshake, Map, Compass, LayoutDashboard, Settings } from "lucide-react";
+import { Menu, X, Zap, RefreshCw, Download, Share2, Sparkles, Shield, Rocket, Cpu, Bot, Users, Smartphone, Keyboard, Monitor, Brain, ArrowRight, CheckCircle2, Search, Mail, Calendar, MessageSquare, Database, Clock, TrendingUp, AlertCircle, DollarSign, Activity, Satellite, Telescope, MapPin, Package, Home, Truck, Globe, Radio, Orbit, Eye, Landmark, HeartPulse, Factory, Scale, Target, GraduationCap, Coffee, Hammer, Building2, Tractor, ShoppingCart, Car, Film, RadioTower, FlaskConical, Lock, Gem, Moon, Sun, Server, BarChart3, ScanText, Infinity as InfinityIcon, Dna, Webhook, History, Heart, BookOpen, Layers, Box, ShieldCheck, Star, Headset, Mic, Volume2, User, Plane, Gamepad2, Droplets, Anchor, Palette, Train, HeartHandshake, Map, Compass, LayoutDashboard, Settings, Microscope, Coins, CloudSun, Recycle, BrainCircuit, Bed, Scissors, Atom, TrainFront, Languages, Sprout, ThermometerSnowflake, Wifi, HardHat, Weight, Music, Layout, PencilLine } from "lucide-react";
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { SPACE_ANIMALS_3D } from './components/RealisticAnimals3D';
 import { SPACE_TECH } from './data/spaceTechConstants';
@@ -1317,7 +1317,8 @@ const NAV_TABS = [
   { id: 'about', label: 'Company', symbolId: 'figma' },
   { id: 'team', label: 'Team', symbolId: 'omega' },
   { id: 'case-studies', label: 'Case Studies', symbolId: 'delta' },
-  { id: 'brand-book', label: 'Brand Book', symbolId: 'alpha' },
+  // Brand Book intentionally hidden from public nav. Source remains in repo;
+  // route is also removed from URL_TO_TAB below so the page is unreachable from the site.
   { id: 'contact', label: 'Contact', symbolId: 'phi' },
 ];
 
@@ -1332,7 +1333,6 @@ const URL_TO_TAB: Record<string, string> = {
   '/company': 'about',
   '/team': 'team',
   '/case-studies': 'case-studies',
-  '/brand-book': 'brand-book',
   '/contact': 'contact',
 };
 
@@ -1686,9 +1686,9 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
   const [logoState, setLogoState] = useState(0); // 0: Delta sym, 1: D, 2: Delta, 3: auto
 
   useEffect(() => {
-    // The persistent nav/footer wordmark must ALWAYS read "Δ Scope" — the
-    // cycling transformation (Δ / D / Delta / auto) is reserved for the
-    // brand-book "Interactive State" showcase only. Opt-in via `cycling`.
+    // Logo cycles its first symbol (Δ / D / Delta / auto) followed by the fixed
+    // "Scope" wordmark. Opt-in via `cycling`. Header Logo passes cycling=true so
+    // visitors see the brand transformation on every page.
     if (!cycling) return;
     // PERF: pause the cycle when the tab is hidden, restart when visible.
     let timer: ReturnType<typeof setInterval> | null = null;
@@ -1696,7 +1696,7 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
       if (timer) return;
       timer = setInterval(() => {
         setLogoState((prev) => (prev + 1) % 4);
-      }, 10000);
+      }, 2000);
     };
     const stopCycle = () => {
       if (timer) {
@@ -1734,9 +1734,13 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
       default: return "Δ";
     }
   };
-  
+
+  // Cycle accent color in lockstep with the symbol: green → blue → pink → ...
+  const LOGO_COLORS = ['text-emerald-400', 'text-blue-400', 'text-pink-400'];
+  const currentLogoColor = LOGO_COLORS[logoState % LOGO_COLORS.length];
+
   return (
-    <motion.div 
+    <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onHoverStart={() => setIsHovered(true)}
@@ -1749,8 +1753,8 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
       className={`flex items-center gap-3 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-xl p-2 -m-2 relative overflow-visible transition-all duration-500 ${className}`}
     >
       <div className="flex items-center font-display font-black tracking-tighter">
-        <motion.span 
-          animate={{ 
+        <motion.span
+          animate={{
             color: isHovered ? "#3b82f6" : "#ffffff",
           }}
           transition={{ duration: 0.3 }}
@@ -1763,7 +1767,7 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -5 }}
               transition={{ duration: 0.5 }}
-              className="text-emerald-400"
+              className={currentLogoColor}
             >
               {getAnimatedPart()}
             </motion.span>
@@ -2449,15 +2453,58 @@ const PlatformAnimatedTitle = () => {
        <motion.span
          onMouseEnter={() => setIsConnectsHovered(true)}
          onMouseLeave={() => setIsConnectsHovered(false)}
-         className={`cursor-pointer relative inline-block transition-all duration-300 ${isConnectsHovered ? 'text-white ml-0 mr-0' : 'text-purple-400 ml-0 mr-3 md:mr-4'}`}
+         className={`cursor-pointer relative inline-flex items-center align-middle transition-all duration-300 mr-3 md:mr-4 ${isConnectsHovered ? 'text-white' : 'text-purple-400'} ${isConnectsHovered ? 'ml-3 md:ml-4' : 'ml-0'}`}
        >
-         {isConnectsHovered ? "Connector" : "Connects"}
-         {isConnectsHovered && (
-            <motion.div 
-              initial={{ width: 0 }} animate={{ width: "120%", left: "-10%" }} exit={{ width: 0 }}
-              className="absolute top-1/2 -translate-y-1/2 h-2 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full z-[-1] opacity-50 blur-sm"
-            />
-         )}
+         <AnimatePresence mode="popLayout">
+           {isConnectsHovered ? (
+             <motion.span
+               key="chain"
+               initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
+               animate={{ opacity: 1, scale: 1, rotate: 0 }}
+               exit={{ opacity: 0, scale: 0.6, rotate: 8 }}
+               transition={{ type: 'spring', stiffness: 300, damping: 18 }}
+               className="inline-flex items-baseline"
+               aria-label="Connector"
+             >
+               {/* Stylised interlocked chain links — brand-colored, glowing */}
+               <svg
+                 viewBox="0 0 120 40"
+                 className="h-[0.7em] w-auto drop-shadow-[0_0_12px_rgba(79,172,254,0.55)]"
+                 style={{ verticalAlign: 'baseline', transform: 'translateY(-0.15em)' }}
+                 fill="none"
+                 stroke="currentColor"
+                 strokeWidth="4"
+                 strokeLinecap="round"
+                 aria-hidden="true"
+               >
+                 <defs>
+                   <linearGradient id="chainGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                     <stop offset="0%" stopColor="#4facfe" />
+                     <stop offset="50%" stopColor="#34d399" />
+                     <stop offset="100%" stopColor="#a78bfa" />
+                   </linearGradient>
+                 </defs>
+                 {/* Link 1 */}
+                 <rect x="4" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
+                 {/* Link 2 — interlocking with link 1 and 3 */}
+                 <rect x="37" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
+                 {/* Link 3 */}
+                 <rect x="70" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
+               </svg>
+             </motion.span>
+           ) : (
+             <motion.span
+               key="word"
+               initial={{ opacity: 0, y: -8 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: 8 }}
+               transition={{ duration: 0.25 }}
+               className="inline-block"
+             >
+               Connects
+             </motion.span>
+           )}
+         </AnimatePresence>
        </motion.span>
        
        <AnimatePresence>
@@ -2476,6 +2523,93 @@ const PlatformAnimatedTitle = () => {
        <motion.span className={`text-emerald-400 inline-block ${isOneActive ? 'ml-3 md:ml-4 mr-3 md:mr-4' : 'mr-3 md:mr-4'}`}>SaaS</motion.span>
        <motion.span className="text-purple-400 inline-block">Platforms</motion.span>
     </h1>
+  );
+};
+
+const StrategicVisionSection = () => {
+  return (
+    <section className="relative z-10 w-full py-32 px-6 overflow-hidden">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div>
+            <motion.h2
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-6xl font-display font-bold text-white mb-8 tracking-tighter leading-tight"
+            >
+              The 2026-2030 <br/>
+              <span className="text-emerald-400">Strategic Horizon</span>
+            </motion.h2>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="space-y-6 text-lg md:text-xl font-light text-white/70 leading-relaxed"
+            >
+              <p>
+                Organizations entering the 2026-2030 era face a fundamental choice: absolute scale through autonomous intelligence or stagnation through legacy friction. Why is this transition critical now?
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8">
+                <div className="space-y-3 font-sans">
+                  <h4 className="text-white font-bold flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    Why It Matters
+                  </h4>
+                  <p className="text-sm">In a hyper-connected global market, human-only response times are no longer competitive. Autonomous agents operate at the speed of data, turning weeks of manual labor into seconds of precision execution.</p>
+                </div>
+                <div className="space-y-3 font-sans">
+                  <h4 className="text-white font-bold flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    What It Solves
+                  </h4>
+                  <p className="text-sm">We solve the "Talent-Scale Trap." Traditionally, scaling required linear hiring. With DeltaScope, your capabilities scale exponentially while your headcount remains focused on direction, creativity, and strategy.</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 bg-blue-500/20 blur-[120px] rounded-full animate-pulse" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="relative p-8 md:p-12 rounded-[2.5rem] bg-black/40 border border-white/10 backdrop-blur-2xl"
+            >
+              <h3 className="text-2xl font-bold text-white mb-8">The Economic Impact</h3>
+
+              <div className="space-y-8">
+                {[
+                  { label: "Operational Cost reduction", value: "65-80%", icon: TrendingUp, color: "text-blue-400" },
+                  { label: "Deployment Velocity", value: "10x", icon: Rocket, color: "text-emerald-400" },
+                  { label: "Compliance Risk reduction", value: "99.9%", icon: Shield, color: "text-purple-400" }
+                ].map((stat, i) => (
+                  <div key={i} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-4">
+                      <div className={`p-3 rounded-xl bg-white/5 border border-white/10 ${stat.color}`}>
+                        <stat.icon size={24} />
+                      </div>
+                      <span className="text-white/60 font-medium group-hover:text-white transition-colors uppercase tracking-widest text-[10px] font-mono">{stat.label}</span>
+                    </div>
+                    <span className={`text-2xl font-mono font-bold ${stat.color}`}>{stat.value}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-12 p-6 rounded-2xl bg-white/5 border border-white/5 italic text-sm text-white/40 leading-relaxed font-sans">
+                "Between 2026 and 2030, the cost of intelligence will approach zero, but the cost of inefficiency will become fatal. DeltaScope is the immunity system for the modern enterprise, mitigating risk while accelerating growth beyond human limits."
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 
@@ -2519,17 +2653,182 @@ const PlatformIntroSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10">
           {[
-            { model: 0, color: "blue", title: "Advanced CRM", desc: "Agentic CRM that categorizes leads, predicts close probability, and automatically follows up across all channels." },
-            { model: 1, color: "emerald", title: "Support & Tickets", desc: "Omnichannel support platform that triages, resolves, and categorizes tickets instantly with zero human intervention needed." },
-            { model: 2, color: "purple", title: "Financial Operations", desc: "Automated billing, reconciliation, and financial forecasting. Integrates instantly with existing accounting systems." },
-            { model: 3, color: "blue", title: "Easy & Friendly UX", desc: "Highly intuitive design that allows your team to navigate complex operational workflows without extensive training." },
-            { model: 4, color: "emerald", title: "Automatic Agent Builder", desc: "Build AI agents automatically from data collected from human work: calls, chats, emails, video meetings, SaaS screenshares, and live cameras." },
-            { model: 5, color: "purple", title: "AI Switchboard", desc: "Answers sales and support calls with AI voice agents and passes to humans when needed. Continuously learns from human solutions and creativity." },
-            { model: 6, color: "blue", title: "Risk Management", desc: "Proactively monitor anomalies, compliance, and operational risks across all workflows using deep analytics." },
-            { model: 7, color: "emerald", title: "Personal Employee Agents", desc: "A dedicated, specialized AI agent for every employee, customized to assist with their specific daily workflows and routines." },
-            { model: 8, color: "purple", title: "Advanced Machine Learning", desc: "Harness powerful machine learning models that analyze continuous streams of team and customer data." },
-            { model: 9, color: "blue", title: "Custom Dashboards", desc: "Real-time custom dashboards tailored automatically for every role to provide exact KPIs and tools needed." },
-            { model: 10, color: "emerald", title: "Self-Creating Process", desc: "A process that creates itself from your corporation data, turning outdated systems into an agile platform." },
+            {
+              model: 0,
+              color: "blue",
+              title: "Agentic CRM",
+              desc: "Predictive sales platform that optimizes the entire buyer journey from initial lead to long-term retention.",
+              functions: [
+                "Lead Scoring & Intent Detection",
+                "Automated Outreach Campaigns",
+                "Predictive Revenue Analytics",
+                "Social Selling Intelligence",
+                "Customer Sentiment Mapping",
+                "Competitor Interaction Tracking",
+                "Dynamic Pricing Optimization",
+                "Deal Flow Heatmapping"
+              ]
+            },
+            {
+              model: 1,
+              color: "emerald",
+              title: "Sales-Driven Tickets",
+              desc: "Omnichannel support that identifies sales opportunities within support flows and resolves issues instantly.",
+              functions: [
+                "Intent-Based Ticket Routing",
+                "Opportunity Extraction",
+                "Auto-Resolution Suggestions",
+                "Churn Prevention Hooks",
+                "Multi-Language Auto-Translation",
+                "Cross-Channel History Merging",
+                "SLA Breach Prediction",
+                "Automated FAQ Synthesis"
+              ]
+            },
+            {
+              model: 2,
+              color: "purple",
+              title: "Autonomous FinOps",
+              desc: "Complete financial lifecycle management from automated billing to complex enterprise reconciliation.",
+              functions: [
+                "Auto-Invoice Processing",
+                "Real-time Cash-flow Projection",
+                "Anomaly & Fraud Detection",
+                "Vendor Payment Optimization",
+                "Tax Compliance Automation",
+                "Multi-Currency Auto-Hedging",
+                "Expense Audit Streamlining",
+                "Automated P&L Reporting"
+              ]
+            },
+            {
+              model: 3,
+              color: "blue",
+              title: "Actionable UX",
+              desc: "Intuitive command interface designed for mission-critical operations with zero learning curve.",
+              functions: [
+                "Context-Aware Workspaces",
+                "Voice & Text Command Bar",
+                "Dynamic Component Loading",
+                "Cross-Platform Syncing",
+                "Biometric Secure Access",
+                "Collaborative Multi-User Editing",
+                "Custom Theme Architectures",
+                "Haptic Feedback Integrations"
+              ]
+            },
+            {
+              model: 4,
+              color: "emerald",
+              title: "Autonomous Builder",
+              desc: "Clone your top performers' workflows into scalable AI agents using data-driven process mining.",
+              functions: [
+                "Multi-Modal Training Data",
+                "Screen-Session Cloning",
+                "Custom Logic Workbench",
+                "Agent Performance Tracking",
+                "Neural Network Fine-Tuning",
+                "Automated Red-Teaming",
+                "Version Control for Agents",
+                "Cross-Silo Knowledge Sharing"
+              ]
+            },
+            {
+              model: 5,
+              color: "purple",
+              title: "AI Voice Switchboard",
+              desc: "Natural intelligence switchboard that handles voice calls with the nuance of your best human agents.",
+              functions: [
+                "Low-Latency Neural Voice",
+                "Real-time Sentiment Analysis",
+                "Intelligent Human Escalation",
+                "Post-Call Summarization",
+                "Dynamic IVR Path Generation",
+                "Caller Intent Classification",
+                "Background Noise Suppression",
+                "Automated Callback Scheduling"
+              ]
+            },
+            {
+              model: 6,
+              color: "blue",
+              title: "Compliance Shield",
+              desc: "Continuous monitoring of operational data to ensure global regulatory adherence and internal policy alignment.",
+              functions: [
+                "Real-time Compliance Audits",
+                "Data Privacy Guardrails",
+                "Behavioral Risk Scoring",
+                "Automated Policy Updates",
+                "Global Regulatory Syncing",
+                "Incident Response Triggers",
+                "Zero-Knowledge Proof Auditing",
+                "ESG Transformation Tracking"
+              ]
+            },
+            {
+              model: 7,
+              color: "emerald",
+              title: "Personal Coworkers",
+              desc: "AI companions for every staff member that handle administrative friction and data retrieval.",
+              functions: [
+                "Intelligent Task Prioritization",
+                "Knowledge Base Retrieval",
+                "Workflow Macro Creation",
+                "Daily Briefing Generation",
+                "Email Sequence Drafting",
+                "Meeting Minutes & Action Items",
+                "Cognitive Load Management",
+                "Skill Gap Identification"
+              ]
+            },
+            {
+              model: 8,
+              color: "purple",
+              title: "Enterprise ML Lab",
+              desc: "Harness proprietary enterprise data to build custom predictive models and cognitive architectures.",
+              functions: [
+                "Knowledge Graph Synthesis",
+                "Vector Search Integration",
+                "Fine-Tuning Framework",
+                "Dataset Management",
+                "Distributed Training Support",
+                "Explainable AI Reporting",
+                "Edge Model Deployment",
+                "Semantic Data Tagging"
+              ]
+            },
+            {
+              model: 9,
+              color: "blue",
+              title: "Predictive Dashboards",
+              desc: "Visualize the future of your operations with KPI projections and real-time anomaly alerts.",
+              functions: [
+                "Natural Language Queries",
+                "Automatic Chart Generation",
+                "Cross-Silo Data Blending",
+                "Threshold Alert Systems",
+                "VR/AR Data Visualizations",
+                "Scenario Impact Simulations",
+                "Executive Summary Audio",
+                "Historical Trend Extrapolation"
+              ]
+            },
+            {
+              model: 10,
+              color: "emerald",
+              title: "Self-Evolving Systems",
+              desc: "Platforms that architecture themselves by observing legacy patterns and business goals.",
+              functions: [
+                "Legacy Code Refactoring",
+                "Database Schema Optimization",
+                "Process Bottleneck Detection",
+                "Auto-Agile Transitioning",
+                "Self-Healing Code Logic",
+                "Automated Technical Debt Mapping",
+                "Service Mesh Orchestration",
+                "Continuous System Hardening"
+              ]
+            },
           ].map((feat, idx) => {
             const colorMap: Record<string, {bg: string, border: string, text: string, hex: string}> = {
               blue: { bg: "bg-blue-500/5", border: "border-blue-500/20", text: "text-blue-400", hex: "#60a5fa" },
@@ -2538,20 +2837,30 @@ const PlatformIntroSection = () => {
             };
             const c = colorMap[feat.color];
             return (
-              <motion.div 
+              <motion.div
                 key={idx}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: (idx % 4) * 0.1 }}
-                className={`p-8 rounded-3xl ${c.bg} border ${c.border} hover:bg-[#00000a] transition-all duration-500 group relative overflow-hidden`}
+                className={`p-6 md:p-8 rounded-3xl ${c.bg} border ${c.border} hover:bg-[#000010] transition-all duration-500 group relative overflow-hidden flex flex-col`}
               >
-                <div className="absolute inset-0 bg-[#00000a] opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
-                <div className="h-32 mb-8 relative flex items-center justify-center transform group-hover:scale-110 transition-transform duration-700 pointer-events-none opacity-80 group-hover:opacity-100 mix-blend-screen drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                <div className="absolute inset-0 bg-[#000010] opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+                <div className="h-24 md:h-32 mb-6 md:mb-8 relative flex items-center justify-center transform group-hover:scale-110 transition-transform duration-700 pointer-events-none opacity-80 group-hover:opacity-100 mix-blend-screen drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                   <SpaceTech2D typeIndex={feat.model} color={c.hex} />
                 </div>
-                <h3 className={`text-xl font-bold mb-4 ${c.text}`}>{feat.title}</h3>
-                <p className="text-white/60 text-sm leading-relaxed">{feat.desc}</p>
+                <h3 className={`text-lg md:text-xl font-bold mb-3 md:mb-4 ${c.text}`}>{feat.title}</h3>
+                <p className="text-white/60 text-xs md:text-sm leading-relaxed mb-6">{feat.desc}</p>
+
+                {/* Function List */}
+                <div className="mt-auto space-y-2 border-t border-white/5 pt-6">
+                  {feat.functions.map((func, fIdx) => (
+                    <div key={fIdx} className="flex items-start gap-2 group/item">
+                      <div className={`w-1 h-1 rounded-full mt-1.5 shrink-0 ${feat.color === 'blue' ? 'bg-blue-500' : feat.color === 'emerald' ? 'bg-emerald-500' : 'bg-purple-500'} group-hover/item:scale-125 transition-transform`} />
+                      <span className="text-[10px] md:text-[11px] font-mono uppercase tracking-wider text-white/40 group-hover/item:text-white/80 transition-colors">{func}</span>
+                    </div>
+                  ))}
+                </div>
               </motion.div>
             );
           })}
@@ -2562,12 +2871,12 @@ const PlatformIntroSection = () => {
          <div className="text-center mb-16 relative z-10">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-white uppercase tracking-tight">Step-by-Step Migration</h2>
           <p className="text-blue-300 mt-4 max-w-2xl mx-auto">Don't have a CRM or ERP yet? No problem. We provide an easy step-by-step migration process that we help you with, from data collection to connecting to an innovative way of working.</p>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-transparent mx-auto mt-6" />
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
-            <div className="flex flex-col items-center text-center">
-                <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-4 border border-blue-400/30">
+            <div className="flex flex-col items-center text-center relative">
+                <div className="hidden md:block absolute top-8 left-[50%] w-full h-[2px] bg-gradient-to-r from-blue-500/50 to-transparent pointer-events-none" />
+                <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-4 border border-blue-400/30 relative z-10">
                     <span className="text-xl font-bold text-white">1</span>
                 </div>
                 <h4 className="text-lg font-bold text-white mb-2">Discovery & Setup</h4>
@@ -5952,38 +6261,90 @@ const CLIENTS = [
 
 const ClientMarquee = () => {
   return (
-    <div className="w-full mt-24 z-20 flex flex-col relative overflow-hidden group h-[300px] md:h-[400px]">
-      <div className="flex flex-row items-center gap-6 justify-center w-full max-w-7xl mx-auto px-6 mb-12 relative z-30">
-        <h3 className="text-white/50 text-lg md:text-xl font-mono tracking-[0.3em] uppercase text-center">Our Clients</h3>
+    <div className="w-full mt-24 z-20 flex flex-col relative group">
+      <div className="flex flex-row items-center gap-6 justify-center w-full max-w-7xl mx-auto px-6 mb-8 relative z-30">
+        <h3 className="text-white text-2xl md:text-3xl lg:text-4xl font-display font-bold tracking-[0.05em] uppercase text-center drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">Our Clients</h3>
       </div>
-      
-      <div className="flex justify-center items-center w-full h-full relative" style={{ perspective: '800px', transformStyle: 'preserve-3d' }}>
+
+      {/* Taller container + top/bottom mask so names fade smoothly at edges
+          instead of being clipped. Mask also keeps clients from visually
+          overlapping the heading above. */}
+      <div
+        className="flex justify-center items-center w-full relative overflow-hidden h-[560px] md:h-[680px]"
+        style={{
+          perspective: '800px',
+          transformStyle: 'preserve-3d',
+          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)',
+          maskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)'
+        }}
+      >
         {CLIENTS.map((client, i) => {
-          // Responsive semi-random positioning
-          const xOffset = `${(i % 3 - 1) * 25 + (Math.sin(i * 123) * 20)}vw`;
-          const yOffset = `${(i % 2 - 0.5) * 100 + (Math.cos(i * 321) * 60)}px`;
-          
+          // Randomized X/Y lanes — distribute names across the screen so the
+          // sequence doesn't feel like a left-to-right ladder.
+          const count = CLIENTS.length;
+          // Evenly-spaced lanes from -18vw to +18vw, shuffled deterministically
+          // via i*7 % count. Tighter spread so long names (e.g. "Dani Levi
+          // Communication Ltd", "Orin Shpalter") don't get clipped at viewport edges.
+          const X_LANES = Array.from({ length: count }, (_, idx) => ((idx + 0.5) / count) * 36 - 18);
+          const Y_LANES = [-180, -90, 0, 90, 180];
+          const xLane = X_LANES[(i * 7) % count];
+          const yLane = Y_LANES[(i * 3 + 2) % Y_LANES.length];
+          const xOffset = `${xLane}vw`;
+          const yOffset = `${yLane}px`;
+
+          // Faster cycle but wider visibility window — names move quicker
+          // through space while staying readable on screen longer
+          const cycleDuration = 18;
+
+          // Each client gets one of the 3 platform colors at peak proximity
+          // (when the description tooltip is reachable). Cycle pink → emerald → blue.
+          const PEAK_COLORS = ['#ec4899', '#34d399', '#4facfe'];
+          const peakColor = PEAK_COLORS[i % PEAK_COLORS.length];
+
           return (
             <motion.div
               key={i}
-              className="absolute group/logo text-[clamp(1rem,3vw,2rem)] font-bold tracking-tight text-white/80 text-center whitespace-nowrap drop-shadow-2xl cursor-default"
+              className="absolute group/logo text-[clamp(0.95rem,2.4vw,1.75rem)] font-bold tracking-tight text-center whitespace-nowrap drop-shadow-2xl cursor-default"
               initial={{ z: -2000, opacity: 0, x: xOffset, y: yOffset }}
-              animate={{ 
-                z: [-2000, 0, 800], 
-                opacity: [0, 0.8, 0] 
+              animate={{
+                z: [-2000, -200, 0, 200, 800],
+                // Visibility window ≈ 44% of cycle (~7.9s on screen). With
+                // 18s cycle and 11 clients staggered ~1.64s apart, ~5 names
+                // are readable at once across the larger container.
+                opacity: [0, 0, 0.9, 0, 0]
               }}
               transition={{
-                duration: 20, /* slower motion so user can hover easily */
+                duration: cycleDuration,
+                times: [0, 0.28, 0.5, 0.72, 1],
                 repeat: Infinity,
                 ease: "linear",
-                delay: i * (20 / CLIENTS.length)
+                delay: i * (cycleDuration / count)
               }}
               whileHover={{ scale: 1.1, zIndex: 100 }}
             >
               <div className="relative flex flex-col items-center">
-                <span className="transition-colors duration-300 group-hover/logo:text-[var(--hover-color)]" style={{ '--hover-color': client.color } as any}>
+                <motion.span
+                  className="group-hover/logo:text-[var(--hover-color)]"
+                  style={{ '--hover-color': client.color } as any}
+                  animate={{
+                    color: [
+                      'rgba(255,255,255,0.85)',
+                      'rgba(255,255,255,0.85)',
+                      peakColor,
+                      'rgba(255,255,255,0.85)',
+                      'rgba(255,255,255,0.85)'
+                    ]
+                  }}
+                  transition={{
+                    duration: cycleDuration,
+                    times: [0, 0.45, 0.5, 0.55, 1],
+                    repeat: Infinity,
+                    ease: 'easeInOut',
+                    delay: i * (cycleDuration / count)
+                  }}
+                >
                   {client.name}
-                </span>
+                </motion.span>
                 
                 {/* Info Tooltip */}
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 md:w-80 p-4 bg-black/90 border border-white/10 rounded-xl opacity-0 group-hover/logo:opacity-100 transition-opacity duration-300 pointer-events-none drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] shadow-2xl flex flex-col gap-3 z-50 text-left">
@@ -8181,17 +8542,44 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
         { name: "Fine Arts & Media", icon: Palette, color: "#f43f5e", model: FilmModel },
         { name: "Precision Machining", icon: Cpu, color: "#6366f1", model: FactoryModel },
         { name: "Non-Profit Ops", icon: HeartHandshake, color: "#ec4899", model: SocialModel },
-        { name: "High-Speed Transit", icon: Train, color: "#14b8a6", model: AutomotiveModel }
+        { name: "High-Speed Transit", icon: Train, color: "#14b8a6", model: AutomotiveModel },
+        { name: "Quantum Research", icon: Atom, color: "#8b5cf6", model: AlgorithmicNodeModel },
+        { name: "Venture Finance", icon: Coins, color: "#f59e0b", model: ChartModel },
+        { name: "Meteorological Forecasting", icon: CloudSun, color: "#0ea5e9", model: GlobeModel },
+        { name: "Waste Circularity", icon: Recycle, color: "#10b981", model: GemModel },
+        { name: "Neuro-Health Units", icon: BrainCircuit, color: "#ec4899", model: HeartPulseModel },
+        { name: "Hospitality & Leisure", icon: Bed, color: "#f97316", model: BuildingModel },
+        { name: "Sustainable Textiles", icon: Scissors, color: "#84cc16", model: FactoryModel },
+        { name: "Renewable Fusion", icon: Zap, color: "#facc15", model: EnergyModel },
+        { name: "E-Governance", icon: Landmark, color: "#6366f1", model: LandmarkModel },
+        { name: "Autonomous Rail", icon: TrainFront, color: "#14b8a6", model: AutomotiveModel },
+        { name: "Digital Ethnography", icon: Languages, color: "#a855f7", model: SocialModel },
+        { name: "Urban Aquaponics", icon: Sprout, color: "#10b981", model: AgricultureModel },
+        { name: "Cryogenic Logistics", icon: ThermometerSnowflake, color: "#0ea5e9", model: PackageModel },
+        { name: "Satellite Connectivity", icon: Wifi, color: "#3b82f6", model: AerospaceModel },
+        { name: "Heavy Industry", icon: HardHat, color: "#f43f5e", model: FactoryModel },
+        { name: "Wellness & Mental Health", icon: Activity, color: "#ec4899", model: HeartPulseModel },
+        { name: "Sports Biometrics", icon: Weight, color: "#14b8a6", model: AutomotiveModel },
+        { name: "Music & Audio Gen", icon: Music, color: "#8b5cf6", model: FilmModel },
+        { name: "Interior Design AI", icon: Layout, color: "#f97316", model: BuildingModel },
+        { name: "Architecture & Planning", icon: PencilLine, color: "#6366f1", model: ConstructionModel }
       ].map((area, i) => (
-              <motion.div 
-                key={i} 
+              <motion.div
+                key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                whileHover={{
+                  scale: 1.05,
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  borderColor: area.color + "80",
+                  boxShadow: `0 0 30px ${area.color}20`,
+                  transition: { duration: 0.3 }
+                }}
                 viewport={{ once: true, amount: 0.1 }}
-                transition={{ 
-                  duration: 0.8, 
-                  delay: (i % 4) * 0.1, 
-                  ease: [0.16, 1, 0.3, 1] 
+                transition={{
+                  duration: 0.8,
+                  delay: (i % 4) * 0.05,
+                  ease: [0.16, 1, 0.3, 1]
                 }}
                 onTap={() => handleSelectSector(area)}
                 onKeyDown={(e) => {
@@ -8203,22 +8591,22 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
                 role="button"
                 tabIndex={0}
                 aria-label={`Select ${area.name} sector`}
-                className="group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] hover:bg-white/[0.04] border border-white/5 hover:border-blue-500/50 hover:-translate-y-2 rounded-3xl transition-all duration-500"
+                className="group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] border border-white/5 rounded-3xl transition-all duration-500"
               >
                 {/* Central Geometric Figure Container */}
                 <div className="absolute inset-x-0 top-0 h-3/4 pointer-events-none flex items-center justify-center opacity-40 group-hover:opacity-100 transition-opacity duration-1000 scale-[0.5] group-hover:scale-[0.55] blur-[1px] group-hover:blur-0 grayscale group-hover:grayscale-0">
-                  <IndustryTech2D typeIndex={i % INDUSTRY_TECH.length} color="rgba(100, 150, 255, 0.5)" />
+                  <IndustryTech2D typeIndex={i} color="rgba(100, 150, 255, 0.5)" />
                 </div>
-                
+
                 {/* Content Block */}
-                <div className="relative z-20 flex flex-col items-center w-full space-y-4 pointer-events-none bg-black/40 py-4 backdrop-blur-sm rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-colors">
+                <div className="relative z-20 flex flex-col items-center w-full space-y-4 pointer-events-none bg-black/40 py-6 backdrop-blur-sm rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all duration-300">
                   <h3 className="text-xl md:text-2xl font-display font-semibold text-white/90 group-hover:text-white transition-all tracking-tight text-center px-4">{area.name}</h3>
-                  <div 
-                    className="h-[2px] w-0 group-hover:w-16 rounded-full transition-all duration-500 delay-100 opacity-60" 
+                  <div
+                    className="h-[2px] w-0 group-hover:w-16 rounded-full transition-all duration-500 delay-100 opacity-60"
                     style={{ backgroundColor: "rgba(59,130,246,0.8)", boxShadow: `0 0 10px rgba(59,130,246,0.5)` }}
                   />
                 </div>
- 
+
                 {/* Glass Panel Effects */}
                 <div className="absolute opacity-0 group-hover:opacity-100 inset-0 -z-10 rounded-3xl bg-blue-500/20 blur-2xl transition-opacity duration-500" />
               </motion.div>
@@ -9274,12 +9662,12 @@ function AppContent() {
         </a>
 
         {/* Global Background */}
-        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard'].includes(activeTab)) && <GalaxyBackground />}
-        {((globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard'].includes(activeTab)) || activeTab === 'about') && <OceanHorizonBackground />}
-        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard'].includes(activeTab)) && <MarsBackground />}
-        {((globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard'].includes(activeTab)) || activeTab === 'dashboard') && <DeepOceanBackground />}
-        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
-        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard'].includes(activeTab)) || activeTab === 'command-hub') && <MicrochipsBackground />}
+        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <GalaxyBackground />}
+        {((globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'about') && <OceanHorizonBackground />}
+        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <MarsBackground />}
+        {((globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'dashboard') && <DeepOceanBackground />}
+        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
+        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
 
         {/* Background Decorative Element */}
         <SatelliteNav 
@@ -9300,7 +9688,7 @@ function AppContent() {
             aria-label="Go to DeltaScope home"
             className="cursor-pointer bg-transparent border-0 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
           >
-            <Logo className="scale-100 origin-left" aria-label="DeltaScope Corporate Home" />
+            <Logo className="scale-100 origin-left" cycling aria-label="DeltaScope Corporate Home" />
           </button>
         </header>
 
@@ -9395,6 +9783,7 @@ function AppContent() {
             className="pt-20 min-h-screen"
           >
             <PlatformIntroSection />
+            <StrategicVisionSection />
           </motion.main>
         )}
         {activeTab === 'dashboard' && (
