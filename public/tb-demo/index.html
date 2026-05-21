@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>TargetBob agent media backgrounds - 3 demos</title>
+    <style>
+        :root {
+            --bg: #0B0817;
+            --bg-soft: #14102A;
+            --ink: #F3EBFF;
+            --ink-soft: #B8A7D9;
+            --accent: #EE3A8C;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--ink);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        .wrap {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 56px 24px 80px;
+        }
+        header.hero {
+            margin-bottom: 48px;
+            text-align: center;
+        }
+        header.hero .eyebrow {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(238, 58, 140, 0.12);
+            border: 1px solid rgba(238, 58, 140, 0.32);
+            border-radius: 999px;
+            padding: 6px 14px;
+        }
+        header.hero h1 {
+            margin: 18px 0 10px;
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+        }
+        header.hero p {
+            margin: 0;
+            font-size: 17px;
+            color: var(--ink-soft);
+            max-width: 720px;
+            margin-inline: auto;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 28px;
+        }
+        @media (max-width: 1080px) {
+            .grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 720px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: var(--bg-soft);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 20px 18px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .card h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.005em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card h2 .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+            background: var(--accent);
+        }
+        .card .meta {
+            font-size: 13px;
+            color: var(--ink-soft);
+            margin: 0;
+            min-height: 38px;
+        }
+        .iframe-shell {
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #FFFFFF;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            aspect-ratio: 430 / 880;
+            width: 100%;
+        }
+        .iframe-shell iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        .card .links {
+            display: flex;
+            gap: 10px;
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+        .card .links a {
+            color: var(--accent);
+            text-decoration: none;
+            border: 1px solid rgba(238, 58, 140, 0.4);
+            padding: 5px 10px;
+            border-radius: 999px;
+            transition: background 0.15s ease;
+        }
+        .card .links a:hover {
+            background: rgba(238, 58, 140, 0.12);
+        }
+        footer.legal {
+            margin-top: 60px;
+            font-size: 12px;
+            color: var(--ink-soft);
+            text-align: center;
+        }
+        footer.legal code {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <main class="wrap">
+        <header class="hero">
+            <span class="eyebrow">TargetBob · PR #169 preview</span>
+            <h1>Agent media backgrounds — three demos</h1>
+            <p>
+                Same form widget, three different media background modes. Each preview is a live
+                embed from
+                <code style="background:rgba(255,255,255,.06);padding:2px 6px;border-radius:6px;">alondev.targetbob.ai</code>.
+                Same agent settings, same Hebrew/RTL content, different background asset under the form.
+            </p>
+        </header>
+
+        <section class="grid" aria-label="three demos">
+            <article class="card">
+                <h2><span class="dot"></span>Image background</h2>
+                <p class="meta">Editorial Budapest twilight photograph. Static asset, no autoplay needed.</p>
+                <div class="iframe-shell">
+                    <iframe
+                        src="https://alondev.targetbob.ai/he/embed/f45d4b51-00d9-48b9-a35f-3f1c51cd566a/widget?direct=true&form=true&defaultCapability=form"
+                        loading="lazy"
+                        allow="autoplay"
+                        title="Image background demo"
+                    ></iframe>
+                </div>
+                <div class="links">
+                    <a href="https://alondev.targetbob.ai/he/embed/f45d4b51-00d9-48b9-a35f-3f1c51cd566a/widget?direct=true&form=true&defaultCapability=form" target="_blank" rel="noopener">Open full screen</a>
+                    <a href="https://alondev.targetbob.ai/he/project/af9557a2-9ce6-4a08-b767-5079f833c1e5/agents/f45d4b51-00d9-48b9-a35f-3f1c51cd566a/settings" target="_blank" rel="noopener">Admin</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <h2><span class="dot"></span>Video background</h2>
+                <p class="meta">Vertical 9:16 drone-style sunset clouds loop. Muted, autoplay, seamless loop.</p>
+                <div class="iframe-shell">
+                    <iframe
+                        src="https://alondev.targetbob.ai/he/embed/149c3201-b8c6-4f5e-ad80-c363d93f81a9/widget?direct=true&form=true&defaultCapability=form"
+                        loading="lazy"
+                        allow="autoplay"
+                        title="Video background demo"
+                    ></iframe>
+                </div>
+                <div class="links">
+                    <a href="https://alondev.targetbob.ai/he/embed/149c3201-b8c6-4f5e-ad80-c363d93f81a9/widget?direct=true&form=true&defaultCapability=form" target="_blank" rel="noopener">Open full screen</a>
+                    <a href="https://alondev.targetbob.ai/he/project/af9557a2-9ce6-4a08-b767-5079f833c1e5/agents/149c3201-b8c6-4f5e-ad80-c363d93f81a9/settings" target="_blank" rel="noopener">Admin</a>
+                </div>
+            </article>
+
+            <article class="card">
+                <h2><span class="dot"></span>Lottie background</h2>
+                <p class="meta">Hand-authored drifting waves Lottie over deep magenta-to-indigo gradient. Vector motion, ~7 KB.</p>
+                <div class="iframe-shell">
+                    <iframe
+                        src="https://alondev.targetbob.ai/he/embed/0b799486-7b8e-41b3-a9b5-8cdedb667876/widget?direct=true&form=true&defaultCapability=form"
+                        loading="lazy"
+                        allow="autoplay"
+                        title="Lottie background demo"
+                    ></iframe>
+                </div>
+                <div class="links">
+                    <a href="https://alondev.targetbob.ai/he/embed/0b799486-7b8e-41b3-a9b5-8cdedb667876/widget?direct=true&form=true&defaultCapability=form" target="_blank" rel="noopener">Open full screen</a>
+                    <a href="https://alondev.targetbob.ai/he/project/af9557a2-9ce6-4a08-b767-5079f833c1e5/agents/0b799486-7b8e-41b3-a9b5-8cdedb667876/settings" target="_blank" rel="noopener">Admin</a>
+                </div>
+            </article>
+        </section>
+
+        <footer class="legal">
+            Internal preview for TargetBob/platform PR #169.
+            Hosted on the dscope marketing site for sharing convenience; not part of the public dscope product.
+        </footer>
+    </main>
+</body>
+</html>
