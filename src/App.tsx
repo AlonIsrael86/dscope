@@ -1341,18 +1341,33 @@ const TAB_TO_URL: Record<string, string> = Object.fromEntries(
 );
 
 const PAGE_TITLES: Record<string, string> = {
-  '/': 'Dscope — Enterprise AI Automation',
-  '/vision': 'Vision — Dscope',
-  '/platform': 'Platform — Dscope',
-  '/dashboard': 'Dashboards — Dscope',
-  '/services': 'Services — Dscope',
-  '/industries': 'Industries — Dscope',
-  '/pricing': 'Pricing — Dscope',
-  '/company': 'Company — Dscope',
-  '/team': 'Team — Dscope',
-  '/case-studies': 'Case Studies — Dscope',
-  '/brand-book': 'Brand Book — Dscope',
-  '/contact': 'Contact — Dscope',
+  '/': 'Dscope - Enterprise AI Automation Platform',
+  '/vision': 'Vision - Dscope',
+  '/platform': 'Platform - Multi-Tasking AI Automation - Dscope',
+  '/dashboard': 'Dashboards - Dscope',
+  '/services': 'Services - Dscope',
+  '/industries': 'Industries - Dscope',
+  '/pricing': 'Pricing - Dscope',
+  '/company': 'Company - Dscope',
+  '/team': 'Team - The Operators Behind Dscope',
+  '/case-studies': 'Case Studies - Dscope',
+  '/brand-book': 'Brand Book - Dscope',
+  '/contact': 'Contact - Dscope',
+};
+
+const PAGE_DESCRIPTIONS: Record<string, string> = {
+  '/': 'Dscope. Multi-tasking AI automation platform. Planetary-scale AI infrastructure architected for modern enterprises. Precision Target. Galactic Reach. Quantum Logic.',
+  '/vision': 'The Dscope vision - an AI automation platform that unifies support, service, sales, and marketing into one orchestrated decagon of intelligence.',
+  '/platform': 'The Dscope platform - a multi-tasking AI automation engine built on decagon architecture. Real-time agents, orbital relays, and a neural integration node.',
+  '/dashboard': 'Live Dscope dashboards. Operational intelligence and analytics surfaces for enterprise AI deployments.',
+  '/services': 'Dscope services - implementation, integration, and managed operations for enterprise AI automation.',
+  '/industries': 'Dscope in the wild - travel, finance, education, real estate, government, and beyond. Industry-specific deployments at planetary scale.',
+  '/pricing': 'Dscope decagon pricelist. Transparent enterprise pricing for the multi-tasking AI automation platform. Updating - final v2.1 pricing lands soon.',
+  '/company': 'The Dscope company - mission, vision, and operating philosophy behind the AI automation platform.',
+  '/team': 'The Dscope team. Founders, engineers, and operators who have shipped AI and automation at scale across travel, finance, education, real estate, and government.',
+  '/case-studies': 'Dscope case studies. How enterprise teams ship AI automation faster with the decagon platform.',
+  '/brand-book': 'The Dscope brand book - typography, color, symbols, motion, and the cosmic visual language.',
+  '/contact': 'Talk to the Dscope team. Schedule a platform walk-through, request a pilot, or contact the founders directly.',
 };
 
 const RealisticComet = () => {
@@ -4797,7 +4812,7 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
       tabIndex={0}
       aria-label={`View details for ${member.name}, ${member.role}`}
     >
-      <div className="aspect-[3/4] md:aspect-[4/5] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar mix-blend-luminosity hover:mix-blend-normal transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.15)] hover:border-blue-500/30">
+      <div className="aspect-[3/4] md:aspect-[4/5] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] hover:border-blue-500/40">
         {/* Realistic Portrait */}
         <motion.img
           style={{ y: yParallax, scale: 1.1 }}
@@ -4807,12 +4822,12 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
           decoding="async"
           width={800}
           height={1000}
-          className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.2] saturate-[0.8] group-hover/avatar:saturate-100"
+          className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.05] saturate-100"
         />
         
-        {/* Overlay Darken on Hover */}
-        <div className="absolute inset-0 bg-blue-900/20 group-hover/avatar:bg-[#020617]/40 transition-colors duration-500" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/40 to-transparent opacity-90 group-hover/avatar:opacity-80 transition-opacity" />
+        {/* Overlay Darken on Hover - reduced so portraits remain visible */}
+        <div className="absolute inset-0 bg-blue-900/5 group-hover/avatar:bg-blue-900/0 transition-colors duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/30 to-transparent opacity-70 group-hover/avatar:opacity-40 transition-opacity" />
 
         {/* Click Animation Particles */}
         <AnimatePresence>
@@ -4958,7 +4973,7 @@ const ScrollingIcon = ({ iconIndex, isOpen, activeColor }: { iconIndex: number, 
         {isOpen ? (
           <X className="w-6 h-6 md:w-8 md:h-8 drop-shadow-md" style={{ color: activeColor }} />
         ) : (
-          <SymbolIcon symbolId={symbolIds[iconIndex]} size={32} />
+          <SymbolIcon symbolId={symbolIds[iconIndex]} size={36} color={activeColor} className="drop-shadow-[0_0_8px_currentColor]" />
         )}
       </motion.div>
     </AnimatePresence>
@@ -5264,9 +5279,9 @@ const SatelliteNav = memo(({
           aria-label={isOpen ? "Collapse navigation system" : "Expand navigation system"}
           aria-expanded={isOpen}
           aria-controls="satellite-nav-menu"
-          animate={{ 
-            boxShadow: isOpen ? `0 0 50px rgba(${activeColorRgb},0.6)` : `0 0 25px rgba(${activeColorRgb},0.3)`,
-            borderColor: isOpen ? `rgba(${activeColorRgb},0.6)` : "rgba(255,255,255,0.15)"
+          animate={{
+            boxShadow: isOpen ? `0 0 50px rgba(${activeColorRgb},0.6)` : `0 0 32px rgba(${activeColorRgb},0.5)`,
+            borderColor: isOpen ? `rgba(${activeColorRgb},0.6)` : `rgba(${activeColorRgb},0.45)`
           }}
           className="relative w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#050510] border-2 flex items-center justify-center z-[1001] transition-all duration-500 group overflow-hidden focus-visible:outline-none focus:ring-4 ring-offset-4 ring-offset-black cursor-pointer"
           style={{ 
@@ -9069,11 +9084,25 @@ function AppContent() {
   const navigate = useNavigate();
   const [activeTab, _setActiveTab] = useState(() => URL_TO_TAB[location.pathname] || 'home');
 
-  // Sync URL → activeTab + document.title
+  // Sync URL → activeTab + document.title + meta description + canonical + OG
   useEffect(() => {
-    const tab = URL_TO_TAB[location.pathname] || 'home';
+    const path = location.pathname;
+    const tab = URL_TO_TAB[path] || 'home';
     _setActiveTab(tab);
-    document.title = PAGE_TITLES[location.pathname] || PAGE_TITLES['/'];
+    const title = PAGE_TITLES[path] || PAGE_TITLES['/'];
+    const desc = PAGE_DESCRIPTIONS[path] || PAGE_DESCRIPTIONS['/'];
+    document.title = title;
+    const setMeta = (selector: string, attr: 'content' | 'href', value: string) => {
+      const el = document.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
+      if (el) (el as any)[attr] = value;
+    };
+    setMeta('meta[name="description"]', 'content', desc);
+    setMeta('link[rel="canonical"]', 'href', `https://dscope.targetbob.ai${path === '/' ? '/' : path}`);
+    setMeta('meta[property="og:title"]', 'content', title);
+    setMeta('meta[property="og:description"]', 'content', desc);
+    setMeta('meta[property="og:url"]', 'content', `https://dscope.targetbob.ai${path === '/' ? '/' : path}`);
+    setMeta('meta[name="twitter:title"]', 'content', title);
+    setMeta('meta[name="twitter:description"]', 'content', desc);
   }, [location.pathname]);
 
   // Wrap setActiveTab to navigate (URL is the source of truth)
@@ -9245,7 +9274,14 @@ function AppContent() {
         />
 
         <header className="fixed top-8 left-6 md:left-12 md:top-12 z-[1005]" role="banner">
-          <Logo className="scale-100 origin-left" aria-label="DeltaScope Corporate Home" />
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            aria-label="Go to DeltaScope home"
+            className="cursor-pointer bg-transparent border-0 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
+          >
+            <Logo className="scale-100 origin-left" aria-label="DeltaScope Corporate Home" />
+          </button>
         </header>
 
         <AnimatePresence mode="wait">

@@ -205,12 +205,12 @@ export const Pricing = () => {
                   </p>
 
                   {/* Pricing */}
-                  <div className="my-10 flex items-baseline gap-2 relative">
-                    <span className="text-2xl font-mono text-[#4facfe]/50">$</span>
-                    <span className={`text-7xl font-display font-black italic tracking-tighter ${plan.highlight ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#4facfe] to-[#00f2fe] drop-shadow-[0_0_20px_rgba(79,172,254,0.6)]' : 'text-white'}`}>
+                  <div className="my-10 flex items-baseline justify-center gap-2 relative max-w-full">
+                    <span className="text-xl sm:text-2xl font-mono text-[#4facfe]/50">$</span>
+                    <span className={`text-5xl sm:text-6xl lg:text-7xl font-display font-black italic tracking-tight leading-none ${plan.highlight ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#4facfe] to-[#00f2fe] drop-shadow-[0_0_20px_rgba(79,172,254,0.6)]' : 'text-white'}`}>
                       {plan.price === 0 ? '0' : Math.round(isAnnual ? plan.price * 0.8 : plan.price)}
                     </span>
-                    <span className="text-[10px] uppercase tracking-widest font-mono text-white/30 ml-2">/ MO</span>
+                    <span className="text-[10px] uppercase tracking-widest font-mono text-white/30 ml-1 sm:ml-2 whitespace-nowrap">/ MO</span>
                   </div>
 
                   <button className={`w-full py-4 text-[10px] font-mono font-black uppercase tracking-[0.4em] transition-all duration-300 relative overflow-hidden group/btn ${
