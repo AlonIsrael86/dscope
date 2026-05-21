@@ -20,7 +20,7 @@ export const CosmicLoader = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setLogoState((prev) => (prev + 1) % 4);
-    }, 2000);
+    }, 3000);
     return () => clearInterval(timer);
   }, []);
 
@@ -108,19 +108,25 @@ export const CosmicLoader = () => {
           {/* Logo Name */}
           <div className="relative flex items-center gap-3 group p-2 -m-2 overflow-visible transition-all duration-500">
             <div className="flex items-center font-display font-black tracking-tighter text-6xl md:text-8xl text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={logoState}
-                  initial={{ opacity: 0, y: 5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -5 }}
-                  transition={{ duration: 0.5 }}
-                  className={`${currentLogoColor} flex items-center`}
-                >
-                  {getAnimatedPart()}
-                </motion.span>
-              </AnimatePresence>
-              <span className="ml-1 uppercase">Scope</span>
+              <motion.span
+                layout
+                transition={{ layout: { duration: 0.7, ease: [0.4, 0, 0.2, 1] } }}
+                className="inline-flex items-center overflow-hidden leading-none py-[0.05em]"
+              >
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={logoState}
+                    initial={{ opacity: 0, y: '-100%' }}
+                    animate={{ opacity: 1, y: '0%' }}
+                    exit={{ opacity: 0, y: '100%' }}
+                    transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                    className={`${currentLogoColor} inline-block leading-none transition-colors duration-700`}
+                  >
+                    {getAnimatedPart()}
+                  </motion.span>
+                </AnimatePresence>
+              </motion.span>
+              <motion.span layout transition={{ layout: { duration: 0.7, ease: [0.4, 0, 0.2, 1] } }} className="ml-1 uppercase">Scope</motion.span>
             </div>
             
             {/* Glimmer Animation Sweep */}

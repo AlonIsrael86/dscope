@@ -1696,7 +1696,7 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
       if (timer) return;
       timer = setInterval(() => {
         setLogoState((prev) => (prev + 1) % 4);
-      }, 2000);
+      }, 3000);
     };
     const stopCycle = () => {
       if (timer) {
@@ -1760,19 +1760,25 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
           transition={{ duration: 0.3 }}
           className="text-white text-xl md:text-2xl uppercase flex items-center"
         >
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={logoState}
-              initial={{ opacity: 0, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -5 }}
-              transition={{ duration: 0.5 }}
-              className={currentLogoColor}
-            >
-              {getAnimatedPart()}
-            </motion.span>
-          </AnimatePresence>
-          <span className="ml-0.5">Scope</span>
+          <motion.span
+            layout
+            transition={{ layout: { duration: 0.7, ease: [0.4, 0, 0.2, 1] } }}
+            className="inline-flex items-center overflow-hidden leading-none py-[0.05em]"
+          >
+            <AnimatePresence mode="wait">
+              <motion.span
+                key={logoState}
+                initial={{ opacity: 0, y: '-100%' }}
+                animate={{ opacity: 1, y: '0%' }}
+                exit={{ opacity: 0, y: '100%' }}
+                transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                className={`${currentLogoColor} inline-block leading-none transition-colors duration-700`}
+              >
+                {getAnimatedPart()}
+              </motion.span>
+            </AnimatePresence>
+          </motion.span>
+          <motion.span layout transition={{ layout: { duration: 0.7, ease: [0.4, 0, 0.2, 1] } }} className="ml-0.5">Scope</motion.span>
         </motion.span>
       </div>
 

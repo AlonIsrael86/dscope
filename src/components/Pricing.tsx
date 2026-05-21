@@ -380,12 +380,7 @@ export const Pricing = () => {
                         step="10"
                         value={voiceHours}
                         onChange={(e) => setVoiceHours(parseInt(e.target.value))}
-                        style={{ touchAction: 'none' }}
-                        className="relative z-10 w-full appearance-none h-3 bg-white/10 rounded-full outline-none cursor-grab active:cursor-grabbing
-                          [&::-webkit-slider-runnable-track]:h-3 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-white/10
-                          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:-mt-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-[#4facfe] [&::-webkit-slider-thumb]:shadow-[0_0_15px_rgba(79,172,254,1)] [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110 [&:active::-webkit-slider-thumb]:scale-110
-                          [&::-moz-range-track]:h-3 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-white/10
-                          [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-[#4facfe] [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-[0_0_15px_rgba(79,172,254,1)] [&::-moz-range-thumb]:cursor-grab"
+                        className="dscope-range dscope-range--blue w-full"
                       />
                       <div className="flex justify-between mt-4 font-mono text-[9px] text-white/30 uppercase tracking-widest">
                         <span>1 HR</span>
@@ -490,12 +485,7 @@ export const Pricing = () => {
                         step="1"
                         value={workersCount}
                         onChange={(e) => setWorkersCount(parseInt(e.target.value))}
-                        style={{ touchAction: 'none' }}
-                        className="relative z-10 w-full appearance-none h-3 bg-white/10 rounded-full outline-none cursor-grab active:cursor-grabbing
-                          [&::-webkit-slider-runnable-track]:h-3 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-white/10
-                          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:-mt-1.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-emerald-400 [&::-webkit-slider-thumb]:shadow-[0_0_15px_rgba(52,211,153,0.8)] [&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-110 [&:active::-webkit-slider-thumb]:scale-110
-                          [&::-moz-range-track]:h-3 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-white/10
-                          [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-emerald-400 [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:shadow-[0_0_15px_rgba(52,211,153,0.8)] [&::-moz-range-thumb]:cursor-grab"
+                        className="dscope-range dscope-range--emerald w-full"
                       />
                       <div className="flex justify-between mt-4 font-mono text-[9px] text-white/30 uppercase tracking-widest">
                         <span>1 Employee</span>
@@ -652,6 +642,65 @@ export const Pricing = () => {
         }
         .styled-scrollbars:hover::-webkit-scrollbar-thumb {
           background: rgba(79, 172, 254, 0.5);
+        }
+
+        /* Pricing calculator sliders — clean, draggable, cross-browser */
+        .dscope-range {
+          -webkit-appearance: none;
+          appearance: none;
+          height: 12px;
+          background: transparent;
+          outline: none;
+          cursor: pointer;
+        }
+        .dscope-range::-webkit-slider-runnable-track {
+          height: 12px;
+          background: rgba(255, 255, 255, 0.10);
+          border-radius: 9999px;
+        }
+        .dscope-range::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          appearance: none;
+          width: 24px;
+          height: 24px;
+          margin-top: -6px;
+          border-radius: 9999px;
+          border: 0;
+          cursor: grab;
+        }
+        .dscope-range:active::-webkit-slider-thumb {
+          cursor: grabbing;
+        }
+        .dscope-range::-moz-range-track {
+          height: 12px;
+          background: rgba(255, 255, 255, 0.10);
+          border-radius: 9999px;
+        }
+        .dscope-range::-moz-range-thumb {
+          width: 24px;
+          height: 24px;
+          border: 0;
+          border-radius: 9999px;
+          cursor: grab;
+        }
+        .dscope-range:active::-moz-range-thumb {
+          cursor: grabbing;
+        }
+        .dscope-range--blue::-webkit-slider-thumb {
+          background: #4facfe;
+          box-shadow: 0 0 15px rgba(79, 172, 254, 1);
+        }
+        .dscope-range--blue::-moz-range-thumb {
+          background: #4facfe;
+          box-shadow: 0 0 15px rgba(79, 172, 254, 1);
+        }
+        .dscope-range--emerald::-webkit-slider-thumb {
+          background: #34d399;
+          box-shadow: 0 0 15px rgba(52, 211, 153, 0.85);
+        }
+        .dscope-range--emerald::-moz-range-thumb {
+          background: #34d399;
+          box-shadow: 0 0 15px rgba(52, 211, 153, 0.85);
         }
       `}} />
     </section>
