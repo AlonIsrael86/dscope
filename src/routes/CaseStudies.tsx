@@ -2,6 +2,7 @@
 // Extracted from App.tsx (Etap 2 — split monolith). No behavior change.
 import { motion } from 'motion/react';
 import { Truck, ScanText, ShieldCheck, DollarSign, BookOpen, ArrowRight } from 'lucide-react';
+import { RealClientCases } from './RealClientCases';
 
 export const CaseStudies = () => {
   const cases = [
@@ -123,6 +124,9 @@ export const CaseStudies = () => {
           ))}
         </div>
       </div>
+
+      {/* Real client testimonials — added under the main case studies grid */}
+      <RealClientCases />
     </motion.main>
   );
 };
