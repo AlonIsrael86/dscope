@@ -14,6 +14,7 @@ export default function PrismHeroPage() {
   const progressRef = useRef(0);
   const heroOverlayRef = useRef<HTMLDivElement>(null);
   const cardWrapperRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
   const scrollMultiplier = 3.5;
 
   useEffect(() => {
@@ -33,6 +34,20 @@ export default function PrismHeroPage() {
         const ht = t < 0.3 ? 1 : t > 0.5 ? 0 : 1 - (t - 0.3) / 0.2;
         hero.style.opacity = String(ht);
         hero.style.transform = `translate3d(0, ${(1 - ht) * -20}px, 0)`;
+      }
+
+      // Glow wash behind canvas — peaks at the dramatic moment (t≈0.35)
+      const glow = glowRef.current;
+      if (glow) {
+        // Triangular peak: 0 at t=0, max at t=0.35, fades by t=0.7
+        const g =
+          t < 0.35
+            ? t / 0.35
+            : t < 0.7
+              ? 1 - (t - 0.35) / 0.35
+              : 0;
+        glow.style.opacity = String(g * 0.85);
+        glow.style.transform = `scale(${0.85 + g * 0.4})`;
       }
 
       // Counter-card slides in 0.55 → 0.80
@@ -79,6 +94,19 @@ export default function PrismHeroPage() {
             style={{
               background:
                 'radial-gradient(120% 80% at 50% 35%, #0b1734 0%, #050b1f 50%, #020617 100%)',
+            }}
+          />
+
+          {/* Scroll-driven glow wash — peaks behind prism at dramatic moment */}
+          <div
+            ref={glowRef}
+            className="pointer-events-none absolute inset-0 transition-transform"
+            style={{
+              background:
+                'radial-gradient(60% 50% at 50% 55%, rgba(79,172,254,0.55) 0%, rgba(0,242,254,0.18) 30%, rgba(2,6,23,0) 65%)',
+              opacity: 0,
+              willChange: 'opacity, transform',
+              transformOrigin: 'center',
             }}
           />
 

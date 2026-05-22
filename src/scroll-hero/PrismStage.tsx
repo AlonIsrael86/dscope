@@ -1,6 +1,6 @@
-import { useRef, useEffect, MutableRefObject } from 'react';
+import { useRef, MutableRefObject } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Stars, MeshTransmissionMaterial, Environment } from '@react-three/drei';
+import { Stars, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 import { useTriangularPrismGeometry } from './PrismGeometry';
 
@@ -10,13 +10,15 @@ const easeOutQuart = (t: number) => 1 - Math.pow(1 - t, 4);
 
 /**
  * The Δ prism protagonist + lighting + camera choreography.
- * Reads scroll progress from a shared ref so the parent (PrismHeroPage)
- * can also drive the counter-balance card from the same value.
+ * Emissive solid prism — glows cyan like a brand light source against
+ * deep-space backdrop. Halo sphere fakes bloom without postprocessing.
  */
 function PrismScene({ progressRef }: { progressRef: MutableRefObject<number> }) {
   const prismRef = useRef<THREE.Mesh>(null!);
+  const haloRef = useRef<THREE.Mesh>(null!);
+  const haloInnerRef = useRef<THREE.Mesh>(null!);
   const cameraTargetRef = useRef(new THREE.Vector3(0, 0, 0));
-  const geometry = useTriangularPrismGeometry(1.6, 0.55);
+  const geometry = useTriangularPrismGeometry(2.0, 0.7);
 
   useFrame((state) => {
     const t = progressRef.current;
@@ -28,91 +30,162 @@ function PrismScene({ progressRef }: { progressRef: MutableRefObject<number> }) 
     const eA = easeInOutCubic(ta);
     const eB = easeOutQuart(tb);
 
-    // Prism position: starts deep at z=-22, grows in, then sweeps upper-right
-    const px = -1.8 + eA * 1.2 + eB * 8.5;
-    const py = -0.4 + eA * 0.7 + eB * 3.0;
-    const pz = -22 + eA * 18 + eB * 12;
+    // Prism position — starts at z=-14 (closer than before so it reads immediately),
+    // grows in dramatically, then sweeps upper-right
+    const px = -0.6 + eA * 0.4 + eB * 9.0;
+    const py = -0.3 + eA * 0.6 + eB * 3.4;
+    const pz = -14 + eA * 11.5 + eB * 10;
 
-    // Rotation: slow drift in A, dramatic bank in B
-    const rotX = -0.15 + eA * 0.15 + eB * -0.9;
-    const rotY = state.clock.elapsedTime * 0.18 + eA * 0.4 + eB * 1.3;
-    const rotZ = eA * 0.1 + eB * 0.55;
+    // Rotation — slow drift in A so the triangle face presents toward camera,
+    // then dramatic bank in B as it exits
+    const rotX = -0.05 + eA * 0.1 + eB * -1.0;
+    const rotY = -0.15 + state.clock.elapsedTime * 0.12 + eA * 0.3 + eB * 1.4;
+    const rotZ = eA * 0.08 + eB * 0.6;
+
+    // Scale ramps from 0.7 → 1.6 through phase A so the dramatic frame is FILLED
+    const s = 0.7 + eA * 0.9 + Math.sin(state.clock.elapsedTime * 1.2) * 0.02;
 
     const prism = prismRef.current;
     if (prism) {
       prism.position.set(px, py, pz);
       prism.rotation.set(rotX, rotY, rotZ);
-      // Scale grows slightly through phase A so the dramatic moment fills more frame
-      const s = 0.85 + eA * 0.55;
       prism.scale.setScalar(s);
+
+      // Pulse emissive intensity slightly so the prism feels alive
+      const mat = prism.material as THREE.MeshStandardMaterial;
+      const pulse = 1 + Math.sin(state.clock.elapsedTime * 1.4) * 0.08;
+      mat.emissiveIntensity = (2.2 + eA * 1.1) * pulse;
     }
 
-    // Camera does a subtle parallax pull — fixed FOV, slight z drift
-    state.camera.position.z = 4 + eA * -0.8;
-    state.camera.position.y = eA * 0.25;
-    cameraTargetRef.current.set(px * 0.15, py * 0.15, pz * 0.3);
+    // Halo follows the prism with a slight scale boost — fakes bloom
+    const halo = haloRef.current;
+    if (halo) {
+      halo.position.set(px, py, pz);
+      halo.scale.setScalar(s * 2.6);
+      const haloMat = halo.material as THREE.MeshBasicMaterial;
+      haloMat.opacity = 0.18 + eA * 0.12 - eB * 0.2;
+    }
+    const haloInner = haloInnerRef.current;
+    if (haloInner) {
+      haloInner.position.set(px, py, pz);
+      haloInner.scale.setScalar(s * 1.55);
+      const m = haloInner.material as THREE.MeshBasicMaterial;
+      m.opacity = 0.32 + eA * 0.18 - eB * 0.3;
+    }
+
+    // Camera does a subtle parallax pull
+    state.camera.position.z = 4.5 + eA * -1.0;
+    state.camera.position.y = eA * 0.3;
+    cameraTargetRef.current.set(px * 0.2, py * 0.2, pz * 0.3);
     state.camera.lookAt(cameraTargetRef.current);
   });
 
   return (
     <>
-      {/* Lighting — neutral white key + cyan rim for refraction tint */}
-      <ambientLight intensity={0.25} color="#ffffff" />
-      <hemisphereLight intensity={0.35} color="#cfe4ff" groundColor="#02050d" />
-      <directionalLight
-        position={[6, 8, 5]}
-        intensity={1.6}
-        color="#ffffff"
-      />
-      {/* Cyan rim light — gives the prism its dscope-accent glow */}
-      <pointLight position={[-6, 2, 4]} intensity={4.5} color="#4facfe" distance={20} decay={2} />
-      <pointLight position={[8, -3, 6]} intensity={2.8} color="#00f2fe" distance={18} decay={2} />
+      {/* Soft ambient + cyan key light from front-left */}
+      <ambientLight intensity={0.15} color="#1a2540" />
+      <hemisphereLight intensity={0.25} color="#4facfe" groundColor="#020617" />
+      <pointLight position={[-5, 3, 4]} intensity={2.2} color="#4facfe" distance={22} decay={2} />
+      <pointLight position={[6, -2, 3]} intensity={1.6} color="#00f2fe" distance={20} decay={2} />
+      <pointLight position={[0, 8, -10]} intensity={3.0} color="#7dd3fc" distance={30} decay={2} />
 
-      {/* Starfield — replaces clouds from the original travel-version */}
+      {/* Dense starfield — present from the first frame */}
       <Stars
-        radius={80}
-        depth={60}
-        count={1800}
-        factor={3}
-        saturation={0.4}
+        radius={120}
+        depth={80}
+        count={4500}
+        factor={4.5}
+        saturation={0.5}
         fade
-        speed={0.4}
+        speed={0.5}
       />
 
-      {/* Studio IBL for clean transmission caustics */}
-      <Environment preset="city" background={false} environmentIntensity={0.6} />
+      {/* Floating dust motes — cosmic atmosphere */}
+      <Sparkles
+        count={120}
+        scale={[24, 14, 24]}
+        position={[0, 0, -8]}
+        size={3.5}
+        speed={0.25}
+        color="#9dd4ff"
+        opacity={0.6}
+      />
+      <Sparkles
+        count={60}
+        scale={[16, 8, 16]}
+        position={[0, 0, -2]}
+        size={5}
+        speed={0.15}
+        color="#4facfe"
+        opacity={0.4}
+      />
 
-      {/* The protagonist — Δ prism */}
-      <mesh ref={prismRef} geometry={geometry} castShadow>
-        <MeshTransmissionMaterial
-          backside
-          backsideThickness={0.5}
-          thickness={1.2}
-          transmission={1}
-          ior={1.5}
-          chromaticAberration={0.06}
-          anisotropy={0.4}
-          distortion={0.15}
-          distortionScale={0.4}
-          temporalDistortion={0.1}
-          roughness={0.02}
-          clearcoat={1}
-          clearcoatRoughness={0.05}
-          attenuationColor="#4facfe"
-          attenuationDistance={1.8}
-          color="#ffffff"
-          resolution={512}
+      {/* Halo sphere — fakes outer bloom around the prism */}
+      <mesh ref={haloRef}>
+        <sphereGeometry args={[1, 24, 24]} />
+        <meshBasicMaterial
+          color="#4facfe"
+          transparent
+          opacity={0.18}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          side={THREE.BackSide}
+        />
+      </mesh>
+      {/* Inner halo — tighter, brighter */}
+      <mesh ref={haloInnerRef}>
+        <sphereGeometry args={[1, 24, 24]} />
+        <meshBasicMaterial
+          color="#7dd3fc"
+          transparent
+          opacity={0.3}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+          side={THREE.BackSide}
         />
       </mesh>
 
-      {/* A faint companion plane of nebula-tinted dust behind the prism for parallax */}
-      <mesh position={[0, 0, -40]} rotation={[0, 0, 0.2]}>
-        <planeGeometry args={[80, 50]} />
-        <meshBasicMaterial color="#0a1530" transparent opacity={0.35} />
+      {/* The protagonist — Δ prism with emissive cyan glow */}
+      <mesh ref={prismRef} geometry={geometry}>
+        <meshStandardMaterial
+          color="#0a1a3a"
+          emissive="#4facfe"
+          emissiveIntensity={2.5}
+          metalness={0.6}
+          roughness={0.18}
+        />
       </mesh>
-      <mesh position={[12, -6, -55]} rotation={[0, 0, -0.4]}>
-        <planeGeometry args={[40, 28]} />
-        <meshBasicMaterial color="#1a2348" transparent opacity={0.28} />
+
+      {/* Distant nebula color washes */}
+      <mesh position={[-14, 4, -45]} rotation={[0, 0, 0.4]}>
+        <planeGeometry args={[50, 30]} />
+        <meshBasicMaterial
+          color="#1e3a8a"
+          transparent
+          opacity={0.35}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
+      </mesh>
+      <mesh position={[16, -8, -55]} rotation={[0, 0, -0.3]}>
+        <planeGeometry args={[40, 26]} />
+        <meshBasicMaterial
+          color="#0891b2"
+          transparent
+          opacity={0.28}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
+      </mesh>
+      <mesh position={[0, 10, -65]}>
+        <planeGeometry args={[70, 30]} />
+        <meshBasicMaterial
+          color="#3b0764"
+          transparent
+          opacity={0.22}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
       </mesh>
     </>
   );
@@ -125,12 +198,12 @@ export function PrismStage({
 }) {
   return (
     <Canvas
-      camera={{ position: [0, 0, 4], fov: 42, near: 0.1, far: 200 }}
+      camera={{ position: [0, 0, 4.5], fov: 45, near: 0.1, far: 200 }}
       dpr={[1, 2]}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       style={{ position: 'absolute', inset: 0 }}
     >
-      <fog attach="fog" args={['#020617', 18, 70]} />
+      <fog attach="fog" args={['#020617', 22, 75]} />
       <PrismScene progressRef={progressRef} />
     </Canvas>
   );
