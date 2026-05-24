@@ -52,3 +52,6 @@ export const BoomableSpaceObject = (props: any) => <Suspense fallback={null}><La
 
 const LazySectorDashboardModal = lazy(() => import('./components/SectorDashboardModal').then(m => ({ default: m.SectorDashboardModal })));
 export const SectorDashboardModal = (props: any) => <Suspense fallback={null}><LazySectorDashboardModal {...props} /></Suspense>;
+
+const LazyMonolithStage = lazy(() => import('./components/MonolithStage').then(m => ({ default: m.MonolithStage })));
+export const MonolithStage = (props: any) => <Suspense fallback={null}><LazyMonolithStage {...props} /></Suspense>;

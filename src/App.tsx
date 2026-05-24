@@ -50,6 +50,7 @@ import {
   MicrochipsBackground,
   BoomableSpaceObject,
   SectorDashboardModal,
+  MonolithStage,
 } from './lazyComponents';
 
 interface Service {
@@ -9712,6 +9713,10 @@ function AppContent() {
             <PinnedScrollSection height="h-[150vh]" innerClassName="flex flex-col justify-center">
               <HeroContent />
             </PinnedScrollSection>
+
+            <InViewGate minHeight="280vh">
+              <MonolithStage />
+            </InViewGate>
 
             <IndustryAutomation />
             
