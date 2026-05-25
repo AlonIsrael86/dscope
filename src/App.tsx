@@ -7218,7 +7218,7 @@ const DashboardHeader = ({ progress }: { progress?: any }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       style={{ opacity: headerOpacity, scale: headerScale, y: headerY }} 
-      className="text-center flex flex-col items-center max-w-7xl mx-auto min-h-screen justify-center relative z-10 py-20 px-4"
+      className="text-center flex flex-col items-center max-w-7xl mx-auto min-h-[50vh] justify-center relative z-10 py-12 md:py-16 px-4"
     >
       <motion.div 
         initial={{ opacity: 0, y: 20 }}

@@ -1,46 +1,69 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 
 /**
  * NebulaBackground
  *
- * Elegant cosmic dashboard background — replaces DeepOceanBackground per
- * Katia's call ("no ocean on /dashboard, want something cosmic and elegant").
+ * Cosmic dashboard background — replaces the previous DeepOceanBackground on
+ * /dashboards per Katia's call ("no ocean, want cosmic + elegant").
  *
  * Layers (back → front):
  *  - Deep gradient base (indigo → black → violet)
  *  - Two large soft nebula blobs (slow drift + breathing scale)
- *  - Drifting star field (50 stars, twinkle staggered)
- *  - Sparse "data nodes" connected by faint lines (constellation feel,
- *    matches "data dashboards" content above the bg)
- *  - Top/bottom vignette so foreground UI stays readable
+ *  - Drifting starfield (50 stars, true circles, each one continuously
+ *    wanders a small random orbit)
+ *  - Constellation network: 7 glowing data nodes that random-walk across
+ *    the whole viewport; SVG lines connect them and continuously re-render
+ *    as the nodes move (per Katia: "точки рухаються хаотично, а зв'язки
+ *    між ними залишаються")
+ *  - Top + bottom vignette so the dashboard UI stays readable
  *
- * All animations are CSS / Framer Motion — no Three.js, cheap to render.
+ * All animation is CSS / Framer Motion + tiny React state — no Three.js.
  */
+
+type NodePos = { id: number; x: number; y: number; color: string };
+
+const NODE_COLORS = ['#60a5fa', '#a855f7', '#22d3ee', '#34d399', '#fbbf24', '#ec4899', '#f97316'];
+
+const INITIAL_NODES: NodePos[] = NODE_COLORS.map((color, id) => ({
+  id,
+  x: 10 + Math.random() * 80,
+  y: 15 + Math.random() * 70,
+  color,
+}));
+
 export const NebulaBackground = React.memo(() => {
   const stars = useMemo(
     () =>
       Array.from({ length: 50 }).map((_, i) => ({
         id: i,
-        left: Math.random() * 100,
-        top: Math.random() * 100,
-        size: Math.random() * 1.8 + 0.6,
-        delay: Math.random() * 4,
-        duration: 2.5 + Math.random() * 4,
+        startLeft: Math.random() * 100,
+        startTop: Math.random() * 100,
+        size: Math.random() * 1.8 + 1.2,
+        twinkleDelay: Math.random() * 4,
+        twinkleDuration: 2.5 + Math.random() * 4,
+        driftDuration: 14 + Math.random() * 16,
+        driftDx: (Math.random() - 0.5) * 60, // px wander range
+        driftDy: (Math.random() - 0.5) * 60,
       })),
     []
   );
 
-  const nodes = useMemo(
-    () =>
-      Array.from({ length: 7 }).map((_, i) => ({
-        id: i,
-        x: 10 + Math.random() * 80,
-        y: 15 + Math.random() * 70,
-        color: ['#60a5fa', '#a855f7', '#22d3ee', '#34d399'][i % 4],
-      })),
-    []
-  );
+  // Constellation nodes — state-driven random walk so SVG lines re-render with them
+  const [nodes, setNodes] = useState<NodePos[]>(INITIAL_NODES);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setNodes((prev) =>
+        prev.map((n) => ({
+          ...n,
+          x: Math.max(6, Math.min(94, n.x + (Math.random() - 0.5) * 22)),
+          y: Math.max(8, Math.min(92, n.y + (Math.random() - 0.5) * 22)),
+        }))
+      );
+    }, 2800);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
@@ -54,7 +77,7 @@ export const NebulaBackground = React.memo(() => {
         }}
       />
 
-      {/* Two soft nebula blobs */}
+      {/* Two soft nebula blobs (slow drift + breathing scale) */}
       <motion.div
         className="absolute rounded-full"
         style={{
@@ -92,29 +115,39 @@ export const NebulaBackground = React.memo(() => {
         transition={{ duration: 35, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Twinkling star field */}
+      {/* Drifting starfield — true circles (equal w/h, rounded-full),
+          each wandering its own random orbit + twinkling */}
       {stars.map((s) => (
         <motion.div
-          key={s.id}
+          key={`star-${s.id}`}
           className="absolute rounded-full bg-white"
           style={{
-            left: `${s.left}%`,
-            top: `${s.top}%`,
+            left: `${s.startLeft}%`,
+            top: `${s.startTop}%`,
             width: s.size,
             height: s.size,
             boxShadow: '0 0 4px rgba(255,255,255,0.7)',
           }}
-          animate={{ opacity: [0.2, 1, 0.2] }}
+          animate={{
+            x: [0, s.driftDx, -s.driftDx * 0.6, 0],
+            y: [0, s.driftDy, -s.driftDy * 0.6, 0],
+            opacity: [0.25, 1, 0.4, 1, 0.25],
+          }}
           transition={{
-            duration: s.duration,
-            repeat: Infinity,
-            delay: s.delay,
-            ease: 'easeInOut',
+            x: { duration: s.driftDuration, repeat: Infinity, ease: 'easeInOut' },
+            y: { duration: s.driftDuration * 0.9, repeat: Infinity, ease: 'easeInOut' },
+            opacity: {
+              duration: s.twinkleDuration,
+              repeat: Infinity,
+              delay: s.twinkleDelay,
+              ease: 'easeInOut',
+            },
           }}
         />
       ))}
 
-      {/* Constellation: faint connection lines + glowing data nodes */}
+      {/* Constellation: faint connection lines between nodes
+          (re-renders on nodes state change → lines follow the random walk) */}
       <svg
         className="absolute inset-0 w-full h-full"
         preserveAspectRatio="none"
@@ -123,53 +156,41 @@ export const NebulaBackground = React.memo(() => {
         {nodes.map((n, i) => {
           const next = nodes[(i + 1) % nodes.length];
           return (
-            <line
+            <motion.line
               key={`l-${n.id}`}
               x1={n.x}
               y1={n.y}
               x2={next.x}
               y2={next.y}
-              stroke="rgba(148,163,184,0.18)"
-              strokeWidth="0.15"
+              stroke="rgba(148,163,184,0.28)"
+              strokeWidth="0.18"
               strokeDasharray="0.4 0.8"
+              initial={false}
+              animate={{ x1: n.x, y1: n.y, x2: next.x, y2: next.y }}
+              transition={{ duration: 2.6, ease: 'easeInOut' }}
             />
           );
         })}
-        {nodes.map((n) => (
-          <g key={`n-${n.id}`}>
-            <circle cx={n.x} cy={n.y} r="0.9" fill={n.color} opacity="0.85">
-              <animate
-                attributeName="r"
-                values="0.9;1.4;0.9"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-            </circle>
-            <circle
-              cx={n.x}
-              cy={n.y}
-              r="2.5"
-              fill="none"
-              stroke={n.color}
-              strokeWidth="0.15"
-              opacity="0.35"
-            >
-              <animate
-                attributeName="r"
-                values="2;3.5;2"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="opacity"
-                values="0.35;0;0.35"
-                dur="3s"
-                repeatCount="indefinite"
-              />
-            </circle>
-          </g>
-        ))}
       </svg>
+
+      {/* Constellation nodes as motion.div circles (round, never stretched).
+          They animate to new positions every ~2.8s — lines above follow. */}
+      {nodes.map((n) => (
+        <motion.div
+          key={`n-${n.id}`}
+          className="absolute rounded-full"
+          initial={false}
+          animate={{ left: `${n.x}%`, top: `${n.y}%` }}
+          transition={{ duration: 2.6, ease: 'easeInOut' }}
+          style={{
+            width: 14,
+            height: 14,
+            backgroundColor: n.color,
+            transform: 'translate(-50%, -50%)',
+            boxShadow: `0 0 14px ${n.color}, 0 0 24px ${n.color}90`,
+          }}
+        />
+      ))}
 
       {/* Top + bottom vignette for foreground readability */}
       <div
