@@ -9095,8 +9095,8 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
             {/* Industry symbol — same lucide glyph (semantic meaning kept) but
                 re-imagined as a tiny cosmic system: orbits, satellites, halo,
                 glow. Per Katia: "ті самі ідеї, але з космічним". */}
-            <div className="absolute inset-x-0 top-0 h-3/4 pointer-events-auto flex items-center justify-center opacity-90 group-hover:opacity-100 transition-all duration-700 scale-[0.72] group-hover:scale-[0.82]">
-              <div className="relative w-3/4 h-3/4">
+            <div className="absolute inset-x-0 top-0 h-3/5 pointer-events-auto flex items-start justify-center pt-[6%] opacity-90 group-hover:opacity-100 transition-all duration-700 scale-[0.72] group-hover:scale-[0.82]">
+              <div className="relative w-3/4 h-full">
                 <CosmicIndustryIcon icon={area.icon} color={area.color} />
               </div>
             </div>
@@ -10394,8 +10394,6 @@ function AppContent() {
             <InViewGate minHeight="80vh">
               <DataClusterGallery />
             </InViewGate>
-
-            <div className="h-[10vh]" /> {/* Relaxed spacer since there is no pinned height */}
           </motion.main>
         )}
 
