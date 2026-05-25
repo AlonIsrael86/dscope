@@ -48,7 +48,7 @@ const PALETTES: Record<string, Palette> = {
   mars:    { hot: '#f6c4a0', light: '#df7440', base: '#a7411b', shade: '#4a1808', night: '#1a0603', halo: '#d35a2c' },
   jupiter: { hot: '#fae3b8', light: '#dba578', base: '#a0633b', shade: '#3f2412', night: '#150807', halo: '#d29565' },
   saturn:  { hot: '#fbe6b8', light: '#e5c08a', base: '#b48a55', shade: '#503820', night: '#180e07', halo: '#dfba85', ringOuter: '#e4c98f', ringInner: '#7a5530' },
-  uranus:  { hot: '#dffaff', light: '#82d6e6', base: '#37a2b9', shade: '#19515f', night: '#04141b', halo: '#7fcfe1' },
+  uranus:  { hot: '#dffaff', light: '#82d6e6', base: '#37a2b9', shade: '#19515f', night: '#04141b', halo: '#7fcfe1', ringOuter: '#a8e1ec', ringInner: '#4b7c87' },
   neptune: { hot: '#c0d6f5', light: '#577ed3', base: '#1f4598', shade: '#0e1f4a', night: '#040818', halo: '#456fd0' },
 };
 
@@ -191,12 +191,34 @@ const renderSurface = (planetId: string, ringId: string) => {
   }
 };
 
-/* ----------------- Saturn ring system (6 concentric rings, properly wrapped) -----------------
-   Real-Saturn-style: ring is a tilted ellipse around the planet. The top half
-   of each ellipse passes BEHIND the planet body, the bottom half passes IN
-   FRONT of the body. We draw two SVG arcs per ring (top + bottom) inside a
-   rotated <g>, so the clipping is aligned to the ring's own axis — no more
-   off-axis clip artefacts. */
+/* ----------------- Generic ring system (used by Saturn & Uranus) ----------------- */
+const PlanetRings = ({
+  p, gradId, side, rings, rotation,
+}: {
+  p: Palette; gradId: string; side: 'back' | 'front';
+  rings: [number, number, number][]; // [rx, ry, baseOpacity]
+  rotation: number;                   // degrees, ring tilt
+}) => {
+  const sweep = side === 'front' ? 1 : 0;
+  const fade = side === 'front' ? 1 : 0.6;
+  return (
+    <g transform={`translate(100 100) rotate(${rotation})`}>
+      {rings.map(([rx, ry, o], i) => (
+        <path
+          key={`${side}-${i}`}
+          d={`M ${-rx} 0 A ${rx} ${ry} 0 0 ${sweep} ${rx} 0`}
+          fill="none"
+          stroke={`url(#${gradId})`}
+          strokeOpacity={o * fade}
+          strokeWidth={i === Math.floor(rings.length / 2) ? 0.9 : 1.4}
+          strokeLinecap="butt"
+        />
+      ))}
+    </g>
+  );
+};
+
+/* ----------------- Saturn ring system (6 concentric rings, properly wrapped) ----------------- */
 const SaturnRings = ({ p, gradId, side }: { p: Palette; gradId: string; side: 'back' | 'front' }) => {
   // (radius x, radius y, base opacity)
   const rings: [number, number, number][] = [
@@ -294,13 +316,6 @@ export const RealisticPlanet = ({
         </motion.div>
       )}
 
-      {/* Uranus tipped ring */}
-      {planet.id === 'uranus' && (
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-[170%] h-[10%] -rotate-[78deg] rounded-full border border-cyan-200/30 shadow-[0_0_10px_rgba(165,243,252,0.15)]" />
-        </div>
-      )}
-
       {/* Grounding shadow */}
       <div className="absolute -bottom-[12%] left-[20%] right-[20%] h-[12%] rounded-[100%] bg-black/50 blur-[8px] pointer-events-none z-0 mix-blend-multiply" />
 
@@ -334,8 +349,8 @@ export const RealisticPlanet = ({
             <stop offset="100%" stopColor="rgba(0,0,0,0.55)" />
           </radialGradient>
 
-          {/* Saturn ring stroke gradient (fades in/out around the planet) */}
-          {planet.hasRings && (
+          {/* Ring stroke gradient (Saturn + Uranus) */}
+          {(planet.hasRings || planet.id === 'uranus') && (
             <linearGradient id={idRingGrad} x1="0%" y1="50%" x2="100%" y2="50%">
               <stop offset="0%"   stopColor={p.ringOuter} stopOpacity="0" />
               <stop offset="20%"  stopColor={p.ringOuter} stopOpacity="0.85" />
@@ -352,6 +367,17 @@ export const RealisticPlanet = ({
 
         {/* Saturn back-half rings */}
         {planet.hasRings && <SaturnRings p={p} gradId={idRingGrad} side="back" />}
+
+        {/* Uranus tilted ring (vertical-ish, ~75° because of axial tilt) — back half */}
+        {planet.id === 'uranus' && (
+          <PlanetRings
+            p={p}
+            gradId={idRingGrad}
+            side="back"
+            rings={[[112, 22, 0.55], [106, 20, 0.4], [100, 18, 0.45]]}
+            rotation={-78}
+          />
+        )}
 
         {/* Atmospheric halo */}
         <circle cx="100" cy="100" r="94" fill={`url(#${idHalo})`} />
@@ -370,6 +396,17 @@ export const RealisticPlanet = ({
 
         {/* Saturn front-half rings (overlap lower planet limb) */}
         {planet.hasRings && <SaturnRings p={p} gradId={idRingGrad} side="front" />}
+
+        {/* Uranus tilted ring — front half */}
+        {planet.id === 'uranus' && (
+          <PlanetRings
+            p={p}
+            gradId={idRingGrad}
+            side="front"
+            rings={[[112, 22, 0.7], [106, 20, 0.55], [100, 18, 0.6]]}
+            rotation={-78}
+          />
+        )}
       </svg>
     </motion.div>
   );
