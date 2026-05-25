@@ -39,14 +39,17 @@ type Palette = {
 };
 
 const PALETTES: Record<string, Palette> = {
-  mercury: { hot: '#e6dbc7', light: '#a89886', base: '#6e6253', shade: '#322a24', night: '#0d0b09', halo: '#7c6f5c' },
-  venus:   { hot: '#fff1c4', light: '#f0c478', base: '#cf8945', shade: '#5a361a', night: '#1b0c05', halo: '#e2a665' },
-  earth:   { hot: '#cfe7ff', light: '#5da3d8', base: '#1f5fa4', shade: '#0e2f5e', night: '#040c1d', halo: '#6cb4e4' },
-  mars:    { hot: '#f0bea0', light: '#cb7547', base: '#9b4823', shade: '#491c0c', night: '#180603', halo: '#c66236' },
-  jupiter: { hot: '#f6e2b8', light: '#d2a778', base: '#9a6c45', shade: '#42291a', night: '#150909', halo: '#cb9870' },
-  saturn:  { hot: '#fbe7be', light: '#dfb887', base: '#a5825a', shade: '#4a3722', night: '#170e07', halo: '#d6b385', ringOuter: '#d7c193', ringInner: '#9d7b48' },
-  uranus:  { hot: '#dff6fa', light: '#90cdda', base: '#4a9aa9', shade: '#1f4d5b', night: '#06141a', halo: '#7fc4d2' },
-  neptune: { hot: '#bccff0', light: '#5d83cd', base: '#2c4990', shade: '#152149', night: '#060a1a', halo: '#5072c7' },
+  // Slightly more vivid than the prior pass so the planets read closer to
+  // the NASA reference (warmer Mercury, orange-rust Mars, vivid Earth blue,
+  // saturated Neptune indigo) while still keeping the cosmic dark-page mood.
+  mercury: { hot: '#efe2c4', light: '#b9947a', base: '#7a5a40', shade: '#352014', night: '#0d0805', halo: '#9c7a59' },
+  venus:   { hot: '#fff0bc', light: '#f7b766', base: '#dd7e36', shade: '#5d2e10', night: '#180a04', halo: '#ec9750' },
+  earth:   { hot: '#d4ebff', light: '#5fa9e0', base: '#1a5fae', shade: '#0a2a5c', night: '#03091a', halo: '#5aa9e4' },
+  mars:    { hot: '#f6c4a0', light: '#df7440', base: '#a7411b', shade: '#4a1808', night: '#1a0603', halo: '#d35a2c' },
+  jupiter: { hot: '#fae3b8', light: '#dba578', base: '#a0633b', shade: '#3f2412', night: '#150807', halo: '#d29565' },
+  saturn:  { hot: '#fbe6b8', light: '#e5c08a', base: '#b48a55', shade: '#503820', night: '#180e07', halo: '#dfba85', ringOuter: '#e4c98f', ringInner: '#7a5530' },
+  uranus:  { hot: '#dffaff', light: '#82d6e6', base: '#37a2b9', shade: '#19515f', night: '#04141b', halo: '#7fcfe1' },
+  neptune: { hot: '#c0d6f5', light: '#577ed3', base: '#1f4598', shade: '#0e1f4a', night: '#040818', halo: '#456fd0' },
 };
 
 const DEFAULT_PALETTE: Palette = { hot: '#d5d5d5', light: '#9c9c9c', base: '#666', shade: '#2e2e2e', night: '#0a0a0a', halo: '#888' };
@@ -188,30 +191,37 @@ const renderSurface = (planetId: string, ringId: string) => {
   }
 };
 
-/* ----------------- Saturn ring system (5 concentric thin rings) ----------------- */
+/* ----------------- Saturn ring system (6 concentric rings, properly wrapped) -----------------
+   Real-Saturn-style: ring is a tilted ellipse around the planet. The top half
+   of each ellipse passes BEHIND the planet body, the bottom half passes IN
+   FRONT of the body. We draw two SVG arcs per ring (top + bottom) inside a
+   rotated <g>, so the clipping is aligned to the ring's own axis — no more
+   off-axis clip artefacts. */
 const SaturnRings = ({ p, gradId, side }: { p: Palette; gradId: string; side: 'back' | 'front' }) => {
-  // (radius, ry, opacity) — Cassini gap simulated by spacing
+  // (radius x, radius y, base opacity)
   const rings: [number, number, number][] = [
-    [128, 21, 0.95],
-    [120, 19, 0.85],
-    [114, 18, 0.55], // Cassini gap (dim)
-    [108, 16, 0.95],
-    [102, 15, 0.7],
+    [132, 22, 0.85],  // outermost (A ring outer)
+    [124, 20, 0.95],  // A ring
+    [118, 19, 0.40],  // Cassini Division (visibly dimmer)
+    [112, 18, 0.95],  // B ring (brightest)
+    [104, 16, 0.85],  // B ring inner
+    [ 96, 14, 0.55],  // C ring (faint, closest to planet)
   ];
+  // sweepFlag 0 = top arc (BACK of ring, behind planet)
+  // sweepFlag 1 = bottom arc (FRONT of ring, over planet)
+  const sweep = side === 'front' ? 1 : 0;
+  const fade = side === 'front' ? 1 : 0.6;
   return (
-    <g
-      transform="translate(100 100) rotate(-18)"
-      clipPath={side === 'front' ? 'inset(50% 0 0 0)' : undefined}
-    >
+    <g transform="translate(100 100) rotate(-18)">
       {rings.map(([rx, ry, o], i) => (
-        <ellipse
-          key={i}
-          rx={rx}
-          ry={ry}
+        <path
+          key={`${side}-${i}`}
+          d={`M ${-rx} 0 A ${rx} ${ry} 0 0 ${sweep} ${rx} 0`}
           fill="none"
-          stroke={i % 2 === 0 ? `url(#${gradId})` : (p.ringInner ?? '#9d7b48')}
-          strokeOpacity={side === 'front' ? o : o * 0.55}
-          strokeWidth={i === 2 ? 1 : 1.6}
+          stroke={i === 2 ? (p.ringInner ?? '#7a5530') : `url(#${gradId})`}
+          strokeOpacity={o * fade}
+          strokeWidth={i === 2 ? 0.9 : 1.6}
+          strokeLinecap="butt"
         />
       ))}
     </g>
