@@ -6,6 +6,7 @@ import { TestimonialsSection } from './routes/Testimonials';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
 import { VoiceWidget } from './components/VoiceWidget';
+import { NebulaBackground } from './components/NebulaBackground';
 import { logger } from './lib/logger';
 import { featureFlags } from './lib/featureFlags';
 import { GoogleGenAI } from "@google/genai";
@@ -9670,7 +9671,8 @@ function AppContent() {
         {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <GalaxyBackground />}
         {((globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'about') && <OceanHorizonBackground />}
         {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <MarsBackground />}
-        {((globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'dashboard') && <DeepOceanBackground />}
+        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <DeepOceanBackground />}
+        {activeTab === 'dashboard' && <NebulaBackground />}
         {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
         {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
 
@@ -9797,9 +9799,9 @@ function AppContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="pt-32 pb-10 relative overflow-hidden"
+            className="pt-20 pb-10 relative overflow-hidden"
           >
-            <PinnedScrollSection height="h-[300vh]" innerClassName="max-w-7xl mx-auto px-6 flex flex-col justify-center">
+            <PinnedScrollSection height="h-[115vh]" innerClassName="max-w-7xl mx-auto px-6 flex flex-col justify-center">
               <DashboardHeader />
             </PinnedScrollSection>
             <AutomationDashboard />
