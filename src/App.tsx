@@ -8,6 +8,7 @@ import { InViewGate } from './components/InViewGate';
 import { VoiceWidget } from './components/VoiceWidget';
 import { NebulaBackground } from './components/NebulaBackground';
 import { GalaxyAboutBackground } from './components/GalaxyAboutBackground';
+import { CosmicIndustryIcon } from './components/CosmicIndustryIcon';
 import { logger } from './lib/logger';
 import { featureFlags } from './lib/featureFlags';
 import { GoogleGenAI } from "@google/genai";
@@ -9091,30 +9092,12 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
                 : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] border border-yellow-500/10 hover:border-yellow-500/30'
             }`}
           >
-            {/* Industry symbol — cosmic glow + sector-specific lucide icon overlay
-                (replaces Alexei's EgyptIndustryPainting per Katia: no Egypt theme,
-                add an icon that hints at each industry, in the site's style) */}
-            <div className="absolute inset-x-0 top-0 h-3/4 pointer-events-auto flex items-center justify-center opacity-90 group-hover:opacity-100 transition-opacity duration-700 scale-[0.7] group-hover:scale-[0.78]">
-              <div className="relative w-3/4 h-3/4 flex items-center justify-center">
-                {/* Soft radial halo in the area's brand color */}
-                <div
-                  className="absolute inset-0 rounded-full transition-all duration-500 group-hover:scale-110"
-                  style={{
-                    background: `radial-gradient(circle, ${area.color}CC 0%, ${area.color}55 40%, transparent 75%)`,
-                    boxShadow: `0 0 70px ${area.color}55, inset 0 0 40px ${area.color}33`,
-                  }}
-                />
-                {/* Thin orbital ring around the icon */}
-                <div
-                  className="absolute w-1/2 h-1/2 rounded-full border opacity-30 group-hover:opacity-70 transition-opacity duration-500"
-                  style={{ borderColor: area.color }}
-                />
-                {/* The lucide icon that symbolises this industry, rendered above the glow */}
-                {React.createElement(area.icon, {
-                  className: "relative z-10 w-20 h-20 md:w-24 md:h-24 text-white/95 drop-shadow-[0_0_18px_rgba(0,0,0,0.55)] transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-3",
-                  strokeWidth: 1.4,
-                  style: { filter: `drop-shadow(0 0 12px ${area.color}AA)` },
-                })}
+            {/* Industry symbol — same lucide glyph (semantic meaning kept) but
+                re-imagined as a tiny cosmic system: orbits, satellites, halo,
+                glow. Per Katia: "ті самі ідеї, але з космічним". */}
+            <div className="absolute inset-x-0 top-0 h-3/4 pointer-events-auto flex items-center justify-center opacity-90 group-hover:opacity-100 transition-all duration-700 scale-[0.72] group-hover:scale-[0.82]">
+              <div className="relative w-3/4 h-3/4">
+                <CosmicIndustryIcon icon={area.icon} color={area.color} />
               </div>
             </div>
             
