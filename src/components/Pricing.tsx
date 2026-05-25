@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SYMBOLS } from './BrandBookSymbols';
-import { Zap, CheckCircle2, Activity, Building2, Ticket, Headphones, Hexagon, ChevronDown, Calculator, TrendingUp, Users, Mic, Contact, Clock, MessageSquare, Mail, Phone, LineChart, FileText, LayoutDashboard, Code, MonitorSpeaker, Waypoints, Info, Rocket, Satellite, Telescope, Atom } from 'lucide-react';
+import { Zap, CheckCircle2, Activity, Building2, Ticket, Headphones, Hexagon, ChevronDown, Calculator, TrendingUp, Users, Mic, Contact, Clock, MessageSquare, Mail, Phone, LineChart, FileText, LayoutDashboard, Code, MonitorSpeaker, Waypoints, Info } from 'lucide-react';
 import { Suspense, lazy } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend, ComposedChart, Line } from 'recharts';
 
@@ -119,23 +119,177 @@ const PACKAGE_TABS = [
   }
 ];
 
-const CosmicTierIcon = ({ index, colors }: { index: number, colors: string[] }) => {
-  // Replaces previous Egyptian/hieroglyph icons (pyramid + Eye of Horus + ears + mouths)
-  // with clean cosmic icons that fit the rest of the site.
-  // Index → tier: 0=Starter, 1=Growth, 2=Scale, 3=Elite
-  const mainColor = colors[0] || 'currentColor';
-  const icons = [Rocket, Satellite, Telescope, Atom];
-  const accents = ['text-amber-400', 'text-cyan-400', 'text-emerald-400', 'text-purple-400'];
-  const anims = ['floating-icon-std', 'floating-icon-delayed', 'floating-icon-fast', 'floating-icon-std'];
-  const Icon = icons[index] || Rocket;
-  const accent = accents[index] || 'text-blue-400';
-  const animCls = anims[index] || 'floating-icon-std';
+const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
+  // Custom cosmic SVG icons per tier with rich hover effects
+  // 0=Starter (Comet/Meteor), 1=Growth (Satellite+orbits), 2=Scale (Telescope+stars), 3=Elite (Black Hole+accretion)
 
+  // Tier 0 — Comet/Meteor with flame trail
+  if (index === 0) {
+    return (
+      <div className="relative w-28 h-28 mb-6 flex items-center justify-center group cursor-pointer select-none">
+        <div className="absolute inset-0 rounded-full opacity-30 group-hover:opacity-75 blur-2xl transition-all duration-500 pointer-events-none"
+             style={{ backgroundColor: '#f59e0b' }} />
+        <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125 group-hover:rotate-[15deg]">
+          <defs>
+            <linearGradient id="cometGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fef3c7" />
+              <stop offset="50%" stopColor="#f59e0b" />
+              <stop offset="100%" stopColor="#dc2626" />
+            </linearGradient>
+            <radialGradient id="cometCore" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#fef3c7" stopOpacity="1" />
+              <stop offset="60%" stopColor="#f59e0b" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#f59e0b" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <path d="M 78 25 L 25 78" stroke="url(#cometGrad)" strokeWidth="4" strokeLinecap="round" opacity="0.9" />
+          <path d="M 70 20 L 35 65" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
+          <path d="M 82 35 L 40 72" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
+          <circle cx="78" cy="25" r="14" fill="url(#cometCore)" />
+          <circle cx="78" cy="25" r="6" fill="#fef3c7" className="group-hover:animate-ping" />
+          <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <circle cx="18" cy="82" r="2" fill="#f59e0b" className="animate-ping" style={{animationDelay: '0.1s'}} />
+            <circle cx="14" cy="58" r="1.5" fill="#fbbf24" className="animate-ping" style={{animationDelay: '0.3s'}} />
+            <circle cx="38" cy="88" r="1.5" fill="#dc2626" className="animate-ping" style={{animationDelay: '0.5s'}} />
+            <circle cx="28" cy="90" r="1" fill="#fff" className="animate-ping" style={{animationDelay: '0.7s'}} />
+          </g>
+        </svg>
+      </div>
+    );
+  }
+
+  // Tier 1 — Satellite with orbiting rings
+  if (index === 1) {
+    return (
+      <div className="relative w-28 h-28 mb-6 flex items-center justify-center group cursor-pointer select-none">
+        <div className="absolute inset-0 rounded-full opacity-30 group-hover:opacity-75 blur-2xl transition-all duration-500 pointer-events-none"
+             style={{ backgroundColor: '#06b6d4' }} />
+        <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125">
+          <defs>
+            <linearGradient id="satBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#67e8f9" />
+              <stop offset="100%" stopColor="#0891b2" />
+            </linearGradient>
+            <linearGradient id="satPanel" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.4" />
+              <stop offset="50%" stopColor="#67e8f9" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.4" />
+            </linearGradient>
+          </defs>
+          <ellipse cx="50" cy="50" rx="42" ry="14" fill="none" stroke="#06b6d4" strokeOpacity="0.35" strokeWidth="1.2"
+                   style={{transformOrigin: '50px 50px', animation: 'spin 8s linear infinite'}}
+                   className="group-hover:[animation-duration:2s]" />
+          <ellipse cx="50" cy="50" rx="42" ry="14" fill="none" stroke="#67e8f9" strokeOpacity="0.5" strokeWidth="1.2"
+                   transform="rotate(60 50 50)"
+                   style={{transformOrigin: '50px 50px', animation: 'spin 6s linear infinite reverse'}}
+                   className="group-hover:[animation-duration:1.5s]" />
+          <ellipse cx="50" cy="50" rx="42" ry="14" fill="none" stroke="#22d3ee" strokeOpacity="0.4" strokeWidth="1"
+                   transform="rotate(-60 50 50)"
+                   style={{transformOrigin: '50px 50px', animation: 'spin 7s linear infinite'}}
+                   className="group-hover:[animation-duration:1.8s]" />
+          <rect x="42" y="42" width="16" height="16" rx="3" fill="url(#satBody)" stroke="#67e8f9" strokeWidth="0.8" />
+          <rect x="18" y="46" width="22" height="8" fill="url(#satPanel)" stroke="#67e8f9" strokeWidth="0.6" />
+          <rect x="60" y="46" width="22" height="8" fill="url(#satPanel)" stroke="#67e8f9" strokeWidth="0.6" />
+          <line x1="22" y1="50" x2="38" y2="50" stroke="#67e8f9" strokeWidth="0.4" />
+          <line x1="62" y1="50" x2="78" y2="50" stroke="#67e8f9" strokeWidth="0.4" />
+          <line x1="50" y1="42" x2="50" y2="30" stroke="#67e8f9" strokeWidth="1" />
+          <circle cx="50" cy="29" r="2.5" fill="#67e8f9" className="animate-pulse" />
+          <circle cx="50" cy="29" r="5" fill="none" stroke="#67e8f9" strokeWidth="0.5" opacity="0"
+                  className="group-hover:opacity-80" style={{animation: 'ping 1.2s cubic-bezier(0,0,0.2,1) infinite'}} />
+        </svg>
+      </div>
+    );
+  }
+
+  // Tier 2 — Telescope with starfield
+  if (index === 2) {
+    return (
+      <div className="relative w-28 h-28 mb-6 flex items-center justify-center group cursor-pointer select-none">
+        <div className="absolute inset-0 rounded-full opacity-30 group-hover:opacity-75 blur-2xl transition-all duration-500 pointer-events-none"
+             style={{ backgroundColor: '#10b981' }} />
+        <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125 group-hover:rotate-[-8deg]">
+          <defs>
+            <linearGradient id="teleBody" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#6ee7b7" />
+              <stop offset="100%" stopColor="#047857" />
+            </linearGradient>
+            <radialGradient id="lensGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#6ee7b7" />
+              <stop offset="100%" stopColor="#10b981" stopOpacity="0.3" />
+            </radialGradient>
+          </defs>
+          <g transform="rotate(-30 50 55)">
+            <rect x="22" y="50" width="56" height="11" rx="3" fill="url(#teleBody)" stroke="#6ee7b7" strokeWidth="0.6" />
+            <rect x="24" y="52" width="52" height="2" fill="#34d399" opacity="0.4" />
+            <ellipse cx="80" cy="55.5" rx="6" ry="9" fill="url(#lensGlow)" stroke="#6ee7b7" strokeWidth="1.2" />
+            <circle cx="80" cy="55.5" r="3" fill="#34d399" className="group-hover:animate-pulse" />
+            <rect x="18" y="48" width="6" height="15" rx="1.5" fill="#059669" />
+          </g>
+          <line x1="40" y1="65" x2="35" y2="92" stroke="#059669" strokeWidth="2" strokeLinecap="round" />
+          <line x1="40" y1="65" x2="52" y2="92" stroke="#059669" strokeWidth="2" strokeLinecap="round" />
+          <line x1="40" y1="65" x2="40" y2="92" stroke="#059669" strokeWidth="2" strokeLinecap="round" />
+          <g>
+            <circle cx="20" cy="15" r="1.5" fill="#6ee7b7" className="animate-pulse" style={{animationDelay: '0s'}}/>
+            <circle cx="35" cy="22" r="1" fill="#fff" className="animate-pulse" style={{animationDelay: '0.3s'}}/>
+            <circle cx="85" cy="12" r="1.5" fill="#34d399" className="animate-pulse" style={{animationDelay: '0.6s'}}/>
+            <circle cx="62" cy="8" r="1" fill="#fff" className="animate-pulse" style={{animationDelay: '0.9s'}}/>
+          </g>
+          <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+            <circle cx="14" cy="28" r="1" fill="#6ee7b7" className="animate-ping" style={{animationDelay: '0.1s'}}/>
+            <circle cx="92" cy="32" r="1" fill="#34d399" className="animate-ping" style={{animationDelay: '0.4s'}}/>
+            <circle cx="50" cy="6" r="0.8" fill="#fff" className="animate-ping" style={{animationDelay: '0.7s'}}/>
+            <circle cx="75" cy="20" r="0.8" fill="#6ee7b7" className="animate-ping" style={{animationDelay: '1.0s'}}/>
+          </g>
+        </svg>
+      </div>
+    );
+  }
+
+  // Tier 3 — Black Hole with accretion disk
   return (
-    <div className="relative w-24 h-24 mb-6 flex items-center justify-center group select-none transition-transform duration-300 hover:scale-110">
-      <div className="absolute inset-0 rounded-full transition-all duration-500 opacity-20 group-hover:opacity-45 blur-xl pointer-events-none"
-           style={{ backgroundImage: `radial-gradient(circle, ${mainColor} 0%, transparent 70%)` }} />
-      <Icon className={`w-16 h-16 ${accent} transition-all duration-300 ${animCls}`} strokeWidth={1.5} />
+    <div className="relative w-28 h-28 mb-6 flex items-center justify-center group cursor-pointer select-none">
+      <div className="absolute inset-0 rounded-full opacity-30 group-hover:opacity-85 blur-2xl transition-all duration-500 pointer-events-none"
+           style={{ backgroundColor: '#a855f7' }} />
+      <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125">
+        <defs>
+          <radialGradient id="bhCore" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#000" />
+            <stop offset="50%" stopColor="#1e0a3c" />
+            <stop offset="100%" stopColor="#a855f7" stopOpacity="0.4" />
+          </radialGradient>
+          <linearGradient id="accretion1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#fbbf24" />
+            <stop offset="50%" stopColor="#a855f7" />
+            <stop offset="100%" stopColor="#3b82f6" />
+          </linearGradient>
+          <linearGradient id="accretion2" x1="100%" y1="0%" x2="0%" y2="0%">
+            <stop offset="0%" stopColor="#ec4899" />
+            <stop offset="50%" stopColor="#a855f7" />
+            <stop offset="100%" stopColor="#06b6d4" />
+          </linearGradient>
+        </defs>
+        <ellipse cx="50" cy="50" rx="46" ry="11" fill="none" stroke="url(#accretion1)" strokeWidth="3.5"
+                 style={{transformOrigin: '50px 50px', animation: 'spin 5s linear infinite'}}
+                 className="group-hover:[animation-duration:1.2s]" />
+        <ellipse cx="50" cy="50" rx="40" ry="7" fill="none" stroke="url(#accretion2)" strokeWidth="2.5" opacity="0.7"
+                 style={{transformOrigin: '50px 50px', animation: 'spin 3.5s linear infinite reverse'}}
+                 className="group-hover:[animation-duration:1s]" />
+        <ellipse cx="50" cy="50" rx="34" ry="4" fill="none" stroke="#fbbf24" strokeWidth="1.5" opacity="0.5"
+                 style={{transformOrigin: '50px 50px', animation: 'spin 2.5s linear infinite'}}
+                 className="group-hover:[animation-duration:0.8s]" />
+        <circle cx="50" cy="50" r="16" fill="url(#bhCore)" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.7" />
+        <circle cx="50" cy="50" r="9" fill="#000" />
+        <circle cx="50" cy="50" r="9" fill="none" stroke="#fbbf24" strokeWidth="0.5" opacity="0.4"
+                className="group-hover:opacity-100" />
+        <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <circle cx="85" cy="50" r="1.5" fill="#fbbf24" className="animate-ping" style={{animationDelay: '0s'}}/>
+          <circle cx="15" cy="50" r="1.5" fill="#a855f7" className="animate-ping" style={{animationDelay: '0.4s'}}/>
+          <circle cx="50" cy="15" r="1" fill="#fff" className="animate-ping" style={{animationDelay: '0.8s'}}/>
+          <circle cx="50" cy="85" r="1" fill="#3b82f6" className="animate-ping" style={{animationDelay: '1.2s'}}/>
+          <circle cx="78" cy="28" r="0.8" fill="#ec4899" className="animate-ping" style={{animationDelay: '0.2s'}}/>
+          <circle cx="22" cy="72" r="0.8" fill="#06b6d4" className="animate-ping" style={{animationDelay: '0.6s'}}/>
+        </g>
+      </svg>
     </div>
   );
 };
