@@ -2645,7 +2645,25 @@ const PlatformIntroSection = () => {
         
         <div className="text-center mb-16 relative z-10">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-white uppercase tracking-tight">Feature List</h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-transparent mx-auto mt-6" />
+          {/* Cosmic accent: three brand-color nodes pulsing on a thin
+              tri-color gradient hairline — replaces the plain blue bar. */}
+          <div className="relative w-56 h-3 mx-auto mt-6 flex items-center justify-center">
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] bg-gradient-to-r from-transparent via-blue-400/40 via-50% to-transparent" />
+            <div className="absolute inset-x-1/4 top-1/2 -translate-y-1/2 h-[1.5px] bg-gradient-to-r from-blue-400/70 via-emerald-400/80 to-purple-400/70" />
+            {[
+              { pos: '10%', cls: 'bg-blue-400', glow: 'rgba(96,165,250,0.9)', delay: 0 },
+              { pos: '50%', cls: 'bg-emerald-400', glow: 'rgba(52,211,153,0.9)', delay: 0.4 },
+              { pos: '90%', cls: 'bg-purple-400', glow: 'rgba(192,132,252,0.9)', delay: 0.8 },
+            ].map((n, i) => (
+              <motion.div
+                key={i}
+                className={`absolute w-2 h-2 rounded-full ${n.cls}`}
+                style={{ left: n.pos, transform: 'translateX(-50%)', boxShadow: `0 0 10px ${n.glow}, 0 0 18px ${n.glow}` }}
+                animate={{ scale: [1, 1.35, 1], opacity: [0.75, 1, 0.75] }}
+                transition={{ duration: 2.4, repeat: Infinity, delay: n.delay, ease: 'easeInOut' }}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10">
