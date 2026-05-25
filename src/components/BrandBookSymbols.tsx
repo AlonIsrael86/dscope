@@ -9,7 +9,8 @@ export const SYMBOLS = [
   { id: 'sigma', name: 'Sigma', path: 'M 20 10 L 80 10 L 80 25 L 45 50 L 80 75 L 80 90 L 20 90 L 20 75 L 50 50 L 20 25 Z', color: '#ef4444' },
   { id: 'delta', name: 'Delta', path: 'M 50 10 L 90 80 L 10 80 Z', color: '#4facfe' },
   { id: 'omega', name: 'Omega', path: 'M 30 80 C 10 80 10 20 50 20 C 90 20 90 80 70 80 L 90 80 L 90 95 L 70 95 C 60 95 60 80 60 80 C 60 60 40 60 40 80 C 40 80 40 95 30 95 L 10 95 L 10 80 Z', color: '#f59e0b' },
-  { id: 'phi', name: 'Phi', path: 'M 50 10 L 50 90 M 30 50 A 20 25 0 1 1 70 50 A 20 25 0 1 1 30 50', color: '#ec4899' }
+  { id: 'phi', name: 'Phi', path: 'M 50 10 L 50 90 M 30 50 A 20 25 0 1 1 70 50 A 20 25 0 1 1 30 50', color: '#ec4899' },
+  { id: 'theta', name: 'Theta', path: 'M 50 10 A 40 40 0 1 0 50 90 A 40 40 0 1 0 50 10 Z M 25 50 L 75 50', color: '#06b6d4' }
 ];
 
 export const BrandBookSymbols = () => {
