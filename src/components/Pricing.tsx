@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SYMBOLS } from './BrandBookSymbols';
-import { Zap, CheckCircle2, Activity, Building2, Ticket, Headphones, Hexagon, ChevronDown, Calculator, TrendingUp, Users, Mic, Contact, Clock, MessageSquare, Mail, Phone, LineChart, FileText, LayoutDashboard, Code, MonitorSpeaker, Waypoints, Info } from 'lucide-react';
+import { Zap, CheckCircle2, Activity, Building2, Ticket, Headphones, Hexagon, ChevronDown, Calculator, TrendingUp, Users, Mic, Contact, Clock, MessageSquare, Mail, Phone, LineChart, FileText, LayoutDashboard, Code, MonitorSpeaker, Waypoints, Info, Rocket, Satellite, Telescope, Atom } from 'lucide-react';
 import { Suspense, lazy } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend, ComposedChart, Line } from 'recharts';
 
@@ -119,187 +119,23 @@ const PACKAGE_TABS = [
   }
 ];
 
-const EgyptianIcon = ({ index, colors }: { index: number, colors: string[] }) => {
+const CosmicTierIcon = ({ index, colors }: { index: number, colors: string[] }) => {
+  // Replaces previous Egyptian/hieroglyph icons (pyramid + Eye of Horus + ears + mouths)
+  // with clean cosmic icons that fit the rest of the site.
+  // Index → tier: 0=Starter, 1=Growth, 2=Scale, 3=Elite
   const mainColor = colors[0] || 'currentColor';
-  
-  if (index === 0) {
-    // Starter = pyramid (Amber Gold & Sunset Red)
-    return (
-      <div className="relative w-24 h-24 mb-6 flex items-center justify-center group select-none transition-transform duration-300 hover:scale-110">
-        <div className="absolute inset-0 rounded-full transition-all duration-500 opacity-20 group-hover:opacity-45 blur-xl pointer-events-none"
-             style={{ backgroundImage: `radial-gradient(circle, ${mainColor} 0%, transparent 70%)` }} />
-        <svg viewBox="0 0 100 100" className="w-20 h-20 fill-none stroke-[2] transition-all duration-300 floating-icon-std">
-          <defs>
-            <linearGradient id={`grad-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f59e0b" />
-              <stop offset="40%" stopColor="#ef4444" />
-              <stop offset="100%" stopColor="#78350f" />
-            </linearGradient>
-            <linearGradient id="innerFace" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.2" />
-              <stop offset="100%" stopColor="#78350f" stopOpacity="0.4" />
-            </linearGradient>
-          </defs>
-          <path d="M 50 18 L 18 78 L 48 83 Z" fill="url(#innerFace)" stroke={`url(#grad-${index})`} strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M 50 18 L 48 83 L 82 78 Z" fill="rgba(0,0,0,0.3)" stroke={`url(#grad-${index})`} strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="50" cy="11" r="4" fill="#ef4444" className="animate-ping" style={{ animationDuration: '2s' }} />
-          <circle cx="50" cy="11" r="2.5" fill="#fbbf24" style={{ filter: 'drop-shadow(0 0 3px #fbbf24)' }} />
-          <line x1="34" y1="48" x2="49" y2="50.5" stroke="#fbbf24" strokeOpacity="0.6" strokeDasharray="3 3" />
-          <line x1="26" y1="65" x2="48" y2="67.5" stroke="#fbbf24" strokeOpacity="0.6" strokeDasharray="4 4" />
-          <line x1="49" y1="50.5" x2="66" y2="48" stroke="#ef4444" strokeOpacity="0.4" strokeDasharray="3 3" />
-          <line x1="48" y1="67.5" x2="74" y2="65" stroke="#ef4444" strokeOpacity="0.4" strokeDasharray="4 4" />
-        </svg>
-      </div>
-    );
-  }
-  
-  if (index === 1) {
-    // Growth = pyramid with ear and mouth (Electric Blue & Cyan Sapphire)
-    return (
-      <div className="relative w-24 h-24 mb-6 flex items-center justify-center group select-none transition-transform duration-300 hover:scale-110">
-        <div className="absolute inset-0 rounded-full transition-all duration-500 opacity-20 group-hover:opacity-45 blur-xl pointer-events-none"
-             style={{ backgroundImage: `radial-gradient(circle, ${mainColor} 0%, transparent 70%)` }} />
-        <svg viewBox="0 0 100 100" className="w-20 h-20 fill-none stroke-[2] transition-all duration-300 floating-icon-delayed">
-          <defs>
-            <linearGradient id={`grad-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#60a5fa" />
-              <stop offset="100%" stopColor="#06b6d4" />
-            </linearGradient>
-            <linearGradient id="pyrGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#0284c7" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#0891b2" stopOpacity="0.1" />
-            </linearGradient>
-          </defs>
-          
-          {/* Central Pyramid */}
-          <path d="M 50 25 L 26 78 L 48 82 Z" fill="url(#pyrGrad)" stroke={`url(#grad-${index})`} strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M 50 25 L 48 82 L 74 78 Z" fill="rgba(1,6,15,0.2)" stroke={`url(#grad-${index})`} strokeLinecap="round" strokeLinejoin="round" />
-          
-          {/* Glowing communication conduits inside pyramid */}
-          <line x1="38" y1="52" x2="49" y2="54" stroke="#22d3ee" strokeOpacity="0.75" className="animate-pulse" />
-          <line x1="31" y1="66" x2="48" y2="68.5" stroke="#22d3ee" strokeOpacity="0.75" className="animate-pulse" />
-          
-          {/* Hieroglyphic Ear on the Left */}
-          <path d="M 16 38 C 7 35 4 45 7 54 C 10 63 19 59 17 48 C 19 44 19 39 16 38" stroke="#38bdf8" strokeWidth="2.5" className="animate-pulse" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M 12 45 C 8 48 9 52 12 51" stroke="#38bdf8" strokeLinecap="round" strokeLinejoin="round" />
+  const icons = [Rocket, Satellite, Telescope, Atom];
+  const accents = ['text-amber-400', 'text-cyan-400', 'text-emerald-400', 'text-purple-400'];
+  const anims = ['floating-icon-std', 'floating-icon-delayed', 'floating-icon-fast', 'floating-icon-std'];
+  const Icon = icons[index] || Rocket;
+  const accent = accents[index] || 'text-blue-400';
+  const animCls = anims[index] || 'floating-icon-std';
 
-          {/* Hieroglyphic Mouth (Re) on the Right */}
-          <path d="M 78 50 C 82 43 94 43 98 50 C 94 57 82 57 78 50 Z" stroke="#00f2fe" strokeWidth="2.5" className="animate-pulse" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="78" y1="50" x2="98" y2="50" stroke="#00f2fe" strokeLinecap="round" />
-          
-          {/* Communication circuit beams */}
-          <path d="M 76 50 Q 60 38 48 50" stroke="#38bdf8" strokeOpacity="0.65" strokeDasharray="3 3" className="animate-[slideDash_1.5s_infinite_linear]" />
-        </svg>
-      </div>
-    );
-  }
-  
-  if (index === 2) {
-    // Scale = pyramid with ear and mouth and big eye (Emerald Mint & Jade Matrix)
-    return (
-      <div className="relative w-24 h-24 mb-6 flex items-center justify-center group select-none transition-transform duration-300 hover:scale-110">
-        <div className="absolute inset-0 rounded-full transition-all duration-500 opacity-20 group-hover:opacity-45 blur-xl pointer-events-none"
-             style={{ backgroundImage: `radial-gradient(circle, ${mainColor} 0%, transparent 70%)` }} />
-        <svg viewBox="0 0 100 100" className="w-20 h-20 fill-none stroke-[2] transition-all duration-300 floating-icon-fast">
-          <defs>
-            <linearGradient id={`grad-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#34d399" />
-              <stop offset="100%" stopColor="#10b981" />
-            </linearGradient>
-            <linearGradient id="emeraldPyr" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#059669" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#047857" stopOpacity="0.1" />
-            </linearGradient>
-            <filter id="eyeGlow">
-              <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          
-          {/* Hovering Eye of Horus on top with green jade glow */}
-          <g filter="url(#eyeGlow)" className="animate-pulse">
-            {/* Eyebrow */}
-            <path d="M 35 11 C 43 6 57 6 65 11" stroke="#34d399" strokeWidth="3" strokeLinecap="round" />
-            {/* Eye bounds */}
-            <path d="M 33 21 C 40 13 60 13 67 21" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-            <path d="M 33 21 C 40 29 60 29 67 21" stroke="#10b981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-            {/* Pupil */}
-            <circle cx="50" cy="21" r="4.5" fill="#34d399" />
-            <circle cx="52" cy="19.5" r="1.5" fill="#ffffff" />
-            {/* Drop lines / Wadjet markings */}
-            <path d="M 45 24 L 45 36" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
-            <path d="M 58 23 C 58 33 67 32 63 27" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </g>
-          
-          {/* Pyramid in the bottom half */}
-          <path d="M 50 48 L 26 82 L 48 85 Z" fill="url(#emeraldPyr)" stroke={`url(#grad-${index})`} strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M 50 48 L 48 85 L 74 82 Z" fill="rgba(1,10,25,0.25)" stroke={`url(#grad-${index})`} strokeLinecap="round" strokeLinejoin="round" />
-          
-          {/* Egyptian Ear Hieroglyph on the Side */}
-          <path d="M 14 50 C 7 47 4 55 7 62 C 10 69 17 66 15 57" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          
-          {/* Egyptian Mouth Hieroglyph on the Side */}
-          <path d="M 81 58 C 84 52 94 52 97 58 C 94 64 84 64 81 58 Z" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="81" y1="58" x2="97" y2="58" stroke="#059669" strokeLinecap="round" />
-        </svg>
-      </div>
-    );
-  }
-  
-  // Elite = pyramid with lightning and eye and cables (Amethyst Purple & Solar Flare Amber)
   return (
     <div className="relative w-24 h-24 mb-6 flex items-center justify-center group select-none transition-transform duration-300 hover:scale-110">
       <div className="absolute inset-0 rounded-full transition-all duration-500 opacity-20 group-hover:opacity-45 blur-xl pointer-events-none"
            style={{ backgroundImage: `radial-gradient(circle, ${mainColor} 0%, transparent 70%)` }} />
-      <svg viewBox="0 0 100 100" className="w-20 h-20 fill-none stroke-[2] transition-all duration-300 floating-icon-std">
-        <defs>
-          <linearGradient id={`grad-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#c084fc" />
-            <stop offset="100%" stopColor="#a855f7" />
-          </linearGradient>
-          <linearGradient id="purplePyr" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#7e22ce" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#581c87" stopOpacity="0.1" />
-          </linearGradient>
-          <linearGradient id="lightningGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#fbbf24" />
-            <stop offset="100%" stopColor="#a855f7" />
-          </linearGradient>
-        </defs>
-        
-        {/* Animated Lightning bolt back-layer */}
-        <path d="M 52 3 L 44 23 L 56 23 L 39 48 L 54 48 L 50 51" stroke="url(#lightningGrad)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" className="animate-pulse opacity-95" />
-        
-        {/* Eye of Horus on top with electric violet glow */}
-        <g className="animate-pulse">
-          <path d="M 33 21 C 40 13 60 13 67 21" stroke="#c084fc" strokeWidth="2.2" strokeLinecap="round" />
-          <path d="M 33 21 C 40 29 60 29 67 21" stroke="#c084fc" strokeWidth="2.2" strokeLinecap="round" />
-          <circle cx="50" cy="21" r="4" fill="#a855f7" />
-          <circle cx="51.5" cy="19.5" r="1.5" fill="#ffffff" />
-          <path d="M 45 24 L 45 34" stroke="#a855f7" strokeWidth="2" strokeLinecap="round" />
-          <path d="M 58 23 C 58 31 66 30 63 26" stroke="#c084fc" strokeWidth="2.2" strokeLinecap="round" />
-        </g>
-        
-        {/* Main Pyramid */}
-        <path d="M 50 52 L 26 85 L 48 88 Z" fill="url(#purplePyr)" stroke={`url(#grad-${index})`} strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M 50 52 L 48 88 L 74 85 Z" fill="rgba(2,1,15,0.35)" stroke={`url(#grad-${index})`} strokeLinecap="round" strokeLinejoin="round" />
-        
-        {/* Cables/circuits with animated signal pulse dots */}
-        <path d="M 26 85 C 12 85 10 73 16 66" stroke="#c084fc" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="16" cy="66" r="3" fill="#fbbf24" className="animate-ping" style={{ animationDuration: '0.8s' }} />
-        <circle cx="16" cy="66" r="2" fill="#c084fc" />
-        
-        <path d="M 74 85 C 88 85 90 73 84 66" stroke="#c084fc" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="84" cy="66" r="3" fill="#fbbf24" className="animate-ping" style={{ animationDuration: '1.1s' }} />
-        <circle cx="84" cy="66" r="2" fill="#c084fc" />
-        
-        {/* Cables downwards with terminal connector */}
-        <line x1="48" y1="88" x2="48" y2="94" stroke="#a855f7" strokeLinecap="round" strokeDasharray="1 1" />
-        <rect x="44" y="94" width="8" height="3" rx="1.5" fill="#a855f7" />
-      </svg>
+      <Icon className={`w-16 h-16 ${accent} transition-all duration-300 ${animCls}`} strokeWidth={1.5} />
     </div>
   );
 };
@@ -717,7 +553,7 @@ export const Pricing = () => {
                     onClick={() => triggerRain(bundle.id, i)}
                     className="p-8 border-b border-white/5 flex flex-col items-center text-center cursor-pointer select-none group/hdr relative"
                   >
-                    <EgyptianIcon index={i} colors={bundle.colors} />
+                    <CosmicTierIcon index={i} colors={bundle.colors} />
                     <h3 className="text-xl font-display font-black tracking-widest uppercase mb-4 text-white group-hover/hdr:text-[#4facfe] transition-colors">
                       {bundle.name}
                     </h3>
