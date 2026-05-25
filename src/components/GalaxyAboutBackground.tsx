@@ -5,22 +5,22 @@ import { motion, useScroll, useTransform } from 'motion/react';
  * GalaxyAboutBackground
  *
  * Per Katia:
- *   - Whole viewport covered in constellations (no labels)
- *   - Stars must be ROUND (previous SVG-in-stretched-viewBox rendered them
- *     as ellipses) — fixed by rendering stars as absolutely positioned
- *     <div>s with equal w/h and rounded-full
- *   - Brightness twinkles continuously, each star on its own period+delay
- *     (CSS @keyframes per-instance via style.animation)
- *   - Lines stay SVG (they look the same when stretched, no shape problem)
- *   - Background gradient gently shifts on scroll, in cosmic palette only
+ *   - Whole viewport covered in 18 named constellations (no labels)
+ *   - Stars are TRUE circles (rendered as round divs, not SVG circles
+ *     inside a stretched viewBox)
+ *   - Each star twinkles asynchronously (per-instance CSS animation)
+ *   - Each CONSTELLATION as a whole drifts gently — stars and their
+ *     connection lines move together so the asterism stays intact —
+ *     and each one drifts on its own slow path so the sky never feels
+ *     synced ("хай сузіря всі трохи рухаються")
+ *   - Background gradient gently shifts on scroll
+ *
+ * Ambient sprinkle stars stay where they are (they're not part of any
+ * constellation, just fills the gaps).
  */
 
 type Star = { x: number; y: number; mag?: number };
-type Constellation = {
-  name: string;
-  stars: Star[];
-  edges: [number, number][];
-};
+type Constellation = { name: string; stars: Star[]; edges: [number, number][] };
 
 const CONSTELLATIONS: Constellation[] = [
   // ── TOP BAND ──
@@ -184,15 +184,14 @@ const CONSTELLATIONS: Constellation[] = [
   },
 ];
 
-// Ambient sprinkle in the gaps
+// Ambient sprinkle in the gaps — these stay where they are (not part
+// of any constellation, so no drift)
 const AMBIENT_STARS = Array.from({ length: 70 }).map((_, i) => ({
   x: (i * 17.31 + 7) % 100,
   y: ((i * i * 0.83) + i * 11) % 100,
   mag: 0.6 + ((i * 0.11) % 0.6),
 }));
 
-// CSS keyframes for round star twinkle — opacity + scale pulse so the
-// brightness change reads clearly. Defined once via a <style> tag.
 const STAR_KEYFRAMES = `
   @keyframes star-twinkle {
     0%   { opacity: 0.35; transform: translate(-50%, -50%) scale(0.8); }
@@ -200,6 +199,80 @@ const STAR_KEYFRAMES = `
     100% { opacity: 0.35; transform: translate(-50%, -50%) scale(0.8); }
   }
 `;
+
+// One constellation: its own absolute-inset layer that gently drifts
+// as a whole, carrying its stars + lines together so the asterism stays
+// intact. Each constellation gets a unique drift path/duration.
+const ConstellationLayer = React.memo(({ cn, index }: { cn: Constellation; index: number }) => {
+  // Deterministic per-constellation drift: amplitude in viewport %,
+  // period in seconds. Both small so the motion is "gentle, not busy".
+  const dxA = ((index * 17) % 9) - 4;      // -4 .. +4 %
+  const dyA = ((index * 23) % 7) - 3;      // -3 .. +3 %
+  const dxB = ((index * 11) % 7) - 3;      // -3 .. +3 %
+  const dyB = ((index * 31) % 9) - 4;      // -4 .. +4 %
+  const dur = 18 + ((index * 5) % 14);     // 18s .. 32s
+  const delay = (index * 0.9) % 6;         // 0s .. 6s
+
+  return (
+    <motion.div
+      className="absolute inset-0 pointer-events-none"
+      animate={{
+        x: [`0%`, `${dxA}%`, `${dxB}%`, `0%`],
+        y: [`0%`, `${dyA}%`, `${dyB}%`, `0%`],
+      }}
+      transition={{ duration: dur, delay, repeat: Infinity, ease: 'easeInOut' }}
+    >
+      {/* Asterism lines for this constellation only */}
+      <svg
+        className="absolute inset-0 w-full h-full"
+        preserveAspectRatio="none"
+        viewBox="0 0 100 100"
+      >
+        {cn.edges.map(([a, b], ei) => {
+          const sa = cn.stars[a];
+          const sb = cn.stars[b];
+          return (
+            <line
+              key={`${cn.name}-e-${ei}`}
+              x1={sa.x}
+              y1={sa.y}
+              x2={sb.x}
+              y2={sb.y}
+              stroke="rgba(165,180,252,0.32)"
+              strokeWidth="0.11"
+              strokeLinecap="round"
+              strokeDasharray="0.45 0.55"
+            />
+          );
+        })}
+      </svg>
+      {/* Stars for this constellation only — round divs with per-star twinkle */}
+      {cn.stars.map((s, si) => {
+        const mag = s.mag ?? 1;
+        const px = 2.4 + mag * 1.6;
+        const seed = index * 31 + si * 13;
+        const tDur = 2.6 + ((seed * 0.41) % 4.6);
+        const tDelay = (seed * 0.27) % 6;
+        return (
+          <div
+            key={`${cn.name}-s-${si}`}
+            className="absolute rounded-full bg-white"
+            style={{
+              left: `${s.x}%`,
+              top: `${s.y}%`,
+              width: `${px}px`,
+              height: `${px}px`,
+              boxShadow: `0 0 ${px * 1.6}px rgba(255,255,255,0.55)`,
+              transform: 'translate(-50%, -50%)',
+              animation: `star-twinkle ${tDur}s ease-in-out ${tDelay}s infinite`,
+            }}
+          />
+        );
+      })}
+    </motion.div>
+  );
+});
+ConstellationLayer.displayName = 'ConstellationLayer';
 
 export const GalaxyAboutBackground = React.memo(() => {
   const { scrollYProgress } = useScroll();
@@ -227,42 +300,16 @@ export const GalaxyAboutBackground = React.memo(() => {
     []
   );
 
-  // Build a flat list of all stars (constellation + ambient) with
-  // deterministic per-star size, animation duration, and start delay.
-  const allStars = useMemo(() => {
-    const out: { x: number; y: number; px: number; dur: number; delay: number }[] = [];
-    CONSTELLATIONS.forEach((cn, ci) => {
-      cn.stars.forEach((s, si) => {
-        const mag = s.mag ?? 1;
-        // Star pixel size — brighter = larger
-        const px = 2.4 + mag * 1.6;
-        const seed = ci * 31 + si * 13;
-        const dur = 2.6 + ((seed * 0.41) % 4.6);    // 2.6s - 7.2s
-        const delay = (seed * 0.27) % 6;            // 0s - 6s
-        out.push({ x: s.x, y: s.y, px, dur, delay });
-      });
-    });
-    AMBIENT_STARS.forEach((s, i) => {
-      const px = 1.4 + s.mag * 1.3;
-      const dur = 2.4 + ((i * 0.61) % 4.4);
-      const delay = (i * 0.43) % 6.5;
-      out.push({ x: s.x, y: s.y, px, dur, delay });
-    });
-    return out;
-  }, []);
-
-  // Pre-compute SVG asterism lines once
-  const lineSegments = useMemo(() => {
-    const segs: { x1: number; y1: number; x2: number; y2: number; key: string }[] = [];
-    CONSTELLATIONS.forEach((cn) => {
-      cn.edges.forEach(([a, b], ei) => {
-        const sa = cn.stars[a];
-        const sb = cn.stars[b];
-        segs.push({ x1: sa.x, y1: sa.y, x2: sb.x, y2: sb.y, key: `${cn.name}-${ei}` });
-      });
-    });
-    return segs;
-  }, []);
+  const ambientRendered = useMemo(
+    () =>
+      AMBIENT_STARS.map((s, i) => {
+        const px = 1.4 + s.mag * 1.3;
+        const dur = 2.4 + ((i * 0.61) % 4.4);
+        const delay = (i * 0.43) % 6.5;
+        return { ...s, px, dur, delay, i };
+      }),
+    []
+  );
 
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
@@ -288,46 +335,28 @@ export const GalaxyAboutBackground = React.memo(() => {
         transition={{ duration: 40, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Asterism lines — SVG (lines are unaffected by aspect stretch) */}
-      <svg
-        className="absolute inset-0 w-full h-full"
-        preserveAspectRatio="none"
-        viewBox="0 0 100 100"
-      >
-        {lineSegments.map((s) => (
-          <line
-            key={s.key}
-            x1={s.x1}
-            y1={s.y1}
-            x2={s.x2}
-            y2={s.y2}
-            stroke="rgba(165,180,252,0.32)"
-            strokeWidth="0.11"
-            strokeLinecap="round"
-            strokeDasharray="0.45 0.55"
-          />
-        ))}
-      </svg>
-
-      {/* Stars — absolute positioned round divs, each twinkling on its
-          own schedule via CSS animation */}
-      {allStars.map((s, i) => (
+      {/* Ambient sprinkle stars — stationary, just twinkle */}
+      {ambientRendered.map((s) => (
         <div
-          key={`s-${i}`}
+          key={`a-${s.i}`}
           className="absolute rounded-full bg-white"
           style={{
             left: `${s.x}%`,
             top: `${s.y}%`,
             width: `${s.px}px`,
             height: `${s.px}px`,
-            boxShadow: `0 0 ${s.px * 1.6}px rgba(255,255,255,0.55)`,
+            boxShadow: `0 0 ${s.px * 1.6}px rgba(255,255,255,0.4)`,
             transform: 'translate(-50%, -50%)',
             animation: `star-twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
           }}
         />
       ))}
 
-      {/* Subtle vignette */}
+      {/* Each constellation: its own drifting layer (stars + lines together) */}
+      {CONSTELLATIONS.map((cn, ci) => (
+        <ConstellationLayer key={cn.name} cn={cn} index={ci} />
+      ))}
+
       <div
         className="absolute inset-0"
         style={{
