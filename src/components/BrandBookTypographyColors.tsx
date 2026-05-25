@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 
 export const BrandBookTypographyColors = () => {
   return (
@@ -71,27 +71,35 @@ export const BrandBookTypographyColors = () => {
 
           <div className="space-y-8">
             <div className="p-6 bg-white/5 border border-white/10 rounded-3xl">
-              <div className="font-mono text-[10px] uppercase tracking-widest text-blue-400 mb-4">Display Heads - Space Grotesk / Inter</div>
+              <div className="font-mono text-[10px] uppercase tracking-widest text-blue-400 mb-4">Display Heads - Outfit</div>
               <h1 className="text-5xl md:text-6xl font-display font-black tracking-tighter uppercase italic leading-none text-white">
                 DeltaScope
               </h1>
-              <p className="mt-4 text-sm text-white/50">Used for hero sections, massive numbers, and intense visual breaks. Black, uppercase, tight tracking.</p>
+              <p className="mt-4 text-sm text-white/50">Used for hero sections, massive numbers, and intense visual breaks (Outfit text). Bold, clean, impactful.</p>
             </div>
 
             <div className="p-6 bg-white/5 border border-white/10 rounded-3xl">
-              <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-400 mb-4">Section Headers - Inter</div>
-              <h2 className="text-3xl font-display font-bold text-white drop-shadow-md">
+              <div className="font-mono text-[10px] uppercase tracking-widest text-emerald-400 mb-4">Body & UI Elements - Inter</div>
+              <h2 className="text-3xl font-sans font-bold text-white drop-shadow-md">
                 Orchestrating the Future
               </h2>
-              <p className="mt-4 text-sm text-white/50">Used for section boundaries and content grouping. Bold, legible, slight drop shadows for depth.</p>
+              <p className="mt-4 text-sm text-white/50">Used for general text, section boundaries, and UI components. Clear, highly legible sans-serif.</p>
             </div>
 
             <div className="p-6 bg-white/5 border border-white/10 rounded-3xl">
-               <div className="font-mono text-[10px] uppercase tracking-widest text-purple-400 mb-4">Functional & Technical - Mono</div>
+               <div className="font-mono text-[10px] uppercase tracking-widest text-purple-400 mb-4">Functional & Technical - JetBrains Mono</div>
                <div className="font-mono text-xs uppercase tracking-[0.2em] text-white/80 p-4 bg-black/50 rounded-xl border border-white/5 inline-block">
                  SYS.INIT_SEQUENCE [OK]
                </div>
                <p className="mt-4 text-sm text-white/50">Used for metadata, small labels, UI functional elements, and code traces. Wide letter-spacing, uppercase.</p>
+            </div>
+
+            <div className="p-6 bg-white/5 border border-white/10 rounded-3xl">
+               <div className="font-mono text-[10px] uppercase tracking-widest text-amber-400 mb-4">Editorial Accents - Newsreader</div>
+               <h3 className="text-2xl font-serif italic text-white/90">
+                 The philosophical dimensions of AI
+               </h3>
+               <p className="mt-4 text-sm text-white/50">Used strategically for elegant quotes, subtle subheadings, and distinguishing narrative elements.</p>
             </div>
           </div>
         </div>

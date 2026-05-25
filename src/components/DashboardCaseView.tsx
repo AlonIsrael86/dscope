@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Filter, ChevronDown, User, Clock, AlertTriangle, CheckCircle2, PlayCircle, ArrowUpDown, Building, Briefcase, Check, X, Activity, Terminal, Database, Cpu, Layers, ShieldCheck, Share2, Download, Zap, Trash2, ArrowLeft } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip } from 'recharts';
+import { SankeyDiagram } from './SankeyDiagram';
 
 const PRIORITIES = ['High', 'Medium', 'Low'];
 const STATUSES = ['Success', 'Failed', 'Running'];
@@ -280,9 +282,21 @@ const ForensicOverlay = ({ caseItem, onClose, onUpdateMilestone, onRemoveMilesto
                    caseItem.status === 'Failed' ? 'bg-red-500/10 border-red-500/30 text-red-400' :
                    'bg-blue-500/10 border-blue-500/30 text-blue-400'
                  }`}>
-                    {caseItem.status === 'Success' && <CheckCircle2 className="w-6 h-6 md:w-8 md:h-8" />}
-                    {caseItem.status === 'Failed' && <AlertTriangle className="w-6 h-6 md:w-8 md:h-8" />}
-                    {caseItem.status === 'Running' && <Activity className="w-6 h-6 md:w-8 md:h-8 opacity-60" />}
+                    {caseItem.status === 'Success' && (
+                      <motion.div initial={{ scale: 0.5 }} animate={{ scale: 1 }} transition={{ duration: 0.5, ease: "backOut" }}>
+                        <CheckCircle2 size={32} strokeWidth={2} />
+                      </motion.div>
+                    )}
+                    {caseItem.status === 'Failed' && (
+                      <motion.div animate={{ rotate: [0, 5, -5, 0] }} transition={{ duration: 0.5, repeat: Infinity }}>
+                        <AlertTriangle size={32} strokeWidth={2} />
+                      </motion.div>
+                    )}
+                    {caseItem.status === 'Running' && (
+                      <motion.div animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                        <Activity size={32} strokeWidth={2} className="opacity-60" />
+                      </motion.div>
+                    )}
                  </div>
                  <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2">
@@ -567,6 +581,23 @@ export const DashboardCaseView = () => {
 
   const forensicCase = useMemo(() => cases.find(c => c.id === forensicCaseId), [forensicCaseId, cases]);
 
+  const statusStats = useMemo(() => {
+    const counts = { Success: 0, Failed: 0, Running: 0 };
+    cases.forEach(c => {
+      const statusTitle = c.status;
+      if (statusTitle === 'Success') counts.Success++;
+      else if (statusTitle === 'Failed') counts.Failed++;
+      else if (statusTitle === 'Running') counts.Running++;
+    });
+    const total = counts.Success + counts.Failed + counts.Running;
+    const data = [
+      { name: 'Success', value: counts.Success, color: '#10b981' },
+      { name: 'Running', value: counts.Running, color: '#3b82f6' },
+      { name: 'Failed', value: counts.Failed, color: '#ef4444' }
+    ];
+    return { data, total, counts };
+  }, [cases]);
+
   const toggleMilestone = (caseId: string, milestoneId: string) => {
     setCases(prev => prev.map(c => {
       if (c.id === caseId) {
@@ -633,7 +664,7 @@ export const DashboardCaseView = () => {
     <div className="mt-12 w-[100vw] relative left-1/2 -translate-x-1/2 pointer-events-auto">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8 px-4 md:px-8">
         <div>
-          <h3 className="text-lg md:text-xl font-display font-black uppercase tracking-tight text-white mb-2 italic">Active Case Monitor</h3>
+          <h3 className="text-lg md:text-xl font-display font-black uppercase tracking-tight text-white mb-2">Active Case Monitor</h3>
           <div className="flex items-center gap-3">
             <p className="text-[10px] font-mono text-white/30 uppercase tracking-[0.3em]">Neural Pathway Verification Unit</p>
           </div>
@@ -703,6 +734,135 @@ export const DashboardCaseView = () => {
         </div>
       </div>
 
+      {/* Stakeholder Health Dashboard Banner */}
+      <div className="px-4 md:px-8 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-xl relative overflow-hidden group">
+          {/* Inner decorative light */}
+          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Donut Chart Block */}
+          <div className="lg:col-span-1 flex flex-col items-center justify-center p-4 border border-white/5 rounded-2xl bg-black/20 relative min-h-[220px]">
+            <h4 className="text-[10px] font-mono text-white/40 uppercase tracking-[0.2em] mb-2 absolute top-4 left-4 flex items-center gap-1.5">
+              <Activity className="w-3.5 h-3.5 text-blue-400 animate-pulse" /> Status Distribution
+            </h4>
+            {/* Recharts PieChart */}
+            <div className="w-full h-36 flex items-center justify-center mt-6">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={statusStats.data}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={36}
+                    outerRadius={50}
+                    paddingAngle={4}
+                    dataKey="value"
+                  >
+                    {statusStats.data.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        const percentageExact = statusStats.total > 0 ? ((data.value / statusStats.total) * 100).toFixed(0) : 0;
+                        return (
+                          <div className="bg-[#0c0c1b]/95 border border-white/10 px-3 py-1.5 rounded-lg shadow-2xl font-mono text-[10px]">
+                            <span style={{ color: data.color }} className="font-bold uppercase tracking-wider">{data.name}: </span>
+                            <span className="text-white font-bold">{data.value}</span>
+                            <span className="text-white/40 ml-1">({percentageExact}%)</span>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              {/* Absolute nested text inside donut */}
+              <div className="absolute flex flex-col items-center justify-center pointer-events-none mt-6">
+                <span className="text-xl font-display font-black text-white tracking-tighter">{statusStats.total}</span>
+                <span className="text-[7px] font-mono text-white/30 uppercase tracking-widest">TOTAL</span>
+              </div>
+            </div>
+            
+            {/* Legend built with inline flex to look extremely cool and match our style */}
+            <div className="flex gap-4 mt-2 justify-center font-mono text-[9px] text-white/50">
+              {statusStats.data.map((item) => (
+                <div key={item.name} className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+                  <span className="uppercase tracking-widest">{item.name} ({item.value})</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Experiment Health Breakdown Metrics */}
+          <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Metric 1: Success Rate */}
+            <div className="p-5 border border-white/5 rounded-2xl bg-black/20 flex flex-col justify-between group/metric relative overflow-hidden">
+              <div className="absolute inset-0 bg-emerald-500/[0.01] group-hover/metric:bg-emerald-500/[0.03] transition-colors" />
+              <div className="relative z-10">
+                <span className="text-[9px] font-mono text-emerald-400 font-extrabold uppercase tracking-widest block mb-4">Verification Success Rate</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-display font-black text-white tracking-tighter">
+                    {statusStats.total > 0 ? ((statusStats.counts.Success / statusStats.total) * 100).toFixed(0) : 0}%
+                  </span>
+                  <span className="text-xs text-white/40 font-mono font-black">TARGET &gt;95%</span>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-[9px] font-mono text-white/40 uppercase tracking-widest">Pathway parity healthy</span>
+              </div>
+            </div>
+
+            {/* Metric 2: Active Pipeline Tasks */}
+            <div className="p-5 border border-white/5 rounded-2xl bg-black/20 flex flex-col justify-between group/metric relative overflow-hidden">
+              <div className="absolute inset-0 bg-blue-500/[0.01] group-hover/metric:bg-blue-500/[0.03] transition-colors" />
+              <div className="relative z-10">
+                <span className="text-[9px] font-mono text-blue-400 font-extrabold uppercase tracking-widest block mb-4">Active Running Pipelines</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-display font-black text-white tracking-tighter">
+                    {statusStats.counts.Running}
+                  </span>
+                  <span className="text-xs text-white/40 font-mono font-black">MUTATOR ON</span>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <PlayCircle className="w-3.5 h-3.5 text-blue-400 animate-spin" />
+                <span className="text-[9px] font-mono text-white/40 uppercase tracking-widest">Experiments real-time</span>
+              </div>
+            </div>
+
+            {/* Metric 3: Isolation Failures */}
+            <div className="p-5 border border-white/5 rounded-2xl bg-black/20 flex flex-col justify-between group/metric relative overflow-hidden">
+              <div className="absolute inset-0 bg-red-500/[0.01] group-hover/metric:bg-red-500/[0.03] transition-colors" />
+              <div className="relative z-10">
+                <span className="text-[9px] font-mono text-red-400 font-extrabold uppercase tracking-widest block mb-4">Unmitigated Failures</span>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-display font-black text-white tracking-tighter">
+                    {statusStats.counts.Failed}
+                  </span>
+                  <span className="text-xs text-white/40 font-mono font-black">ISOLATE PROTOCOL</span>
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 text-red-400 animate-pulse" />
+                <span className="text-[9px] font-mono text-white/40 uppercase tracking-widest">Requires neural debug</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* D3-powered case state transition flow visualizer */}
+      <div className="px-4 md:px-8">
+        <SankeyDiagram cases={filteredCases} agents={AGENTS} />
+      </div>
+
       <div className="grid grid-cols-1 gap-4">
         <AnimatePresence mode="popLayout">
           {filteredCases.map((c, i) => {
@@ -711,12 +871,16 @@ export const DashboardCaseView = () => {
               <motion.div
                 layout
                 key={c.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ delay: i * 0.05 }}
-                className={`group p-5 md:rounded-2xl bg-white/[0.03] border-y md:border border-white/5 hover:bg-white/[0.06] hover:border-white/20 transition-all cursor-pointer flex flex-col gap-6 relative overflow-hidden ${forensicCaseId === c.id ? 'ring-1 ring-blue-500/30 bg-white/[0.07] border-white/10' : ''}`}
-                onClick={() => setForensicCaseId(c.id)}
+                initial={{ opacity: 0, x: -20, scale: 0.98 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                transition={{
+                  layout: { type: "spring", stiffness: 350, damping: 30 },
+                  opacity: { duration: 0.2 },
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  scale: { duration: 0.2 }
+                }}
+                className={`group p-5 md:rounded-2xl bg-white/[0.03] border-y md:border border-white/5 transition-all flex flex-col gap-6 relative overflow-hidden`}
               >
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 
@@ -724,7 +888,7 @@ export const DashboardCaseView = () => {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-3">
                       <span className="text-xs font-mono text-blue-400/60 font-bold">{c.id}</span>
-                      <h4 className="text-white font-bold text-xl group-hover:text-blue-400 transition-colors uppercase italic">{c.title}</h4>
+                      <h4 className="text-white font-bold text-base md:text-lg group-hover:text-blue-400 transition-colors uppercase">{c.title}</h4>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className={`px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase border ${
@@ -734,14 +898,14 @@ export const DashboardCaseView = () => {
                       }`}>
                         {c.priority}
                       </div>
-                      <div className={`px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase flex items-center gap-1.5 ${
-                        c.status === 'Success' ? 'text-emerald-400' :
-                        c.status === 'Failed' ? 'text-red-400' :
-                        'text-blue-400'
+                      <div className={`px-3 py-1 rounded-full text-[10px] font-mono font-bold uppercase flex items-center gap-1.5 transition-all ${
+                        c.status === 'Success' ? 'text-emerald-400 group-hover:bg-emerald-400/10' :
+                        c.status === 'Failed' ? 'text-red-400 group-hover:bg-red-400/10' :
+                        'text-blue-400 group-hover:bg-blue-400/10'
                       }`}>
-                        {c.status === 'Success' && <CheckCircle2 className="w-3 h-3" />}
-                        {c.status === 'Failed' && <AlertTriangle className="w-3 h-3" />}
-                        {c.status === 'Running' && <PlayCircle className="w-3 h-3 animate-spin" />}
+                        {c.status === 'Success' && <CheckCircle2 size={12} strokeWidth={2.5} />}
+                        {c.status === 'Failed' && <AlertTriangle size={12} strokeWidth={2.5} className="animate-pulse" />}
+                        {c.status === 'Running' && <PlayCircle size={12} strokeWidth={2.5} className="animate-spin" />}
                         {c.status}
                       </div>
                       <button 
@@ -754,9 +918,13 @@ export const DashboardCaseView = () => {
                       >
                         <ChevronDown className={`w-4 h-4 transition-transform ${expandedCaseId === c.id ? 'rotate-180' : ''}`} />
                       </button>
-                      <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 group-hover:bg-blue-500 group-hover:text-white transition-all shadow-lg group-hover:shadow-blue-500/40 group/btn">
-                        <Zap className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-                      </div>
+                      <motion.div 
+                        whileHover={{ scale: 1.1, backgroundColor: "rgb(59 130 246)" }}
+                        whileTap={{ scale: 0.9 }}
+                        className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 group-hover:text-white transition-all shadow-lg group-hover:shadow-blue-500/40 group/btn"
+                      >
+                        <Zap size={16} strokeWidth={2} className="group-hover/btn:scale-110 transition-transform" />
+                      </motion.div>
                     </div>
                   </div>
                   <p className="text-white/70 text-sm md:text-base leading-relaxed mb-4">{c.description}</p>
@@ -798,7 +966,7 @@ null
                         <div className="pt-6 mt-6 border-t border-white/5 space-y-8">
                            {/* Inline Milestones */}
                            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-                              <h5 className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest font-bold mb-6 flex items-center gap-2 italic">
+                              <h5 className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest font-bold mb-6 flex items-center gap-2">
                                  <ShieldCheck className="w-3 h-3" /> Neural Roadmap Progress
                               </h5>
                               <div className="flex flex-col gap-2">

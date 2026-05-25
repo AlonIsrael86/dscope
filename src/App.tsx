@@ -2,14 +2,17 @@ import React, { useState, useEffect, useRef, useMemo, memo, Component, ErrorInfo
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContactPlaceholder } from './routes/Contact';
 import { CaseStudies } from './routes/CaseStudies';
-import { TestimonialsSection } from './routes/Testimonials';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
+import { VoiceWidget } from './components/VoiceWidget';
+import { NebulaBackground } from './components/NebulaBackground';
+import { GalaxyAboutBackground } from './components/GalaxyAboutBackground';
+import { CosmicIndustryIcon } from './components/CosmicIndustryIcon';
 import { logger } from './lib/logger';
 import { featureFlags } from './lib/featureFlags';
 import { GoogleGenAI } from "@google/genai";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, animate, useSpring, useMotionValueEvent, useInView, useTime } from "motion/react";
-import { Menu, X, Zap, RefreshCw, Download, Share2, Sparkles, Shield, Rocket, Cpu, Bot, Users, Smartphone, Keyboard, Monitor, Brain, ArrowRight, CheckCircle2, Search, Mail, Calendar, MessageSquare, Database, Clock, TrendingUp, AlertCircle, DollarSign, Activity, Satellite, Telescope, MapPin, Package, Home, Truck, Globe, Radio, Orbit, Eye, Landmark, HeartPulse, Factory, Scale, Target, GraduationCap, Coffee, Hammer, Building2, Tractor, ShoppingCart, Car, Film, RadioTower, FlaskConical, Lock, Gem, Moon, Sun, Server, BarChart3, ScanText, Infinity as InfinityIcon, Dna, Webhook, History, Heart, BookOpen, Layers, Box, ShieldCheck, Star, Headset, Mic, Volume2, User, Plane, Gamepad2, Droplets, Anchor, Palette, Train, HeartHandshake, Map, Compass, LayoutDashboard, Settings, Microscope, Coins, CloudSun, Recycle, BrainCircuit, Bed, Scissors, Atom, TrainFront, Languages, Sprout, ThermometerSnowflake, Wifi, HardHat, Weight, Music, Layout, PencilLine } from "lucide-react";
+import { Menu, X, Zap, RefreshCw, Download, Share2, Sparkles, Shield, Rocket, Cpu, Bot, Users, Smartphone, Keyboard, Monitor, Brain, ArrowRight, CheckCircle2, Search, Mail, Calendar, MessageSquare, Database, Clock, TrendingUp, AlertCircle, DollarSign, Activity, Satellite, Telescope, MapPin, Package, Home, Truck, Globe, Radio, Orbit, Eye, Landmark, HeartPulse, Factory, Scale, Target, GraduationCap, Coffee, Hammer, Building2, Tractor, ShoppingCart, Car, Film, RadioTower, FlaskConical, Lock, Gem, Moon, Sun, Server, BarChart3, ScanText, Infinity as InfinityIcon, Dna, Webhook, History, Heart, BookOpen, Layers, Box, ShieldCheck, Star, Headset, Mic, Volume2, User, Plane, Gamepad2, Droplets, Anchor, Palette, Train, HeartHandshake, Map, Compass, LayoutDashboard, Settings, Microscope, Coins, CloudSun, Recycle, BrainCircuit, Bed, Scissors, Atom, TrainFront, Languages, Sprout, ThermometerSnowflake, Wifi, HardHat, Weight, Music, Layout, PencilLine, ChevronDown, ChevronUp } from "lucide-react";
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { SPACE_ANIMALS_3D } from './components/RealisticAnimals3D';
 import { SPACE_TECH } from './data/spaceTechConstants';
@@ -24,6 +27,7 @@ import { BrandBookPhenomena } from './components/BrandBookPhenomena';
 import { OceanGallery } from './components/BrandOceanCreatures';
 import { BrandBookTypographyColors } from './components/BrandBookTypographyColors';
 import { BrandBookSymbols, SYMBOLS } from './components/BrandBookSymbols';
+import { BrandCharacters } from './components/BrandCharacters';
 import { Pricing } from './components/Pricing';
 import { TamCharts } from './components/TamCharts';
 import { SPACE_OBJECT_TYPES } from './data/spaceObjectConstants';
@@ -1308,15 +1312,14 @@ const SymbolIcon = ({ symbolId, color, size = 24, className = "" }: { symbolId: 
 
 const NAV_TABS = [
   { id: 'home', label: 'Home', symbolId: 'alpha' },
-  { id: 'vision', label: 'Vision', symbolId: 'omega' },
+  { id: 'vision', label: 'our vision', symbolId: 'omega' },
   { id: 'command-hub', label: 'Platform', symbolId: 'gamma' },
   { id: 'dashboard', label: 'DASHBOARDS', symbolId: 'sigma' },
   { id: 'services', label: 'Services', symbolId: 'phi' },
-  { id: 'industries', label: 'Industries', symbolId: 'sigma' },
+  { id: 'industries', label: 'Industries', symbolId: 'theta' },
   { id: 'pricing', label: 'Pricing', symbolId: 'delta' },
-  { id: 'about', label: 'Company', symbolId: 'figma' },
-  { id: 'team', label: 'Team', symbolId: 'omega' },
-  { id: 'case-studies', label: 'Case Studies', symbolId: 'delta' },
+  { id: 'about', label: 'About us', symbolId: 'figma' },
+  { id: 'case-studies', label: 'Case Studies', symbolId: 'beta' },
   // Brand Book intentionally hidden from public nav. Source remains in repo;
   // route is also removed from URL_TO_TAB below so the page is unreachable from the site.
   { id: 'contact', label: 'Contact', symbolId: 'phi' },
@@ -1331,7 +1334,6 @@ const URL_TO_TAB: Record<string, string> = {
   '/industries': 'industries',
   '/pricing': 'pricing',
   '/company': 'about',
-  '/team': 'team',
   '/case-studies': 'case-studies',
   '/contact': 'contact',
 };
@@ -1349,7 +1351,6 @@ const PAGE_TITLES: Record<string, string> = {
   '/industries': 'Industries - Dscope',
   '/pricing': 'Pricing - Dscope',
   '/company': 'Company - Dscope',
-  '/team': 'Team - The Operators Behind Dscope',
   '/case-studies': 'Case Studies - Dscope',
   '/brand-book': 'Brand Book - Dscope',
   '/contact': 'Contact - Dscope',
@@ -1364,7 +1365,6 @@ const PAGE_DESCRIPTIONS: Record<string, string> = {
   '/industries': 'Dscope in the wild - travel, finance, education, real estate, government, and beyond. Industry-specific deployments at planetary scale.',
   '/pricing': 'Dscope decagon pricelist. Transparent enterprise pricing for the multi-tasking AI automation platform. Updating - final v2.1 pricing lands soon.',
   '/company': 'The Dscope company - mission, vision, and operating philosophy behind the AI automation platform.',
-  '/team': 'The Dscope team. Founders, engineers, and operators who have shipped AI and automation at scale across travel, finance, education, real estate, and government.',
   '/case-studies': 'Dscope case studies. How enterprise teams ship AI automation faster with the decagon platform.',
   '/brand-book': 'The Dscope brand book - typography, color, symbols, motion, and the cosmic visual language.',
   '/contact': 'Talk to the Dscope team. Schedule a platform walk-through, request a pilot, or contact the founders directly.',
@@ -2416,67 +2416,72 @@ const PlatformAnimatedTitle = () => {
   const [isConnectsHovered, setIsConnectsHovered] = useState(false);
 
   return (
-    <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-black uppercase tracking-tighter mb-8 leading-[1.1] drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-       {/* One -> 1 */}
-       <motion.span 
+    <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-black uppercase tracking-tighter mb-8 leading-[1.1] drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)] flex flex-wrap items-baseline justify-center gap-x-3 md:gap-x-4 gap-y-2">
+       {/* One -> 1 (toggle on hover). `layout` makes neighbours reflow so
+            the gap-x stays equal even though the swapped element's width
+            differs (One is wider than 1). */}
+       <motion.span
+         layout
          onMouseEnter={() => setIsOneActive(true)}
          onMouseLeave={() => setIsOneActive(false)}
-         className="text-blue-400 mr-3 md:mr-4 cursor-pointer inline-flex items-center justify-center relative w-20 md:w-28 text-center"
+         className="text-blue-400 cursor-pointer inline-flex items-baseline"
        >
-         <AnimatePresence mode="popLayout">
+         <AnimatePresence mode="popLayout" initial={false}>
            {isOneActive ? (
-             <motion.span key="num" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
+             <motion.span key="num" layout initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
                1
              </motion.span>
            ) : (
-             <motion.span key="word" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
+             <motion.span key="word" layout initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
                One
              </motion.span>
            )}
          </AnimatePresence>
        </motion.span>
 
-       <motion.span className="text-emerald-400 mr-3 md:mr-4 inline-block">Platform</motion.span>
-       <motion.span className="text-purple-400 mr-3 md:mr-4 inline-block">That</motion.span>
-       
+       <motion.span layout className="text-emerald-400 inline-block">Platform</motion.span>
+       <motion.span layout className="text-purple-400 inline-block">That</motion.span>
+
        <motion.span
+         layout
          onMouseEnter={() => setIsReplacesHovered(true)}
          onMouseLeave={() => setIsReplacesHovered(false)}
          animate={isReplacesHovered ? { scaleY: 0.8, scaleX: 1.1, borderRadius: "50%" } : { scaleY: 1, scaleX: 1, borderRadius: "0%" }}
          transition={{ type: "spring", stiffness: 300, damping: 15 }}
          style={{ display: "inline-block", originY: 0.5, originX: 0.5 }}
-         className={`cursor-pointer inline-block mr-3 md:mr-4 transition-colors ${isReplacesHovered ? 'text-white bg-blue-500/20 px-4 rounded-full' : 'text-blue-400'}`}
+         className={`cursor-pointer inline-block transition-colors ${isReplacesHovered ? 'text-white bg-blue-500/20 px-4 rounded-full' : 'text-blue-400'}`}
        >
          Replaces
        </motion.span>
-       
-       <motion.span 
-         className={`text-emerald-400 inline-block transition-all duration-300 ${isConnectsHovered ? 'mr-0' : 'mr-3 md:mr-4'}`}
-       >
-         or
-       </motion.span>
-       
+
+       <motion.span layout className="text-emerald-400 inline-block">or</motion.span>
+
+       {/* Connects swap. The chain SVG is rendered inline (not absolute-
+           overlayed) and has a smaller natural width than "Connects"; the
+           `layout` props make every neighbour reflow so the gap-x stays
+           uniform when the slot shrinks/grows. */}
        <motion.span
+         layout
          onMouseEnter={() => setIsConnectsHovered(true)}
          onMouseLeave={() => setIsConnectsHovered(false)}
-         className={`cursor-pointer relative inline-flex items-center align-middle transition-all duration-300 mr-3 md:mr-4 ${isConnectsHovered ? 'text-white' : 'text-purple-400'} ${isConnectsHovered ? 'ml-3 md:ml-4' : 'ml-0'}`}
+         className={`cursor-pointer relative inline-flex items-baseline transition-colors duration-300 ${isConnectsHovered ? 'text-white' : 'text-purple-400'}`}
        >
-         <AnimatePresence mode="popLayout">
+         <AnimatePresence mode="popLayout" initial={false}>
            {isConnectsHovered ? (
              <motion.span
                key="chain"
-               initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
-               animate={{ opacity: 1, scale: 1, rotate: 0 }}
-               exit={{ opacity: 0, scale: 0.6, rotate: 8 }}
+               layout
+               initial={{ opacity: 0, scale: 0.6 }}
+               animate={{ opacity: 1, scale: 1 }}
+               exit={{ opacity: 0, scale: 0.6 }}
                transition={{ type: 'spring', stiffness: 300, damping: 18 }}
                className="inline-flex items-baseline"
                aria-label="Connector"
              >
-               {/* Stylised interlocked chain links — brand-colored, glowing */}
                <svg
                  viewBox="0 0 120 40"
                  className="h-[0.7em] w-auto drop-shadow-[0_0_12px_rgba(79,172,254,0.55)]"
-                 style={{ verticalAlign: 'baseline', transform: 'translateY(-0.15em)' }}
+                 style={{ transform: 'translateY(0.05em)' }}
                  fill="none"
                  stroke="currentColor"
                  strokeWidth="4"
@@ -2490,20 +2495,18 @@ const PlatformAnimatedTitle = () => {
                      <stop offset="100%" stopColor="#a78bfa" />
                    </linearGradient>
                  </defs>
-                 {/* Link 1 */}
                  <rect x="4" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
-                 {/* Link 2 — interlocking with link 1 and 3 */}
                  <rect x="37" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
-                 {/* Link 3 */}
                  <rect x="70" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
                </svg>
              </motion.span>
            ) : (
              <motion.span
                key="word"
-               initial={{ opacity: 0, y: -8 }}
-               animate={{ opacity: 1, y: 0 }}
-               exit={{ opacity: 0, y: 8 }}
+               layout
+               initial={{ opacity: 0, scale: 0.9 }}
+               animate={{ opacity: 1, scale: 1 }}
+               exit={{ opacity: 0, scale: 0.9 }}
                transition={{ duration: 0.25 }}
                className="inline-block"
              >
@@ -2512,22 +2515,10 @@ const PlatformAnimatedTitle = () => {
            )}
          </AnimatePresence>
        </motion.span>
-       
-       <AnimatePresence>
-        {!isOneActive && (
-          <motion.span
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "auto" }}
-            exit={{ opacity: 0, width: 0 }}
-            className={`text-blue-400 inline-block overflow-hidden whitespace-nowrap transition-all duration-300 ${isConnectsHovered ? 'ml-0 mr-3 md:mr-4' : 'ml-0 mr-3 md:mr-4'}`}
-          >
-            All
-          </motion.span>
-        )}
-       </AnimatePresence>
 
-       <motion.span className={`text-emerald-400 inline-block ${isOneActive ? 'ml-3 md:ml-4 mr-3 md:mr-4' : 'mr-3 md:mr-4'}`}>SaaS</motion.span>
-       <motion.span className="text-purple-400 inline-block">Platforms</motion.span>
+       <motion.span layout className="text-blue-400 inline-block">All</motion.span>
+       <motion.span layout className="text-emerald-400 inline-block">SaaS</motion.span>
+       <motion.span layout className="text-purple-400 inline-block">Platforms</motion.span>
     </h1>
   );
 };
@@ -2654,7 +2645,25 @@ const PlatformIntroSection = () => {
         
         <div className="text-center mb-16 relative z-10">
           <h2 className="text-3xl md:text-4xl font-display font-bold text-white uppercase tracking-tight">Feature List</h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-transparent mx-auto mt-6" />
+          {/* Cosmic accent: three brand-color nodes pulsing on a thin
+              tri-color gradient hairline — replaces the plain blue bar. */}
+          <div className="relative w-56 h-3 mx-auto mt-6 flex items-center justify-center">
+            <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[1.5px] bg-gradient-to-r from-transparent via-blue-400/40 via-50% to-transparent" />
+            <div className="absolute inset-x-1/4 top-1/2 -translate-y-1/2 h-[1.5px] bg-gradient-to-r from-blue-400/70 via-emerald-400/80 to-purple-400/70" />
+            {[
+              { pos: '10%', cls: 'bg-blue-400', glow: 'rgba(96,165,250,0.9)', delay: 0 },
+              { pos: '50%', cls: 'bg-emerald-400', glow: 'rgba(52,211,153,0.9)', delay: 0.4 },
+              { pos: '90%', cls: 'bg-purple-400', glow: 'rgba(192,132,252,0.9)', delay: 0.8 },
+            ].map((n, i) => (
+              <motion.div
+                key={i}
+                className={`absolute w-2 h-2 rounded-full ${n.cls}`}
+                style={{ left: n.pos, transform: 'translateX(-50%)', boxShadow: `0 0 10px ${n.glow}, 0 0 18px ${n.glow}` }}
+                animate={{ scale: [1, 1.35, 1], opacity: [0.75, 1, 0.75] }}
+                transition={{ duration: 2.4, repeat: Infinity, delay: n.delay, ease: 'easeInOut' }}
+              />
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 relative z-10">
@@ -3374,10 +3383,87 @@ const OrbitingNode = ({ node, progress, i, activeNode, setActiveNode }: { node: 
     </motion.div>
   );
 };
+const AnimatedNumber = ({ value }: { value: string }) => {
+  const parseValue = (valStr: string) => {
+    const cleanStr = valStr.replace(/,/g, '');
+    const match = cleanStr.match(/^([0-9.]+)(.*)$/);
+    if (match) {
+      const num = parseFloat(match[1]);
+      const suffix = match[2] || '';
+      return { num, suffix };
+    }
+    return { num: 0, suffix: valStr };
+  };
+
+  const getDecimalPlaces = (str: string) => {
+    const cleanStr = str.replace(/,/g, '');
+    const match = cleanStr.match(/^([0-9.]+)/);
+    if (match) {
+      const parts = match[1].split('.');
+      return parts.length > 1 ? parts[1].length : 0;
+    }
+    return 0;
+  };
+
+  const { num, suffix } = parseValue(value);
+  const decimals = getDecimalPlaces(value);
+  const originalHadCommas = value.includes(',');
+
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, { stiffness: 45, damping: 15, mass: 1 });
+
+  useEffect(() => {
+    const controls = animate(motionValue, num, { duration: 1.2, ease: "easeOut" });
+    return () => controls.stop();
+  }, [num, motionValue]);
+
+  const displayValue = useTransform(springValue, (latest) => {
+    let formatted = "";
+    if (decimals > 0) {
+      formatted = latest.toFixed(decimals);
+    } else if (originalHadCommas) {
+      formatted = Math.round(latest).toLocaleString();
+    } else {
+      formatted = Math.round(latest).toString();
+    }
+    return `${formatted}${suffix}`;
+  });
+
+  return <motion.span>{displayValue}</motion.span>;
+};
+
 const AutomationDashboard = () => {
   const [selectedRole, setSelectedRole] = useState<'Sales' | 'Support' | 'Operations' | 'Executive' | 'Audience'>('Executive');
   const [secondsSaved, setSecondsSaved] = useState(12845000);
   const [hoveredStatIndex, setHoveredStatIndex] = useState<number | null>(null);
+  const [expandedStats, setExpandedStats] = useState<Record<string, boolean>>({});
+  
+  const getSparklineData = (label: string, valueStr: string) => {
+    const cleanStr = valueStr.replace(/,/g, '');
+    const match = cleanStr.match(/^([0-9.]+)/);
+    const baseValue = match ? parseFloat(match[1]) : 50;
+    
+    const decimalMatch = valueStr.replace(/,/g, '').match(/^([0-9.]+)/);
+    const decimals = (decimalMatch && decimalMatch[1].includes('.')) ? decimalMatch[1].split('.')[1].length : 0;
+    
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    
+    return days.map((day, idx) => {
+      let labelSum = 0;
+      for (let charIdx = 0; charIdx < label.length; charIdx++) {
+        labelSum += label.charCodeAt(charIdx);
+      }
+      
+      const seed = labelSum + idx;
+      const noise = ((seed % 24) - 12) / 100; // -12% to +12%
+      const trend = 0.88 + (idx * 0.02); // 0.88 to 1.0 peak
+      const value = baseValue * trend * (1 + noise);
+      return {
+        day,
+        value: parseFloat(value.toFixed(decimals))
+      };
+    });
+  };
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -3561,7 +3647,7 @@ const AutomationDashboard = () => {
     <div id="automation-dashboard" className="max-w-7xl mx-auto px-6 py-12 relative" role="region" aria-label="Automation Stats and Analytics">
       <div className="text-center mb-24 px-4">
         <WritingTitle 
-          text="Efficiency Dashboard"
+          text="Custom Dashboards"
           className="text-4xl md:text-7xl font-display font-black text-white tracking-tighter uppercase mb-6 justify-center"
         />
         <motion.div 
@@ -3574,9 +3660,9 @@ const AutomationDashboard = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 text-white/40 font-mono text-[10px] uppercase tracking-[0.4em]"
+          className="mt-6 text-white/60 font-mono text-sm max-w-2xl mx-auto"
         >
-          Real-time Global Performance Matrix
+          Custom dashboards are crucial for organizational alignment. By tailoring metrics and visualization layouts, every role—from executive planning to operational execution—can view the insights most relevant to their responsibilities, driving faster and more informed decisions across the entire enterprise.
         </motion.p>
       </div>
 
@@ -3635,40 +3721,124 @@ const AutomationDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        {currentData.stats.map((stat, i) => (
-          <motion.div
-            key={`${selectedRole}-${i}`}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            whileHover={{ y: -10, scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.05)", transition: { duration: 0.3 } }}
-            onMouseEnter={() => setHoveredStatIndex(i)}
-            onMouseLeave={() => setHoveredStatIndex(null)}
-            onFocus={() => setHoveredStatIndex(i)}
-            onBlur={() => setHoveredStatIndex(null)}
-            tabIndex={0}
-            role="article"
-            aria-label={`${stat.label}: ${stat.value} ${stat.unit}`}
-            className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] bg-white/[0.02] border border-white/5 transition-all group overflow-hidden relative focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500/50 cursor-default"
-          >
-            <div className="flex justify-between items-start mb-8 relative z-10">
-              <div className={`p-3 rounded-2xl bg-white/5 ${stat.color} border border-white/10 group-hover:scale-110 group-hover:border-white/20 transition-all relative`}>
-                <stat.icon className="w-6 h-6 drop-shadow-[0_0_8px_currentColor]" aria-hidden="true" />
-                <DiscoveryTooltip 
-                  text={`V_METRIC: ${stat.label.toUpperCase()}`}
-                  isVisible={hoveredStatIndex === i}
-                  className="mb-10"
-                />
+        {currentData.stats.map((stat, i) => {
+          const key = `${selectedRole}-${i}`;
+          const isExpanded = !!expandedStats[key];
+          const sparkData = getSparklineData(stat.label, stat.value);
+          const strokeColor = stat.color.includes('emerald') 
+            ? '#10b981' 
+            : stat.color.includes('blue') 
+            ? '#3b82f6' 
+            : stat.color.includes('purple') 
+            ? '#a78bfa'
+            : stat.color.includes('red')
+            ? '#f87171'
+            : '#a78bfa';
+
+          return (
+            <motion.div
+              layout
+              key={key}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              whileHover={{ y: -6, scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.05)", transition: { duration: 0.2 } }}
+              onMouseEnter={() => setHoveredStatIndex(i)}
+              onMouseLeave={() => setHoveredStatIndex(null)}
+              onFocus={() => setHoveredStatIndex(i)}
+              onBlur={() => setHoveredStatIndex(null)}
+              onClick={() => {
+                setExpandedStats(prev => ({ ...prev, [key]: !prev[key] }));
+              }}
+              tabIndex={0}
+              role="button"
+              aria-expanded={isExpanded}
+              aria-label={`${stat.label}: ${stat.value} ${stat.unit}. Click to expand 7-day trend.`}
+              className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] bg-white/[0.02] border border-white/5 transition-all group overflow-hidden relative focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500/50 cursor-pointer"
+            >
+              <div className="flex justify-between items-start mb-6 relative z-10">
+                <div className={`p-3 rounded-2xl bg-white/5 ${stat.color} border border-white/10 group-hover:scale-110 group-hover:border-white/20 transition-all relative`}>
+                  <stat.icon className="w-6 h-6 drop-shadow-[0_0_8px_currentColor]" aria-hidden="true" />
+                  <DiscoveryTooltip 
+                    text={`V_METRIC: ${stat.label.toUpperCase()}`}
+                    isVisible={hoveredStatIndex === i}
+                    className="mb-10"
+                  />
+                </div>
+                <div className="flex flex-col items-end gap-1.5">
+                  <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest">{stat.unit}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setExpandedStats(prev => ({ ...prev, [key]: !prev[key] }));
+                    }}
+                    className="px-2 py-0.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 hover:border-blue-500/20 text-[8px] font-mono uppercase tracking-widest text-white/40 hover:text-blue-400 transition-all flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>{isExpanded ? 'Collapse' : 'Expand'}</span>
+                    {isExpanded ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                  </button>
+                </div>
               </div>
-              <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest">{stat.unit}</span>
-            </div>
-            <div className="relative z-10">
-              <p className={`text-2xl font-display font-bold mb-1 tracking-tighter ${stat.color}`}>{stat.value}</p>
-              <p className="text-[10px] font-mono text-white/50 uppercase tracking-widest">{stat.label}</p>
-            </div>
-            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/5 blur-3xl rounded-full group-hover:bg-blue-500/10 transition-colors" />
-          </motion.div>
-        ))}
+              <div className="relative z-10">
+                <p className={`text-2xl font-display font-bold mb-1 tracking-tighter ${stat.color}`}>
+                  <AnimatedNumber value={stat.value} />
+                </p>
+                <p className="text-[10px] font-mono text-white/50 uppercase tracking-widest">{stat.label}</p>
+              </div>
+
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                    animate={{ height: "auto", opacity: 1, marginTop: 16 }}
+                    exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden border-t border-white/5 pt-4"
+                  >
+                    <div className="flex justify-between items-center mb-2 text-[8px] font-mono text-white/40 uppercase tracking-wider">
+                      <span>7-Day History Trend</span>
+                      <span className="text-emerald-400 font-bold flex items-center gap-0.5">
+                        <TrendingUp size={8}/> +12.4%
+                      </span>
+                    </div>
+                    <div className="h-16 w-full relative">
+                      <ResponsiveContainer width="100%" height="80%">
+                        <AreaChart data={sparkData} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
+                          <defs>
+                            <linearGradient id={`sparkGrad-${selectedRole}-${i}`} x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor={strokeColor} stopOpacity={0.4}/>
+                              <stop offset="100%" stopColor={strokeColor} stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <Area 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke={strokeColor} 
+                            strokeWidth={1.5}
+                            fill={`url(#sparkGrad-${selectedRole}-${i})`}
+                            dot={false}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                      
+                      <div className="flex justify-between text-[8px] font-mono text-white/30 px-1 mt-1">
+                        <span>M</span>
+                        <span>T</span>
+                        <span>W</span>
+                        <span>T</span>
+                        <span>F</span>
+                        <span>S</span>
+                        <span>S</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/5 blur-3xl rounded-full group-hover:bg-blue-500/10 transition-colors" />
+            </motion.div>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -4983,7 +5153,7 @@ const DataClusterGallery = () => {
   ], []);
 
   return (
-    <section ref={containerRef} className="py-32 md:py-64 relative min-h-[500vh] flex flex-col justify-start overflow-hidden border-t border-white/5">
+    <section ref={containerRef} className="py-16 md:py-24 relative min-h-[320vh] flex flex-col justify-start overflow-hidden border-t border-white/5">
       
       {/* FIXED HEADER - More fluid transitions */}
       <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-center z-30 pointer-events-none">
@@ -7011,7 +7181,7 @@ const DashboardHeader = ({ progress }: { progress?: any }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       style={{ opacity: headerOpacity, scale: headerScale, y: headerY }} 
-      className="text-center flex flex-col items-center max-w-7xl mx-auto min-h-screen justify-center relative z-10 py-20 px-4"
+      className="text-center flex flex-col items-center max-w-7xl mx-auto min-h-[50vh] justify-center relative z-10 py-12 md:py-16 px-4"
     >
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -8182,7 +8352,7 @@ const FeatureObjectCard = ({ feature, index }: any) => {
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group p-8 md:p-12 aspect-square flex flex-col items-center justify-center text-center bg-transparent transition-all relative overflow-hidden"
+      className="group p-8 md:p-10 aspect-square flex flex-col items-center justify-center text-center bg-black/60 backdrop-blur-[40px] rounded-[2.5rem] shadow-[0_0_60px_rgba(59,130,246,0.10)] hover:shadow-[0_0_100px_rgba(59,130,246,0.20)] transition-all duration-500 relative overflow-hidden"
     >
       <div className="w-32 h-32 flex items-center justify-center mb-6 relative z-10 transition-transform duration-500 group-hover:scale-110">
          <SpaceTech2D type={feature.type} color={color} />
@@ -8472,11 +8642,327 @@ const VisionSection = ({ smoothProgress, scrollYProgress }: { smoothProgress: an
   );
 };
 
+const getPhaseForIndustry = (name: string): string => {
+  const n = name.toLowerCase();
+  if (n.includes("insurance") || n.includes("legal") || n.includes("public") || n.includes("strategic") || n.includes("non-profit") || n.includes("governance") || n.includes("interior") || n.includes("planning") || n.includes("mural")) return 'legacy';
+  if (n.includes("financial") || n.includes("learning") || n.includes("retail") || n.includes("marketing") || n.includes("ethnography") || n.includes("wellness") || n.includes("biometrics") || n.includes("music") || n.includes("audio")) return 'cognitive';
+  if (n.includes("delivery") || n.includes("factory") || n.includes("food") || n.includes("shipping") || n.includes("construction") || n.includes("agriculture") || n.includes("aquaponics") || n.includes("cryogenic")) return 'collaborative';
+  if (n.includes("security") || n.includes("telecomm") || n.includes("healthcare") || n.includes("real estate") || n.includes("bio") || n.includes("machining") || n.includes("transit")) return 'agentic';
+  return 'autonomous';
+};
+
+const EvolutionaryRoadmap = ({ onSelectPhase, activePhase }: { onSelectPhase: (phase: string | null) => void, activePhase: string | null }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [hoveredSector, setHoveredSector] = useState<string | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"]
+  });
+  const springProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20 });
+
+  const stages = [
+    {
+      id: 'legacy',
+      num: '01',
+      title: 'Legacy State',
+      era: 'Pre-2024 • System Silos',
+      icon: History,
+      color: '#ef4444',
+      glow: 'rgba(239, 68, 68, 0.4)',
+      bgGradient: 'from-red-500/10 to-red-950/20',
+      borderGlow: 'hover:border-red-500/40',
+      activeBorder: 'border-red-500 shadow-[0_0_30px_rgba(239, 68, 68, 0.25)]',
+      desc: 'Siloed database structures, legacy system barriers, heavy administrative oversight, and high human manual effort.',
+      metric: '92% Manual Oversight',
+      metricLabel: 'Processing bottlenecks',
+      examples: ['Traditional Insurance', 'Legal Discovery', 'Standard Administrative Bureaucracy']
+    },
+    {
+      id: 'cognitive',
+      num: '02',
+      title: 'Cognitive Integration',
+      era: '2024 • Context-Aware Copilots',
+      icon: Brain,
+      color: '#f59e0b',
+      glow: 'rgba(245, 158, 11, 0.4)',
+      bgGradient: 'from-orange-500/10 to-orange-950/20',
+      borderGlow: 'hover:border-orange-500/40',
+      activeBorder: 'border-orange-500 shadow-[0_0_30px_rgba(245, 158, 11, 0.25)]',
+      desc: 'Consolidation of unstructured streams, optical OCR extractions, and contextual search helpers answering user requests.',
+      metric: '3.5x Throughput Increase',
+      metricLabel: 'Retrieval latency speedup',
+      examples: ['Financial Ops', 'AI Scoring Agents', 'Retail Support Systems']
+    },
+    {
+      id: 'collaborative',
+      num: '03',
+      title: 'Collaborative Automation',
+      era: '2025 • Sequential Integrations',
+      icon: Webhook,
+      color: '#10b981',
+      glow: 'rgba(16, 185, 129, 0.4)',
+      bgGradient: 'from-emerald-500/10 to-emerald-950/20',
+      borderGlow: 'hover:border-emerald-500/40',
+      activeBorder: 'border-emerald-500 shadow-[0_0_30px_rgba(16, 185, 129, 0.25)]',
+      desc: 'Seamless multi-step automated pipelines. Systems self-route transactional records with high-performance automated handshakes.',
+      metric: '80% Workload Reduction',
+      metricLabel: 'Routine repetitive workflows',
+      examples: ['Global Delivery Logistics', 'Processes Factory', 'Cryogenic Freight Systems']
+    },
+    {
+      id: 'agentic',
+      num: '04',
+      title: 'Agentic Coordination',
+      era: '2026 • Specialist Multi-Agent Swarms',
+      icon: Bot,
+      color: '#3b82f6',
+      glow: 'rgba(59, 130, 246, 0.4)',
+      bgGradient: 'from-blue-500/10 to-blue-950/20',
+      borderGlow: 'hover:border-blue-500/40',
+      activeBorder: 'border-blue-500 shadow-[0_0_30px_rgba(59, 130, 246, 0.25)]',
+      desc: 'Multi-agent frameworks carrying out complex jobs. Specialist nodes coordinate dynamically to achieve complex high-integrity targets.',
+      metric: '<120ms Dynamic Re-route',
+      metricLabel: 'Complex decision latency',
+      examples: ['Cyber Threats Triage', 'Telecom Networks', 'Smart Real Estate Grids']
+    },
+    {
+      id: 'autonomous',
+      num: '05',
+      title: 'Autonomous Orchestration',
+      era: '2027+ • Self-Evolving Ecosystems',
+      icon: Orbit,
+      color: '#8b5cf6',
+      glow: 'rgba(139, 92, 246, 0.4)',
+      bgGradient: 'from-purple-500/10 to-purple-950/20',
+      borderGlow: 'hover:border-purple-500/40',
+      activeBorder: 'border-purple-500 shadow-[0_0_30px_rgba(139, 92, 246, 0.25)]',
+      desc: 'Self-regulating cybernetic loops governing planetary-scale assets. Agents self-repair and optimize infrastructure in real-time.',
+      metric: '99.999% Zero-Human Touch',
+      metricLabel: 'End-to-end task automation',
+      examples: ['Space Deep Exploration', 'Fusion Smart Grids', 'Quantum Computations Units']
+    }
+  ];
+
+  return (
+    <div ref={containerRef} className="relative max-w-7xl mx-auto py-20 px-4 md:px-8">
+      {/* Visual background gradient blur */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] pointer-events-none rounded-full" />
+      
+      <div className="text-center mb-16 max-w-3xl mx-auto">
+        <span className="text-xs font-mono tracking-[0.4em] text-blue-400 uppercase block mb-3">evolutionary pathway</span>
+        <h3 className="text-3xl md:text-5xl font-display font-light text-white tracking-tight mb-4">The Evolution to Autonomy</h3>
+        <p className="text-white/40 font-light text-base md:text-lg">
+          Trace DeltaScope's transformative road mapping of critical sectors. 
+          <span className="text-blue-400 font-semibold"> Tap any phase card</span> to isolatively filter compatible sectors in the grid below.
+        </p>
+      </div>
+
+      <div className="relative">
+        {/* Dynamic Connected Progress Line */}
+        <div className="absolute top-[32px] bottom-[32px] left-6 md:left-1/2 w-0.5 bg-white/[0.03] -translate-x-1/2 rounded-full overflow-hidden">
+          <motion.div 
+            style={{ scaleY: springProgress }}
+            className="w-full h-full bg-gradient-to-b from-red-500 via-orange-500 via-emerald-500 via-blue-500 to-purple-500 origin-top rounded-full shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+          />
+        </div>
+
+        {/* Timeline Items */}
+        <div className="space-y-16 relative">
+          {stages.map((stage, idx) => {
+            const IconComponent = stage.icon;
+            const isEven = idx % 2 === 0;
+            const isSelected = activePhase === stage.id;
+            const isDimmed = activePhase !== null && !isSelected;
+
+            return (
+              <motion.div
+                key={stage.id}
+                className={`flex flex-col md:flex-row items-stretch md:items-center relative ${
+                  isEven ? 'md:flex-row-reverse' : ''
+                } transition-all duration-500 ${isDimmed ? 'opacity-30 scale-[0.98] blur-[0.5px]' : 'opacity-100'}`}
+              >
+                {/* Timeline center bullet */}
+                <div className="absolute left-6 md:left-1/2 top-8 md:top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 flex items-center justify-center">
+                  <motion.button
+                    onClick={() => onSelectPhase(isSelected ? null : stage.id)}
+                    whileHover={{ scale: 1.2 }}
+                    className={`w-10 h-10 rounded-full border flex items-center justify-center cursor-pointer transition-all duration-300 ${
+                      isSelected 
+                        ? 'border-transparent text-white scale-110 shadow-lg' 
+                        : 'border-white/25 text-white/50 bg-[#06060c]'
+                    }`}
+                    style={{ 
+                      backgroundColor: isSelected ? stage.color : undefined,
+                      boxShadow: isSelected ? `0 0 20px ${stage.glow}` : undefined
+                    }}
+                  >
+                    <IconComponent size={16} strokeWidth={2.5} />
+                  </motion.button>
+                </div>
+
+                {/* Content block */}
+                <div className={`w-full md:w-[45%] pl-16 md:pl-0 ${isEven ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'}`}>
+                  <motion.div
+                    onClick={() => onSelectPhase(isSelected ? null : stage.id)}
+                    whileHover={{ scale: 1.02 }}
+                    className={`p-6 md:p-8 rounded-[2rem] bg-white/[0.01] border backdrop-blur-xl cursor-pointer transition-all duration-300 select-none ${
+                      isSelected ? stage.activeBorder : 'border-white/5 ' + stage.borderGlow + ' hover:bg-white/[0.03]'
+                    }`}
+                  >
+                    <div className={`flex items-center gap-2 mb-3 font-mono text-[10px] uppercase font-black tracking-widest ${
+                      isEven ? 'md:justify-end' : 'md:justify-start'
+                    }`}>
+                      <span style={{ color: stage.color }}>PHASE {stage.num}</span>
+                      <span className="text-white/20">•</span>
+                      <span className="text-white/40">{stage.era}</span>
+                    </div>
+
+                    <h4 className="text-2xl font-display font-medium text-white mb-3 tracking-tight">
+                      {stage.title}
+                    </h4>
+
+                    <p className={`text-sm text-white/50 font-light leading-relaxed mb-4 ${
+                      isEven ? 'md:text-right' : 'md:text-left'
+                    }`}>
+                      {stage.desc}
+                    </p>
+
+                    {/* Shifting industries preview */}
+                    <div className="mb-4">
+                      <span className="text-[9px] font-mono text-white/30 uppercase tracking-widest block mb-2 font-black">Shifting Sectors</span>
+                      <div className={`flex flex-wrap gap-2 ${isEven ? 'md:justify-end' : 'md:justify-start'}`}>
+                        {stage.examples.map((ex, ie) => {
+                          const tech = getTechForSector(ex);
+                          const hoverKey = `${stage.id}-${ex}`;
+                          const isHovered = hoveredSector === hoverKey;
+                          
+                          return (
+                            <div key={ie} className="relative">
+                              <motion.span 
+                                onMouseEnter={() => setHoveredSector(hoverKey)}
+                                onMouseLeave={() => setHoveredSector(null)}
+                                whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.08)", borderColor: stage.color }}
+                                className="text-[10px] font-mono text-white/60 bg-white/5 border border-white/5 rounded-full px-2.5 py-1.5 cursor-pointer block transition-all duration-300 relative z-30"
+                              >
+                                {ex}
+                              </motion.span>
+                              
+                              <AnimatePresence>
+                                {isHovered && (
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.92, y: 8 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.92, y: 8 }}
+                                    transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                                    className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-64 p-3.5 bg-[#070b19] border border-blue-500/30 backdrop-blur-xl rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.85)] z-[100] pointer-events-none text-left"
+                                    style={{ borderColor: `${stage.color}50` }}
+                                  >
+                                    <div className="text-[8px] font-mono tracking-widest uppercase mb-1.5 flex items-center gap-1 font-black" style={{ color: stage.color }}>
+                                      <Zap size={10} strokeWidth={3} /> System Architecture
+                                    </div>
+                                    <div className="text-xs font-semibold text-white/90 mb-1 font-display">
+                                      {tech.name}
+                                    </div>
+                                    <div className="text-[10px] text-white/45 font-mono leading-relaxed">
+                                      {tech.desc}
+                                    </div>
+                                    
+                                    {/* Tooltip Chevron Indicator */}
+                                    <div 
+                                      className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-[1px] border-6 border-transparent border-t-[#070b19] z-50 pointer-events-none"
+                                    />
+                                    <div 
+                                      className="absolute top-full left-1/2 -translate-x-1/2 border-6 border-transparent border-t-blue-500/30 -z-10 pointer-events-none"
+                                      style={{ borderTopColor: `${stage.color}50` }}
+                                    />
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Stat / Impact callout */}
+                    <div className={`flex items-center gap-3 pt-4 border-t border-white/5 ${
+                      isEven ? 'md:justify-end' : 'md:justify-start'
+                    }`}>
+                      <div className={isEven ? 'text-right' : 'text-left'}>
+                        <p className="text-lg font-display font-black text-white italic leading-none">{stage.metric}</p>
+                        <p className="text-[9px] font-mono text-white/40 uppercase tracking-wide mt-1">{stage.metricLabel}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+                
+                {/* Symmetry element */}
+                <div className="hidden md:block md:w-[45%]" />
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const getTechForSector = (sectorName: string) => {
+  const normalized = sectorName.toLowerCase();
+  let techId = "govt"; // default
+  if (normalized.includes("insurance") || normalized.includes("security") || normalized.includes("defense")) techId = "defense";
+  else if (normalized.includes("legal") || normalized.includes("finance") || normalized.includes("ops") || normalized.includes("trading") || normalized.includes("monetary") || normalized.includes("coin") || normalized.includes("venture")) techId = "finance";
+  else if (normalized.includes("delivery") || normalized.includes("logistics") || normalized.includes("transit") || normalized.includes("supply")) techId = "logistics";
+  else if (normalized.includes("learning") || normalized.includes("academic") || normalized.includes("research") || normalized.includes("ethnography") || normalized.includes("quantum")) techId = "academic";
+  else if (normalized.includes("factory") || normalized.includes("process") || normalized.includes("machining") || normalized.includes("heavy")) techId = "factory";
+  else if (normalized.includes("food") || normalized.includes("beverage") || normalized.includes("hospitality") || normalized.includes("leisure") || normalized.includes("non-profit")) techId = "hospitality";
+  else if (normalized.includes("shipping") || normalized.includes("freight") || normalized.includes("tourism") || normalized.includes("oceanography")) techId = "shipping";
+  else if (normalized.includes("construction") || normalized.includes("infrastructure") || normalized.includes("architecture") || normalized.includes("mining") || normalized.includes("res")) techId = "construction";
+  else if (normalized.includes("health") || normalized.includes("medical") || normalized.includes("biometric") || normalized.includes("wellness")) techId = "healthcare";
+  else if (normalized.includes("real estate") || normalized.includes("building") || normalized.includes("property") || normalized.includes("interior") || normalized.includes("design")) techId = "realestate";
+  else if (normalized.includes("energy") || normalized.includes("grid") || normalized.includes("power") || normalized.includes("fusion")) techId = "energy";
+  else if (normalized.includes("agriculture") || normalized.includes("farm") || normalized.includes("sprout") || normalized.includes("textile") || normalized.includes("aquaponic") || normalized.includes("circular")) techId = "agriculture";
+  else if (normalized.includes("retail") || normalized.includes("commerce") || normalized.includes("shop")) techId = "retail";
+  else if (normalized.includes("automotive") || normalized.includes("car") || normalized.includes("driving") || normalized.includes("rail")) techId = "automotive";
+  else if (normalized.includes("entertainment") || normalized.includes("film") || normalized.includes("music") || normalized.includes("game") || normalized.includes("esport") || normalized.includes("art")) techId = "entertainment";
+  else if (normalized.includes("telecomm") || normalized.includes("network") || normalized.includes("wifi") || normalized.includes("broadband") || normalized.includes("satellite")) techId = "telecomm";
+  else if (normalized.includes("pharma") || normalized.includes("drug") || normalized.includes("bio-eng") || normalized.includes("chemical")) techId = "pharma";
+  else if (normalized.includes("aerospace") || normalized.includes("aviation") || normalized.includes("rocket") || normalized.includes("space")) techId = "aerospace";
+  else if (normalized.includes("marketing") || normalized.includes("advert") || normalized.includes("brand") || normalized.includes("social")) techId = "marketing";
+
+  return INDUSTRY_TECH.find(t => t.id === techId) || INDUSTRY_TECH[0];
+};
+
 const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
   const [selectedSector, setSelectedSector] = useState<any>(null);
+  const [activePhase, setActivePhase] = useState<string | null>(null);
 
   const handleSelectSector = (sector: any) => {
     setSelectedSector(sector);
+  };
+
+  const getEgyptIdForAreaName = (name: string): string => {
+    const normalized = name.toLowerCase();
+    if (normalized.includes("insurance") || normalized.includes("security") || normalized.includes("defense")) return "defense";
+    if (normalized.includes("legal") || normalized.includes("finance") || normalized.includes("ops") || normalized.includes("trading") || normalized.includes("monetary") || normalized.includes("coin") || normalized.includes("venture")) return "finance";
+    if (normalized.includes("delivery") || normalized.includes("logistics") || normalized.includes("transit") || normalized.includes("supply")) return "logistics";
+    if (normalized.includes("learning") || normalized.includes("academic") || normalized.includes("research") || normalized.includes("ethnography") || normalized.includes("quantum")) return "academic";
+    if (normalized.includes("factory") || normalized.includes("process") || normalized.includes("machining") || normalized.includes("heavy")) return "factory";
+    if (normalized.includes("food") || normalized.includes("beverage") || normalized.includes("hospitality") || normalized.includes("leisure") || normalized.includes("non-profit")) return "hospitality";
+    if (normalized.includes("shipping") || normalized.includes("freight") || normalized.includes("tourism") || normalized.includes("oceanography")) return "shipping";
+    if (normalized.includes("construction") || normalized.includes("infrastructure") || normalized.includes("architecture") || normalized.includes("mining") || normalized.includes("res")) return "construction";
+    if (normalized.includes("health") || normalized.includes("medical") || normalized.includes("biometric") || normalized.includes("wellness")) return "healthcare";
+    if (normalized.includes("real estate") || normalized.includes("building") || normalized.includes("property") || normalized.includes("interior") || normalized.includes("design")) return "realestate";
+    if (normalized.includes("energy") || normalized.includes("grid") || normalized.includes("power") || normalized.includes("fusion")) return "energy";
+    if (normalized.includes("agriculture") || normalized.includes("farm") || normalized.includes("sprout") || normalized.includes("textile") || normalized.includes("aquaponic") || normalized.includes("circular")) return "agriculture";
+    if (normalized.includes("retail") || normalized.includes("commerce") || normalized.includes("shop")) return "retail";
+    if (normalized.includes("automotive") || normalized.includes("car") || normalized.includes("driving") || normalized.includes("rail")) return "automotive";
+    if (normalized.includes("entertainment") || normalized.includes("film") || normalized.includes("music") || normalized.includes("game") || normalized.includes("esport") || normalized.includes("art")) return "entertainment";
+    if (normalized.includes("telecomm") || normalized.includes("network") || normalized.includes("wifi") || normalized.includes("broadband") || normalized.includes("satellite")) return "telecomm";
+    if (normalized.includes("pharma") || normalized.includes("drug") || normalized.includes("bio-eng") || normalized.includes("chemical")) return "pharma";
+    if (normalized.includes("aerospace") || normalized.includes("aviation") || normalized.includes("rocket") || normalized.includes("space")) return "aerospace";
+    if (normalized.includes("marketing") || normalized.includes("advert") || normalized.includes("brand") || normalized.includes("social")) return "marketing";
+    return "govt";
   };
   
   const y = useTransform(scrollYProgress || useSpring(0), [0, 1], [0, -100]);
@@ -8490,7 +8976,7 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
       className="pt-24 pb-10 overflow-x-hidden relative bg-transparent isolate min-h-screen"
     >
       <motion.div style={{ y }} className="mx-auto space-y-12">
-<div 
+        <div 
           className="py-24 text-center px-4 relative z-20"
         >
            <h3 className="text-3xl sm:text-4xl md:text-5xl font-display font-light text-white max-w-5xl mx-auto leading-tight tracking-tight">
@@ -8498,9 +8984,12 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
            </h3>
         </div>
         
+        {/* Scroll-triggered Evolutionary Roadmap */}
+        <EvolutionaryRoadmap activePhase={activePhase} onSelectPhase={setActivePhase} />
+        
         {/* Industry Grid Section */}
         <div id="industries" className="relative py-32 px-4 md:px-8">
-          <div className="text-center mb-20 max-w-4xl mx-auto flex flex-col items-center relative z-10">
+          <div className="text-center mb-10 max-w-4xl mx-auto flex flex-col items-center relative z-10">
             <motion.span 
               initial={{ opacity: 0, letterSpacing: "0.2em" }}
               whileInView={{ opacity: 1, letterSpacing: "0.5em" }}
@@ -8510,7 +8999,25 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
               The Automation Engine
             </motion.span>
              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight text-center">Cross-Industry Automation</h2>
-             <p className="text-white/40 mt-6 font-light text-lg text-center max-w-2xl">DeltaScope handles multi-tasking AI applications to solve challenges in support, sales, marketing and more across diverse industries.</p>
+             <p className="text-white/40 mt-6 mb-8 font-light text-lg text-center max-w-2xl">DeltaScope handles multi-tasking AI applications to solve challenges in support, sales, marketing and more across diverse industries.</p>
+             
+             {/* Dynamic Filter Badges */}
+             {activePhase && (
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.95 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 className="flex items-center gap-3 px-4 py-2 border border-blue-500/30 bg-blue-500/10 rounded-full font-mono text-[10px] tracking-wider uppercase text-blue-300 mb-6"
+               >
+                 <span>Showing ONLY: <span className="font-bold text-white">{activePhase.toUpperCase()} ERA</span> sectors</span>
+                 <button 
+                   onClick={() => setActivePhase(null)} 
+                   className="text-white/50 hover:text-white bg-white/10 hover:bg-white/20 transition-all rounded-full p-1 leading-none inline-flex items-center justify-center cursor-pointer"
+                   title="Clear Filter"
+                 >
+                   <X size={10} strokeWidth={3} />
+                 </button>
+               </motion.div>
+             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-7xl w-full mx-auto px-4 md:px-0 relative z-10">
@@ -8569,54 +9076,69 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
         { name: "Music & Audio Gen", icon: Music, color: "#8b5cf6", model: FilmModel },
         { name: "Interior Design AI", icon: Layout, color: "#f97316", model: BuildingModel },
         { name: "Architecture & Planning", icon: PencilLine, color: "#6366f1", model: ConstructionModel }
-      ].map((area, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
-                  borderColor: area.color + "80",
-                  boxShadow: `0 0 30px ${area.color}20`,
-                  transition: { duration: 0.3 }
-                }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{
-                  duration: 0.8,
-                  delay: (i % 4) * 0.05,
-                  ease: [0.16, 1, 0.3, 1]
-                }}
-                onTap={() => handleSelectSector(area)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleSelectSector(area);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-label={`Select ${area.name} sector`}
-                className="group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] border border-white/5 rounded-3xl transition-all duration-500"
-              >
-                {/* Central Geometric Figure Container */}
-                <div className="absolute inset-x-0 top-0 h-3/4 pointer-events-none flex items-center justify-center opacity-40 group-hover:opacity-100 transition-opacity duration-1000 scale-[0.5] group-hover:scale-[0.55] blur-[1px] group-hover:blur-0 grayscale group-hover:grayscale-0">
-                  <IndustryTech2D typeIndex={i} color="rgba(100, 150, 255, 0.5)" />
-                </div>
+      ].map((area, i) => {
+        const isFilteredOut = activePhase && getPhaseForIndustry(area.name) !== activePhase;
 
-                {/* Content Block */}
-                <div className="relative z-20 flex flex-col items-center w-full space-y-4 pointer-events-none bg-black/40 py-6 backdrop-blur-sm rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all duration-300">
-                  <h3 className="text-xl md:text-2xl font-display font-semibold text-white/90 group-hover:text-white transition-all tracking-tight text-center px-4">{area.name}</h3>
-                  <div
-                    className="h-[2px] w-0 group-hover:w-16 rounded-full transition-all duration-500 delay-100 opacity-60"
-                    style={{ backgroundColor: "rgba(59,130,246,0.8)", boxShadow: `0 0 10px rgba(59,130,246,0.5)` }}
-                  />
-                </div>
+        return (
+          <motion.div 
+            key={i} 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            whileHover={isFilteredOut ? {} : { 
+              scale: 1.05,
+              backgroundColor: "rgba(255, 255, 255, 0.08)",
+              borderColor: "#fbbf2490",
+              boxShadow: "0 0 32px rgba(251,191,36,0.18)",
+              transition: { duration: 0.3 }
+            }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ 
+              duration: 0.8, 
+              delay: (i % 4) * 0.05, 
+              ease: [0.16, 1, 0.3, 1] 
+            }}
+            onTap={isFilteredOut ? undefined : () => handleSelectSector(area)}
+            onKeyDown={(e) => {
+              if (isFilteredOut) return;
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelectSector(area);
+              }
+            }}
+            role="button"
+            tabIndex={isFilteredOut ? -1 : 0}
+            aria-label={`Select ${area.name} sector`}
+            className={`group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 ${
+              isFilteredOut 
+                ? 'opacity-[0.08] saturate-50 blur-[1px] scale-95 pointer-events-none' 
+                : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] border border-yellow-500/10 hover:border-yellow-500/30'
+            }`}
+          >
+            {/* Industry symbol — same lucide glyph (semantic meaning kept) but
+                re-imagined as a tiny cosmic system: orbits, satellites, halo,
+                glow. Per Katia: "ті самі ідеї, але з космічним". */}
+            <div className="absolute inset-x-0 top-0 h-3/5 pointer-events-auto flex items-start justify-center pt-[6%] opacity-90 group-hover:opacity-100 transition-all duration-700 scale-[0.72] group-hover:scale-[0.82]">
+              <div className="relative w-3/4 h-full">
+                <CosmicIndustryIcon icon={area.icon} color={area.color} />
+              </div>
+            </div>
+            
+            {/* Content Block — fixed min-height so 1-line and 2-line titles
+                yield rectangles of the same size; text is vertically centered
+                inside (justify-center) */}
+            <div className="relative z-20 flex flex-col items-center justify-center w-full space-y-2 pointer-events-none bg-black/40 py-3 min-h-[6rem] backdrop-blur-sm rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all duration-300">
+              <h3 className="text-xl md:text-2xl font-display font-semibold text-white/90 group-hover:text-white transition-all tracking-tight leading-tight text-center px-4">{area.name}</h3>
+              <div
+                className="h-[2px] w-0 group-hover:w-16 rounded-full transition-all duration-500 delay-100 opacity-60"
+                style={{ backgroundColor: "rgba(59,130,246,0.8)", boxShadow: `0 0 10px rgba(59,130,246,0.5)` }}
+              />
+            </div>
 
-                {/* Glass Panel Effects */}
-                <div className="absolute opacity-0 group-hover:opacity-100 inset-0 -z-10 rounded-3xl bg-blue-500/20 blur-2xl transition-opacity duration-500" />
-              </motion.div>
-            ))}
+            {/* Glass Panel Effects */}
+            <div className="absolute opacity-0 group-hover:opacity-100 inset-0 -z-10 rounded-3xl bg-blue-500/20 blur-2xl transition-opacity duration-500" />
+          </motion.div>
+        );
+      })}
           </div>
         </div>
       </motion.div>
@@ -9217,6 +9739,7 @@ const BrandBook = ({ globalBg, setGlobalBg }: any) => {
       <BrandBookPhenomena />
       <OceanGallery />
       <BrandBookSymbols />
+      <BrandCharacters />
 
     </div>
   );
@@ -9669,9 +10192,11 @@ function AppContent() {
 
         {/* Global Background */}
         {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <GalaxyBackground />}
-        {((globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'about') && <OceanHorizonBackground />}
+        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <OceanHorizonBackground />}
+        {activeTab === 'about' && <GalaxyAboutBackground />}
         {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <MarsBackground />}
-        {((globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'dashboard') && <DeepOceanBackground />}
+        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <DeepOceanBackground />}
+        {activeTab === 'dashboard' && <NebulaBackground />}
         {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
         {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
 
@@ -9743,9 +10268,6 @@ function AppContent() {
               </div>
             </InViewGate>
             <InViewGate minHeight="80vh">
-              <TestimonialsSection />
-            </InViewGate>
-            <InViewGate minHeight="80vh">
               <motion.section
                 initial="hidden"
                 whileInView="visible"
@@ -9798,9 +10320,9 @@ function AppContent() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="pt-32 pb-10 relative overflow-hidden"
+            className="pt-20 pb-10 relative overflow-hidden"
           >
-            <PinnedScrollSection height="h-[300vh]" innerClassName="max-w-7xl mx-auto px-6 flex flex-col justify-center">
+            <PinnedScrollSection height="h-[115vh]" innerClassName="max-w-7xl mx-auto px-6 flex flex-col justify-center">
               <DashboardHeader />
             </PinnedScrollSection>
             <AutomationDashboard />
@@ -9890,11 +10412,7 @@ function AppContent() {
 
             <TeamSection />
 
-            <InViewGate minHeight="80vh">
-              <DataClusterGallery />
-            </InViewGate>
-
-            <div className="h-[10vh]" /> {/* Relaxed spacer since there is no pinned height */}
+            <DataClusterGallery />
           </motion.main>
         )}
 
@@ -9919,27 +10437,6 @@ function AppContent() {
             transition={{ duration: 0.5 }}
           >
             <Pricing />
-          </motion.main>
-        )}
-
-        {activeTab === 'team' && (
-          <motion.main
-            key="team"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            className="pt-32 pb-20"
-          >
-            <div className="max-w-5xl mx-auto px-4 md:px-6 text-center flex flex-col justify-center relative py-12">
-              <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-blue-400 mb-4 block">The People Behind Dscope</span>
-              <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter italic text-white leading-[0.95]">
-                Operators, not <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4facfe] to-[#00f2fe]">spectators</span>.
-              </h1>
-              <p className="mt-6 text-white/60 max-w-2xl mx-auto text-lg font-light leading-relaxed">
-                The Dscope founding team has built and shipped AI and automation across enterprise travel, financial services, higher education, real estate, government, and B2B SaaS — for clients including Lastminute, Yeda, Calcalist, Dani Levi, Orin Shpalter, MalamTeam, Fischer F|B|C, and Allen Carr Israel.
-              </p>
-            </div>
-            <TeamSection />
           </motion.main>
         )}
 
@@ -10003,6 +10500,7 @@ function AppContent() {
           </div>
         </div>
       </footer>
+      <VoiceWidget />
       </motion.div>
     </div>
   );

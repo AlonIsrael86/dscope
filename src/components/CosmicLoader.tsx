@@ -1,9 +1,78 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 
-// Import Assets
-import { Medusa, BioluminescentFish } from './BrandOceanCreatures';
+// Import Assets — only the abstract scientific ones; ocean creatures
+// (Medusa, BioluminescentFish) were swapped for cosmic equivalents below
+// per Katia: replace fish with something fitting the cosmic site style.
 import { DnaHelix, WaterMolecule } from './BrandMicroscopicObjects';
+
+/** Ringed planet — replaces the previous Medusa decoration. */
+const RingedPlanet = () => (
+  <svg viewBox="0 0 220 220" className="w-[180px] h-[180px]">
+    <defs>
+      <radialGradient id="ringedPlanetBody" cx="40%" cy="40%" r="60%">
+        <stop offset="0%" stopColor="#a78bfa" />
+        <stop offset="55%" stopColor="#6d28d9" />
+        <stop offset="100%" stopColor="#1e1b4b" />
+      </radialGradient>
+      <radialGradient id="ringedPlanetHalo" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="rgba(168,85,247,0.6)" />
+        <stop offset="60%" stopColor="rgba(168,85,247,0.15)" />
+        <stop offset="100%" stopColor="rgba(168,85,247,0)" />
+      </radialGradient>
+      <linearGradient id="ringedPlanetRing" x1="0%" y1="50%" x2="100%" y2="50%">
+        <stop offset="0%" stopColor="rgba(34,211,238,0)" />
+        <stop offset="40%" stopColor="rgba(34,211,238,0.7)" />
+        <stop offset="60%" stopColor="rgba(168,85,247,0.7)" />
+        <stop offset="100%" stopColor="rgba(168,85,247,0)" />
+      </linearGradient>
+    </defs>
+    {/* Outer halo */}
+    <circle cx="110" cy="110" r="100" fill="url(#ringedPlanetHalo)" />
+    {/* Tilted ring (behind body) */}
+    <g transform="rotate(-22 110 110)">
+      <ellipse cx="110" cy="110" rx="100" ry="22" fill="none" stroke="url(#ringedPlanetRing)" strokeWidth="6" opacity="0.85" />
+      <ellipse cx="110" cy="110" rx="92" ry="18" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="1" />
+    </g>
+    {/* Planet body */}
+    <circle cx="110" cy="110" r="54" fill="url(#ringedPlanetBody)" />
+    {/* Subtle terminator highlight */}
+    <circle cx="92" cy="92" r="14" fill="rgba(255,255,255,0.18)" />
+    {/* Ring front edge */}
+    <g transform="rotate(-22 110 110)">
+      <path d="M 10 110 A 100 22 0 0 0 210 110" fill="none" stroke="url(#ringedPlanetRing)" strokeWidth="6" opacity="0.95" />
+    </g>
+  </svg>
+);
+
+/** Shooting comet with a glowing trail — replaces the previous BioluminescentFish. */
+const ShootingComet = () => (
+  <svg viewBox="0 0 240 140" className="w-[200px] h-[120px]">
+    <defs>
+      <linearGradient id="cometTrail" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stopColor="rgba(34,211,238,0)" />
+        <stop offset="60%" stopColor="rgba(34,211,238,0.65)" />
+        <stop offset="100%" stopColor="rgba(255,255,255,0.95)" />
+      </linearGradient>
+      <radialGradient id="cometHead" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stopColor="#ffffff" />
+        <stop offset="40%" stopColor="rgba(125,211,252,0.9)" />
+        <stop offset="100%" stopColor="rgba(34,211,238,0)" />
+      </radialGradient>
+    </defs>
+    {/* Trail */}
+    <path d="M 20 80 C 70 70, 130 64, 190 60" stroke="url(#cometTrail)" strokeWidth="5" strokeLinecap="round" fill="none" />
+    <path d="M 40 86 C 90 78, 140 72, 188 64" stroke="url(#cometTrail)" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.6" />
+    <path d="M 60 94 C 110 84, 160 76, 192 68" stroke="url(#cometTrail)" strokeWidth="1.5" strokeLinecap="round" fill="none" opacity="0.4" />
+    {/* Comet head */}
+    <circle cx="195" cy="60" r="22" fill="url(#cometHead)" />
+    <circle cx="195" cy="60" r="8" fill="#ffffff" />
+    {/* A couple of sparks left behind */}
+    <circle cx="80" cy="78" r="1.6" fill="#a5f3fc" opacity="0.8" />
+    <circle cx="120" cy="70" r="1.2" fill="#ffffff" opacity="0.7" />
+    <circle cx="155" cy="64" r="1.4" fill="#a5f3fc" opacity="0.85" />
+  </svg>
+);
 
 export const CosmicLoader = () => {
   const [percent, setPercent] = useState(0);
@@ -77,16 +146,24 @@ export const CosmicLoader = () => {
         ))}
       </div>
 
-      {/* Ocean/Molecular Assets */}
+      {/* Cosmic / Molecular Assets — corners */}
       <div className="absolute inset-0 pointer-events-none z-10 flex items-center justify-center">
-        {/* Top left */}
-        <div className="absolute top-[10%] left-[10%] opacity-30 scale-75 blur-[2px]">
-          <Medusa />
-        </div>
-        {/* Bottom right */}
-        <div className="absolute bottom-[10%] right-[10%] opacity-30 scale-75 blur-[2px]">
-          <BioluminescentFish />
-        </div>
+        {/* Top left — ringed planet with a slow spin */}
+        <motion.div
+          className="absolute top-[8%] left-[8%] opacity-40"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 80, repeat: Infinity, ease: 'linear' }}
+        >
+          <RingedPlanet />
+        </motion.div>
+        {/* Bottom right — comet drifting across its corner */}
+        <motion.div
+          className="absolute bottom-[12%] right-[8%] opacity-50"
+          animate={{ x: [-20, 12, -20], y: [4, -6, 4] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <ShootingComet />
+        </motion.div>
         {/* Top right */}
         <div className="absolute top-[15%] right-[15%] opacity-40 scale-50">
           <DnaHelix pure />
