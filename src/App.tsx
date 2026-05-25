@@ -9101,11 +9101,11 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
               </div>
             </div>
             
-            {/* Content Block */}
-            <div className="relative z-20 flex flex-col items-center w-full space-y-4 pointer-events-none bg-black/40 py-6 backdrop-blur-sm rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all duration-300">
-              <h3 className="text-xl md:text-2xl font-display font-semibold text-white/90 group-hover:text-white transition-all tracking-tight text-center px-4">{area.name}</h3>
-              <div 
-                className="h-[2px] w-0 group-hover:w-16 rounded-full transition-all duration-500 delay-100 opacity-60" 
+            {/* Content Block — keep box tight even when title wraps to 2 lines */}
+            <div className="relative z-20 flex flex-col items-center w-full space-y-2 pointer-events-none bg-black/40 py-3 backdrop-blur-sm rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all duration-300">
+              <h3 className="text-xl md:text-2xl font-display font-semibold text-white/90 group-hover:text-white transition-all tracking-tight leading-tight text-center px-4">{area.name}</h3>
+              <div
+                className="h-[2px] w-0 group-hover:w-16 rounded-full transition-all duration-500 delay-100 opacity-60"
                 style={{ backgroundColor: "rgba(59,130,246,0.8)", boxShadow: `0 0 10px rgba(59,130,246,0.5)` }}
               />
             </div>
