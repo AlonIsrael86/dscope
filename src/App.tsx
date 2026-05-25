@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useMemo, memo, Component, ErrorInfo
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContactPlaceholder } from './routes/Contact';
 import { CaseStudies } from './routes/CaseStudies';
-import { TestimonialsSection } from './routes/Testimonials';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
 import { VoiceWidget } from './components/VoiceWidget';
@@ -10244,9 +10243,6 @@ function AppContent() {
                    <LunarCommandHub />
                  </div>
               </div>
-            </InViewGate>
-            <InViewGate minHeight="80vh">
-              <TestimonialsSection />
             </InViewGate>
             <InViewGate minHeight="80vh">
               <motion.section
