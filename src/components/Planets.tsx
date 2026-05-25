@@ -65,17 +65,30 @@ const seedFromId = (id: string) => {
 
 const SurfaceMercury = () => (
   <g>
-    {/* Crater patches — scattered darker discs */}
-    <circle cx="58" cy="80" r="9"  fill="#3a3127" opacity="0.55" />
-    <circle cx="90" cy="55" r="6"  fill="#28201a" opacity="0.6" />
-    <circle cx="120" cy="78" r="11" fill="#2e2620" opacity="0.55" />
-    <circle cx="78" cy="120" r="7"  fill="#2c241e" opacity="0.5" />
-    <circle cx="135" cy="125" r="8"  fill="#251e18" opacity="0.55" />
-    <circle cx="105" cy="100" r="5"  fill="#1e1814" opacity="0.45" />
-    <circle cx="60" cy="135" r="6"  fill="#241d17" opacity="0.45" />
-    {/* Highlights inside craters */}
-    <circle cx="56" cy="78" r="3"  fill="#bdae93" opacity="0.5" />
-    <circle cx="118" cy="76" r="4"  fill="#a89678" opacity="0.4" />
+    {/* Larger crater basins */}
+    <circle cx="58" cy="80" r="11"  fill="#3a3127" opacity="0.6" />
+    <circle cx="120" cy="78" r="13" fill="#2e2620" opacity="0.6" />
+    <circle cx="135" cy="128" r="10" fill="#241d17" opacity="0.55" />
+    <circle cx="78" cy="120" r="8"  fill="#2c241e" opacity="0.55" />
+    {/* Medium craters */}
+    <circle cx="90" cy="55" r="6"  fill="#28201a" opacity="0.65" />
+    <circle cx="105" cy="100" r="6" fill="#1e1814" opacity="0.5" />
+    <circle cx="60" cy="140" r="6"  fill="#241d17" opacity="0.5" />
+    <circle cx="140" cy="60" r="5"  fill="#28201a" opacity="0.55" />
+    <circle cx="38" cy="100" r="5"  fill="#2c241e" opacity="0.5" />
+    {/* Many small crater dots */}
+    <circle cx="70" cy="65" r="2.5" fill="#1a140f" opacity="0.6" />
+    <circle cx="95" cy="78" r="2"   fill="#1a140f" opacity="0.55" />
+    <circle cx="155" cy="92" r="2.5" fill="#1a140f" opacity="0.55" />
+    <circle cx="50" cy="115" r="2"  fill="#1a140f" opacity="0.5" />
+    <circle cx="115" cy="142" r="2.5" fill="#1a140f" opacity="0.55" />
+    <circle cx="82" cy="148" r="2"  fill="#1a140f" opacity="0.5" />
+    <circle cx="100" cy="40" r="2"  fill="#1a140f" opacity="0.55" />
+    <circle cx="148" cy="138" r="2" fill="#1a140f" opacity="0.5" />
+    {/* Crater rim highlights (sunlit side) */}
+    <circle cx="55" cy="76" r="3"  fill="#bdae93" opacity="0.55" />
+    <circle cx="116" cy="74" r="4"  fill="#a89678" opacity="0.5" />
+    <circle cx="86" cy="52" r="2"  fill="#bdae93" opacity="0.5" />
   </g>
 );
 
@@ -94,55 +107,90 @@ const SurfaceVenus = ({ ringId }: { ringId: string }) => (
 
 const SurfaceEarth = () => (
   <g>
-    {/* Continent silhouettes — abstract hints, not literal maps */}
-    <g fill="#3f7d3a" opacity="0.85">
-      {/* Africa-ish */}
-      <path d="M104 72 C 112 70 122 82 120 96 C 118 110 110 116 102 118 C 95 120 92 110 95 100 C 95 88 100 78 104 72 Z" />
-      {/* Eurasia-ish */}
-      <path d="M70 60 C 88 55 110 60 124 64 C 130 68 116 76 96 76 C 80 76 65 70 70 60 Z" />
-      {/* Americas-ish */}
-      <path d="M52 78 C 60 72 70 80 68 92 C 70 110 60 130 56 142 C 50 138 46 122 48 108 C 48 96 46 84 52 78 Z" />
-      {/* Australia-ish */}
-      <path d="M132 122 C 140 120 148 126 144 134 C 140 140 130 138 128 132 C 126 128 128 124 132 122 Z" />
+    {/* Continent silhouettes — richer hints (Eurasia, Africa, N./S. America, Australia, Antarctica) */}
+    <g>
+      {/* Eurasia */}
+      <path d="M62 56 C 80 50 108 52 130 56 C 142 60 138 70 124 74 C 110 78 88 76 72 72 C 60 68 56 62 62 56 Z" fill="#4a8a3e" opacity="0.85" />
+      <path d="M120 60 C 134 58 152 62 154 70 C 152 76 138 76 124 72 Z" fill="#3a7430" opacity="0.85" />
+      {/* North Africa + Sahara hint */}
+      <path d="M96 76 C 112 76 122 84 120 96 C 118 106 108 110 100 108 C 94 106 90 96 92 88 C 92 82 94 78 96 76 Z" fill="#b88a4e" opacity="0.75" />
+      {/* Sub-Saharan / horn */}
+      <path d="M104 102 C 114 100 122 108 118 118 C 114 126 104 126 100 120 C 98 114 100 106 104 102 Z" fill="#3e7a35" opacity="0.85" />
+      {/* North America */}
+      <path d="M44 70 C 56 64 70 70 72 80 C 74 92 66 100 56 102 C 46 102 38 92 40 82 C 40 76 42 72 44 70 Z" fill="#4a8a3e" opacity="0.85" />
+      {/* Central + S. America */}
+      <path d="M58 104 C 64 100 70 108 68 116 C 70 130 62 142 56 148 C 50 144 48 130 50 120 C 52 112 54 106 58 104 Z" fill="#3a7430" opacity="0.85" />
+      {/* Australia */}
+      <path d="M134 124 C 144 122 152 128 148 136 C 142 142 130 140 128 134 C 126 130 130 126 134 124 Z" fill="#a87742" opacity="0.8" />
+      {/* Antarctica hint (bottom rim) */}
+      <ellipse cx="100" cy="172" rx="40" ry="6" fill="#f0f4ff" opacity="0.45" />
+      {/* Arctic ice cap */}
+      <ellipse cx="100" cy="30" rx="36" ry="5" fill="#f0f4ff" opacity="0.4" />
     </g>
-    {/* White cloud swirls (slowly rotating) */}
-    <motion.g animate={{ rotate: 360 }} transition={{ duration: 180, repeat: Infinity, ease: 'linear' }} style={{ transformOrigin: '100px 100px' }} opacity="0.55">
-      <ellipse cx="78" cy="62" rx="32" ry="6" fill="#ffffff" />
+    {/* Two cloud layers rotating at different rates */}
+    <motion.g animate={{ rotate: 360 }} transition={{ duration: 200, repeat: Infinity, ease: 'linear' }} style={{ transformOrigin: '100px 100px' }} opacity="0.55">
+      <ellipse cx="76" cy="60" rx="30" ry="4" fill="#ffffff" />
       <ellipse cx="120" cy="92" rx="34" ry="5" fill="#ffffff" />
-      <ellipse cx="90" cy="130" rx="40" ry="6" fill="#ffffff" />
+      <ellipse cx="92" cy="130" rx="38" ry="4" fill="#ffffff" />
     </motion.g>
+    <motion.g animate={{ rotate: -360 }} transition={{ duration: 280, repeat: Infinity, ease: 'linear' }} style={{ transformOrigin: '100px 100px' }} opacity="0.4">
+      <ellipse cx="110" cy="72" rx="22" ry="3" fill="#ffffff" />
+      <ellipse cx="70" cy="110" rx="26" ry="3" fill="#ffffff" />
+      <ellipse cx="130" cy="146" rx="20" ry="3" fill="#ffffff" />
+    </motion.g>
+    {/* Tight atmospheric blue rim */}
+    <circle cx="100" cy="100" r="84" fill="none" stroke="#9fd3ff" strokeOpacity="0.35" strokeWidth="1.2" />
   </g>
 );
 
 const SurfaceMars = () => (
   <g>
-    {/* Dark mare patches */}
-    <path d="M70 75 C 90 70 110 78 108 90 C 102 100 80 102 72 92 C 66 86 64 80 70 75 Z" fill="#562613" opacity="0.55" />
-    <path d="M120 110 C 138 110 142 124 132 132 C 122 138 110 132 112 122 C 113 116 116 112 120 110 Z" fill="#4a200f" opacity="0.5" />
-    <ellipse cx="85" cy="130" rx="22" ry="9" fill="#5a2a18" opacity="0.45" />
-    {/* Polar caps */}
-    <ellipse cx="100" cy="24" rx="22" ry="9" fill="#f5ece0" opacity="0.55" />
-    <ellipse cx="100" cy="176" rx="18" ry="7" fill="#f5ece0" opacity="0.4" />
-    {/* Highlights */}
-    <ellipse cx="135" cy="80" rx="10" ry="5" fill="#f0a877" opacity="0.4" />
+    {/* Dark mare regions — irregular shapes hinting at Syrtis Major / Mare Erythraeum */}
+    <path d="M60 72 C 78 64 100 70 110 80 C 116 90 108 100 92 102 C 76 102 62 92 58 84 C 56 80 58 76 60 72 Z" fill="#5a2410" opacity="0.6" />
+    <path d="M118 96 C 138 94 148 108 140 122 C 132 132 116 130 110 120 C 106 112 110 100 118 96 Z" fill="#4a1d0a" opacity="0.55" />
+    <ellipse cx="78" cy="128" rx="24" ry="11" fill="#5e2a16" opacity="0.5" />
+    <path d="M40 100 C 48 96 56 102 54 112 C 50 122 42 122 38 114 C 36 108 36 102 40 100 Z" fill="#4d1f0e" opacity="0.55" />
+    {/* Valles Marineris — long horizontal scar */}
+    <path d="M48 92 Q 90 88 138 96" stroke="#391506" strokeWidth="2.5" strokeOpacity="0.55" fill="none" strokeLinecap="round" />
+    <path d="M52 94 Q 90 92 134 100" stroke="#1f0703" strokeWidth="1" strokeOpacity="0.45" fill="none" strokeLinecap="round" />
+    {/* A few crater dots */}
+    <circle cx="86" cy="80" r="3" fill="#2b1006" opacity="0.6" />
+    <circle cx="124" cy="74" r="2.5" fill="#2b1006" opacity="0.55" />
+    <circle cx="100" cy="148" r="3.5" fill="#2b1006" opacity="0.6" />
+    {/* Polar caps — slightly larger + softer */}
+    <ellipse cx="100" cy="22" rx="26" ry="10" fill="#f5ede0" opacity="0.7" />
+    <ellipse cx="100" cy="178" rx="22" ry="8" fill="#f5ede0" opacity="0.55" />
+    {/* Warm sub-solar dust highlight */}
+    <ellipse cx="138" cy="78" rx="12" ry="6" fill="#f0a877" opacity="0.4" />
   </g>
 );
 
 const SurfaceJupiter = () => (
   <g>
-    {/* 5 horizontal bands */}
-    <rect x="16" y="48"  width="168" height="14" fill="#dab48a" opacity="0.5" />
-    <rect x="16" y="66"  width="168" height="10" fill="#7e5530" opacity="0.55" />
-    <rect x="16" y="82"  width="168" height="18" fill="#e8c690" opacity="0.45" />
-    <rect x="16" y="104" width="168" height="12" fill="#6f4a28" opacity="0.55" />
-    <rect x="16" y="120" width="168" height="14" fill="#d6a87a" opacity="0.45" />
-    <rect x="16" y="140" width="168" height="10" fill="#7e5b35" opacity="0.5" />
-    {/* Great Red Spot */}
-    <ellipse cx="86" cy="112" rx="14" ry="7" fill="#8a3018" opacity="0.85" />
-    <ellipse cx="86" cy="112" rx="9" ry="4" fill="#5c1a0a" opacity="0.7" />
-    {/* Swirl details */}
-    <ellipse cx="140" cy="92" rx="10" ry="3" fill="#fbe2b6" opacity="0.45" />
-    <ellipse cx="60" cy="124" rx="8" ry="3" fill="#fbe2b6" opacity="0.4" />
+    {/* 8 alternating equatorial bands of varying width — more photo-real */}
+    <rect x="16" y="38"  width="168" height="10" fill="#c89e72" opacity="0.55" />
+    <rect x="16" y="48"  width="168" height="12" fill="#7c5631" opacity="0.55" />
+    <rect x="16" y="60"  width="168" height="10" fill="#ddb589" opacity="0.5" />
+    <rect x="16" y="70"  width="168" height="14" fill="#6f4a26" opacity="0.55" />
+    <rect x="16" y="84"  width="168" height="18" fill="#eccea0" opacity="0.5" />
+    <rect x="16" y="102" width="168" height="10" fill="#7a4f29" opacity="0.6" />
+    <rect x="16" y="112" width="168" height="14" fill="#d8a87a" opacity="0.45" />
+    <rect x="16" y="126" width="168" height="12" fill="#65411f" opacity="0.55" />
+    <rect x="16" y="138" width="168" height="12" fill="#caa074" opacity="0.5" />
+    <rect x="16" y="150" width="168" height="10" fill="#7d5938" opacity="0.5" />
+    {/* Great Red Spot — three-layer ellipse with swirl rim */}
+    <ellipse cx="84" cy="110" rx="18" ry="8" fill="#8a3018" opacity="0.85" />
+    <ellipse cx="84" cy="110" rx="13" ry="6" fill="#a23a1c" opacity="0.85" />
+    <ellipse cx="84" cy="110" rx="8"  ry="3.5" fill="#581608" opacity="0.85" />
+    <ellipse cx="84" cy="110" rx="18" ry="8" fill="none" stroke="#fbe2b6" strokeWidth="0.6" strokeOpacity="0.5" />
+    {/* Band swirl streaks — small white wisps following bands */}
+    <ellipse cx="138" cy="78"  rx="10" ry="1.6" fill="#fbe2b6" opacity="0.55" />
+    <ellipse cx="56"  cy="92"  rx="14" ry="1.8" fill="#fbe2b6" opacity="0.5" />
+    <ellipse cx="120" cy="122" rx="12" ry="1.5" fill="#fbe2b6" opacity="0.45" />
+    <ellipse cx="48"  cy="138" rx="10" ry="1.6" fill="#fbe2b6" opacity="0.4" />
+    {/* Subtle band edge shading */}
+    <rect x="16" y="98" width="168" height="2" fill="#3a2410" opacity="0.45" />
+    <rect x="16" y="68" width="168" height="2" fill="#3a2410" opacity="0.3" />
   </g>
 );
 
