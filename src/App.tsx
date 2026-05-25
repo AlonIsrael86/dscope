@@ -8329,12 +8329,7 @@ const FeatureObjectCard = ({ feature, index }: any) => {
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group p-8 md:p-10 aspect-square flex flex-col items-center justify-center text-center backdrop-blur-[40px] shadow-[0_0_80px_rgba(59,130,246,0.12)] hover:shadow-[0_0_120px_rgba(59,130,246,0.22)] transition-shadow duration-500 relative"
-      style={{
-        background: 'radial-gradient(ellipse at center, rgba(5,8,16,0.85) 0%, rgba(5,8,16,0.6) 45%, rgba(5,8,16,0.25) 75%, rgba(5,8,16,0) 95%)',
-        WebkitMaskImage: 'radial-gradient(ellipse at center, black 50%, transparent 95%)',
-        maskImage: 'radial-gradient(ellipse at center, black 50%, transparent 95%)',
-      }}
+      className="group p-8 md:p-10 aspect-square flex flex-col items-center justify-center text-center bg-black/60 backdrop-blur-[40px] rounded-[2.5rem] shadow-[0_0_60px_rgba(59,130,246,0.10)] hover:shadow-[0_0_100px_rgba(59,130,246,0.20)] transition-all duration-500 relative overflow-hidden"
     >
       <div className="w-32 h-32 flex items-center justify-center mb-6 relative z-10 transition-transform duration-500 group-hover:scale-110">
          <SpaceTech2D type={feature.type} color={color} />
