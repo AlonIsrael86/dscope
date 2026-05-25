@@ -10184,7 +10184,8 @@ function AppContent() {
 
         {/* Global Background */}
         {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <GalaxyBackground />}
-        {((globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'about') && <OceanHorizonBackground />}
+        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <OceanHorizonBackground />}
+        {activeTab === 'about' && <NebulaBackground />}
         {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <MarsBackground />}
         {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <DeepOceanBackground />}
         {activeTab === 'dashboard' && <NebulaBackground />}
