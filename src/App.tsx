@@ -7,6 +7,7 @@ import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
 import { VoiceWidget } from './components/VoiceWidget';
 import { NebulaBackground } from './components/NebulaBackground';
+import { SankeyDiagram } from './components/SankeyDiagram';
 import { logger } from './lib/logger';
 import { featureFlags } from './lib/featureFlags';
 import { GoogleGenAI } from "@google/genai";
@@ -4222,6 +4223,66 @@ const AutomationDashboard = () => {
       </div>
 
       <DashboardCaseView />
+
+      {/* CASE STATE TRANSITIONS — animated Sankey flow (Alexei concept) */}
+      <AnimatedCaseFlowSankey />
+    </div>
+  );
+};
+
+// Wrapper around SankeyDiagram that periodically reshuffles case
+// priorities/statuses/agents so nodes visibly move while the source→target
+// connections stay (per Katia: "точки рухаються і міняються місцями але
+// зв'язки залишаються").
+const AnimatedCaseFlowSankey = () => {
+  const baseCases = useMemo(() => [
+    { id: 'c1', title: 'Sales Lead Triage',         department: 'Sales',      priority: 'High',   status: 'Success', agentId: 'a1' },
+    { id: 'c2', title: 'Cargo Routing',             department: 'Logistics',  priority: 'Medium', status: 'Running', agentId: 'a2' },
+    { id: 'c3', title: 'Contract Review',           department: 'Legal',      priority: 'High',   status: 'Failed',  agentId: 'a3' },
+    { id: 'c4', title: 'Onboarding Workflow',       department: 'Operations', priority: 'Low',    status: 'Success', agentId: 'a1' },
+    { id: 'c5', title: 'Subscription Renewal',      department: 'Sales',      priority: 'Medium', status: 'Running', agentId: 'a4' },
+    { id: 'c6', title: 'Compliance Audit',          department: 'Legal',      priority: 'High',   status: 'Success', agentId: 'a3' },
+    { id: 'c7', title: 'Shipment Anomaly',          department: 'Logistics',  priority: 'High',   status: 'Failed',  agentId: 'a2' },
+    { id: 'c8', title: 'CSAT Follow-up',            department: 'Operations', priority: 'Medium', status: 'Success', agentId: 'a5' },
+    { id: 'c9', title: 'Pipeline Forecasting',      department: 'Sales',      priority: 'Low',    status: 'Running', agentId: 'a4' },
+    { id: 'c10', title: 'Refund Processing',        department: 'Operations', priority: 'High',   status: 'Success', agentId: 'a1' },
+  ], []);
+  const agents = useMemo(() => [
+    { id: 'a1', name: 'Sarah.K' },
+    { id: 'a2', name: 'Smith.A' },
+    { id: 'a3', name: 'Elena.V' },
+    { id: 'a4', name: 'Mike.R' },
+    { id: 'a5', name: 'Anna.B' },
+  ], []);
+
+  const [cases, setCases] = useState(baseCases);
+
+  useEffect(() => {
+    const priorities = ['High', 'Medium', 'Low'];
+    const statuses = ['Success', 'Running', 'Failed'];
+    const id = setInterval(() => {
+      setCases(prev =>
+        prev.map(c => ({
+          ...c,
+          priority: priorities[Math.floor(Math.random() * priorities.length)],
+          status: statuses[Math.floor(Math.random() * statuses.length)],
+          agentId: agents[Math.floor(Math.random() * agents.length)].id,
+        }))
+      );
+    }, 3500);
+    return () => clearInterval(id);
+  }, [agents]);
+
+  return (
+    <div className="mt-12 p-6 rounded-[2rem] bg-white/[0.015] border border-white/5 backdrop-blur-xl relative overflow-hidden">
+      <div className="flex items-center gap-3 mb-4 px-2">
+        <Layers className="w-5 h-5 text-blue-400" />
+        <h3 className="text-2xl md:text-3xl font-display font-bold tracking-tight text-white">CASE STATE TRANSITIONS</h3>
+      </div>
+      <p className="text-[10px] font-mono uppercase tracking-widest text-white/40 mb-6 px-2">
+        D3.js live topological model · tracking traffic streams &amp; active bottlenecks
+      </p>
+      <SankeyDiagram cases={cases} agents={agents} />
     </div>
   );
 };

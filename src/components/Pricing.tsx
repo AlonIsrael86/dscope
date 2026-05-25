@@ -126,7 +126,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   // Tier 0 — Comet/Meteor with flame trail
   if (index === 0) {
     return (
-      <div className="relative w-28 h-28 mb-6 flex items-center justify-center group cursor-pointer select-none">
+      <div className="relative mb-6 inline-flex items-center justify-center group cursor-pointer select-none">
         <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125 group-hover:rotate-[15deg]">
           <defs>
             <linearGradient id="cometGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -159,7 +159,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   // Tier 1 — Satellite with orbiting rings
   if (index === 1) {
     return (
-      <div className="relative w-28 h-28 mb-6 flex items-center justify-center group cursor-pointer select-none">
+      <div className="relative mb-6 inline-flex items-center justify-center group cursor-pointer select-none">
         <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125">
           <defs>
             <linearGradient id="satBody" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -200,7 +200,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   // Tier 2 — Telescope with starfield
   if (index === 2) {
     return (
-      <div className="relative w-28 h-28 mb-6 flex items-center justify-center group cursor-pointer select-none">
+      <div className="relative mb-6 inline-flex items-center justify-center group cursor-pointer select-none">
         <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125 group-hover:rotate-[-8deg]">
           <defs>
             <linearGradient id="teleBody" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -241,7 +241,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
 
   // Tier 3 — Black Hole with accretion disk
   return (
-    <div className="relative w-28 h-28 mb-6 flex items-center justify-center group cursor-pointer select-none">
+    <div className="relative mb-6 inline-flex items-center justify-center group cursor-pointer select-none">
       <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125">
         <defs>
           <radialGradient id="bhCore" cx="50%" cy="50%" r="50%">
