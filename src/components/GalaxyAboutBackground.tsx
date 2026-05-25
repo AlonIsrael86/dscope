@@ -211,8 +211,8 @@ const jitterParams = (index: number, si: number) => {
     freqY: 0.0006 + ((seed * 0.0000041) % 0.0005),
     phaseX: ((seed * 0.7) % (2 * Math.PI)),
     phaseY: ((seed * 0.9) % (2 * Math.PI)),
-    ampX: 0.5 + ((seed % 7) * 0.1),  // 0.5 .. 1.2 %
-    ampY: 0.4 + ((seed % 5) * 0.12), // 0.4 .. 0.88 %
+    ampX: 0.12 + ((seed % 7) * 0.04), // 0.12 .. 0.36 %
+    ampY: 0.10 + ((seed % 5) * 0.04), // 0.10 .. 0.26 %
   };
 };
 
