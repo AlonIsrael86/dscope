@@ -5,7 +5,7 @@
 // real-client section that Katia explicitly asked to keep stays visible.
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { BookOpen, Headset, ShieldCheck, TrendingUp, Target, ArrowRight } from 'lucide-react';
+import { BookOpen, Headset, ShieldCheck, TrendingUp, Target, ArrowRight, Monitor } from 'lucide-react';
 import { AreaChart, Area, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { RealClientCases } from './RealClientCases';
 

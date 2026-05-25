@@ -3373,6 +3373,55 @@ const OrbitingNode = ({ node, progress, i, activeNode, setActiveNode }: { node: 
     </motion.div>
   );
 };
+const AnimatedNumber = ({ value }: { value: string }) => {
+  const parseValue = (valStr: string) => {
+    const cleanStr = valStr.replace(/,/g, '');
+    const match = cleanStr.match(/^([0-9.]+)(.*)$/);
+    if (match) {
+      const num = parseFloat(match[1]);
+      const suffix = match[2] || '';
+      return { num, suffix };
+    }
+    return { num: 0, suffix: valStr };
+  };
+
+  const getDecimalPlaces = (str: string) => {
+    const cleanStr = str.replace(/,/g, '');
+    const match = cleanStr.match(/^([0-9.]+)/);
+    if (match) {
+      const parts = match[1].split('.');
+      return parts.length > 1 ? parts[1].length : 0;
+    }
+    return 0;
+  };
+
+  const { num, suffix } = parseValue(value);
+  const decimals = getDecimalPlaces(value);
+  const originalHadCommas = value.includes(',');
+
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, { stiffness: 45, damping: 15, mass: 1 });
+
+  useEffect(() => {
+    const controls = animate(motionValue, num, { duration: 1.2, ease: "easeOut" });
+    return () => controls.stop();
+  }, [num, motionValue]);
+
+  const displayValue = useTransform(springValue, (latest) => {
+    let formatted = "";
+    if (decimals > 0) {
+      formatted = latest.toFixed(decimals);
+    } else if (originalHadCommas) {
+      formatted = Math.round(latest).toLocaleString();
+    } else {
+      formatted = Math.round(latest).toString();
+    }
+    return `${formatted}${suffix}`;
+  });
+
+  return <motion.span>{displayValue}</motion.span>;
+};
+
 const AutomationDashboard = () => {
   const [selectedRole, setSelectedRole] = useState<'Sales' | 'Support' | 'Operations' | 'Executive' | 'Audience'>('Executive');
   const [secondsSaved, setSecondsSaved] = useState(12845000);
