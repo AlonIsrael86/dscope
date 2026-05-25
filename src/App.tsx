@@ -11,7 +11,7 @@ import { logger } from './lib/logger';
 import { featureFlags } from './lib/featureFlags';
 import { GoogleGenAI } from "@google/genai";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, animate, useSpring, useMotionValueEvent, useInView, useTime } from "motion/react";
-import { Menu, X, Zap, RefreshCw, Download, Share2, Sparkles, Shield, Rocket, Cpu, Bot, Users, Smartphone, Keyboard, Monitor, Brain, ArrowRight, CheckCircle2, Search, Mail, Calendar, MessageSquare, Database, Clock, TrendingUp, AlertCircle, DollarSign, Activity, Satellite, Telescope, MapPin, Package, Home, Truck, Globe, Radio, Orbit, Eye, Landmark, HeartPulse, Factory, Scale, Target, GraduationCap, Coffee, Hammer, Building2, Tractor, ShoppingCart, Car, Film, RadioTower, FlaskConical, Lock, Gem, Moon, Sun, Server, BarChart3, ScanText, Infinity as InfinityIcon, Dna, Webhook, History, Heart, BookOpen, Layers, Box, ShieldCheck, Star, Headset, Mic, Volume2, User, Plane, Gamepad2, Droplets, Anchor, Palette, Train, HeartHandshake, Map, Compass, LayoutDashboard, Settings, Microscope, Coins, CloudSun, Recycle, BrainCircuit, Bed, Scissors, Atom, TrainFront, Languages, Sprout, ThermometerSnowflake, Wifi, HardHat, Weight, Music, Layout, PencilLine } from "lucide-react";
+import { Menu, X, Zap, RefreshCw, Download, Share2, Sparkles, Shield, Rocket, Cpu, Bot, Users, Smartphone, Keyboard, Monitor, Brain, ArrowRight, CheckCircle2, Search, Mail, Calendar, MessageSquare, Database, Clock, TrendingUp, AlertCircle, DollarSign, Activity, Satellite, Telescope, MapPin, Package, Home, Truck, Globe, Radio, Orbit, Eye, Landmark, HeartPulse, Factory, Scale, Target, GraduationCap, Coffee, Hammer, Building2, Tractor, ShoppingCart, Car, Film, RadioTower, FlaskConical, Lock, Gem, Moon, Sun, Server, BarChart3, ScanText, Infinity as InfinityIcon, Dna, Webhook, History, Heart, BookOpen, Layers, Box, ShieldCheck, Star, Headset, Mic, Volume2, User, Plane, Gamepad2, Droplets, Anchor, Palette, Train, HeartHandshake, Map, Compass, LayoutDashboard, Settings, Microscope, Coins, CloudSun, Recycle, BrainCircuit, Bed, Scissors, Atom, TrainFront, Languages, Sprout, ThermometerSnowflake, Wifi, HardHat, Weight, Music, Layout, PencilLine, ChevronDown, ChevronUp } from "lucide-react";
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { SPACE_ANIMALS_3D } from './components/RealisticAnimals3D';
 import { SPACE_TECH } from './data/spaceTechConstants';
@@ -2458,7 +2458,7 @@ const PlatformAnimatedTitle = () => {
        <motion.span
          onMouseEnter={() => setIsConnectsHovered(true)}
          onMouseLeave={() => setIsConnectsHovered(false)}
-         className={`cursor-pointer relative inline-flex items-center align-middle transition-all duration-300 mr-3 md:mr-4 ${isConnectsHovered ? 'text-white' : 'text-purple-400'} ${isConnectsHovered ? 'ml-3 md:ml-4' : 'ml-0'}`}
+         className={`cursor-pointer relative inline-flex items-center justify-center align-middle transition-colors duration-300 mr-3 md:mr-4 ml-3 md:ml-4 min-w-[6em] ${isConnectsHovered ? 'text-white' : 'text-purple-400'}`}
        >
          <AnimatePresence mode="popLayout">
            {isConnectsHovered ? (
