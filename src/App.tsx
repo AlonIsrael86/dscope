@@ -1582,7 +1582,7 @@ const SpaceBackground = memo(() => {
       <AmbientEtherealParticles scrollYProgress={scrollYProgress} />
 
       {/* Parallax Stars */}
-      <CelestialBody />
+      {/* CelestialBody removed per Katia — was the scroll-driven gray cratered Moon orb */}
       <div className="absolute inset-[-10%] w-[120%] h-[120%]">
         {starLayers.map((stars, layer) => (
           <StarLayer 
