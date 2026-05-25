@@ -10393,9 +10393,7 @@ function AppContent() {
 
             <TeamSection />
 
-            <InViewGate minHeight="80vh">
-              <DataClusterGallery />
-            </InViewGate>
+            <DataClusterGallery />
           </motion.main>
         )}
 
