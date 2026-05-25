@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { Truck, ScanText, ShieldCheck, DollarSign, BookOpen, ArrowRight } from 'lucide-react';
 import { RealClientCases } from './RealClientCases';
+import { TestimonialsSection } from './Testimonials';
 
 export const CaseStudies = () => {
   const cases = [
@@ -127,6 +128,9 @@ export const CaseStudies = () => {
 
       {/* Real client testimonials — added under the main case studies grid */}
       <RealClientCases />
+
+      {/* 4 testimonials cards at the bottom (per Katia decision) */}
+      <TestimonialsSection />
     </motion.main>
   );
 };
