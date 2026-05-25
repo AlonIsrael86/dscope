@@ -4230,12 +4230,12 @@ const AutomationDashboard = () => {
   );
 };
 
-// Wrapper around SankeyDiagram that periodically reshuffles case
-// priorities/statuses/agents so nodes visibly move while the source→target
-// connections stay (per Katia: "точки рухаються і міняються місцями але
-// зв'язки залишаються").
+// Wrapper around SankeyDiagram with a stable case dataset. Per Katia:
+// the diagram should compose its nodes/links once on mount (the entry
+// animation built into SankeyDiagram itself) and then stay put — no
+// periodic reshuffling that makes it "re-assemble every few seconds".
 const AnimatedCaseFlowSankey = () => {
-  const baseCases = useMemo(() => [
+  const cases = useMemo(() => [
     { id: 'c1', title: 'Sales Lead Triage',         department: 'Sales',      priority: 'High',   status: 'Success', agentId: 'a1' },
     { id: 'c2', title: 'Cargo Routing',             department: 'Logistics',  priority: 'Medium', status: 'Running', agentId: 'a2' },
     { id: 'c3', title: 'Contract Review',           department: 'Legal',      priority: 'High',   status: 'Failed',  agentId: 'a3' },
@@ -4254,24 +4254,6 @@ const AnimatedCaseFlowSankey = () => {
     { id: 'a4', name: 'Mike.R' },
     { id: 'a5', name: 'Anna.B' },
   ], []);
-
-  const [cases, setCases] = useState(baseCases);
-
-  useEffect(() => {
-    const priorities = ['High', 'Medium', 'Low'];
-    const statuses = ['Success', 'Running', 'Failed'];
-    const id = setInterval(() => {
-      setCases(prev =>
-        prev.map(c => ({
-          ...c,
-          priority: priorities[Math.floor(Math.random() * priorities.length)],
-          status: statuses[Math.floor(Math.random() * statuses.length)],
-          agentId: agents[Math.floor(Math.random() * agents.length)].id,
-        }))
-      );
-    }, 3500);
-    return () => clearInterval(id);
-  }, [agents]);
 
   return (
     <div className="mt-12 p-6 rounded-[2rem] bg-white/[0.015] border border-white/5 backdrop-blur-xl relative overflow-hidden">
