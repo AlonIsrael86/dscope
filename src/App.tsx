@@ -1308,15 +1308,14 @@ const SymbolIcon = ({ symbolId, color, size = 24, className = "" }: { symbolId: 
 
 const NAV_TABS = [
   { id: 'home', label: 'Home', symbolId: 'alpha' },
-  { id: 'vision', label: 'Vision', symbolId: 'omega' },
+  { id: 'vision', label: 'our vision', symbolId: 'omega' },
   { id: 'command-hub', label: 'Platform', symbolId: 'gamma' },
   { id: 'dashboard', label: 'DASHBOARDS', symbolId: 'sigma' },
   { id: 'services', label: 'Services', symbolId: 'phi' },
-  { id: 'industries', label: 'Industries', symbolId: 'sigma' },
+  { id: 'industries', label: 'Industries', symbolId: 'theta' },
   { id: 'pricing', label: 'Pricing', symbolId: 'delta' },
-  { id: 'about', label: 'Company', symbolId: 'figma' },
-  { id: 'team', label: 'Team', symbolId: 'omega' },
-  { id: 'case-studies', label: 'Case Studies', symbolId: 'delta' },
+  { id: 'about', label: 'About us', symbolId: 'figma' },
+  { id: 'case-studies', label: 'Case Studies', symbolId: 'beta' },
   // Brand Book intentionally hidden from public nav. Source remains in repo;
   // route is also removed from URL_TO_TAB below so the page is unreachable from the site.
   { id: 'contact', label: 'Contact', symbolId: 'phi' },
@@ -1331,7 +1330,6 @@ const URL_TO_TAB: Record<string, string> = {
   '/industries': 'industries',
   '/pricing': 'pricing',
   '/company': 'about',
-  '/team': 'team',
   '/case-studies': 'case-studies',
   '/contact': 'contact',
 };
@@ -1349,7 +1347,6 @@ const PAGE_TITLES: Record<string, string> = {
   '/industries': 'Industries - Dscope',
   '/pricing': 'Pricing - Dscope',
   '/company': 'Company - Dscope',
-  '/team': 'Team - The Operators Behind Dscope',
   '/case-studies': 'Case Studies - Dscope',
   '/brand-book': 'Brand Book - Dscope',
   '/contact': 'Contact - Dscope',
@@ -1364,7 +1361,6 @@ const PAGE_DESCRIPTIONS: Record<string, string> = {
   '/industries': 'Dscope in the wild - travel, finance, education, real estate, government, and beyond. Industry-specific deployments at planetary scale.',
   '/pricing': 'Dscope decagon pricelist. Transparent enterprise pricing for the multi-tasking AI automation platform. Updating - final v2.1 pricing lands soon.',
   '/company': 'The Dscope company - mission, vision, and operating philosophy behind the AI automation platform.',
-  '/team': 'The Dscope team. Founders, engineers, and operators who have shipped AI and automation at scale across travel, finance, education, real estate, and government.',
   '/case-studies': 'Dscope case studies. How enterprise teams ship AI automation faster with the decagon platform.',
   '/brand-book': 'The Dscope brand book - typography, color, symbols, motion, and the cosmic visual language.',
   '/contact': 'Talk to the Dscope team. Schedule a platform walk-through, request a pilot, or contact the founders directly.',
