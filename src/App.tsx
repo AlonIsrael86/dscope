@@ -5131,7 +5131,7 @@ const DataClusterGallery = () => {
   ], []);
 
   return (
-    <section ref={containerRef} className="py-32 md:py-64 relative min-h-[500vh] flex flex-col justify-start overflow-hidden border-t border-white/5">
+    <section ref={containerRef} className="py-16 md:py-24 relative min-h-[160vh] flex flex-col justify-start overflow-hidden border-t border-white/5">
       
       {/* FIXED HEADER - More fluid transitions */}
       <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-center z-30 pointer-events-none">
