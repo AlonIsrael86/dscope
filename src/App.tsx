@@ -5,6 +5,7 @@ import { CaseStudies } from './routes/CaseStudies';
 import { TestimonialsSection } from './routes/Testimonials';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
+import { VoiceWidget } from './components/VoiceWidget';
 import { logger } from './lib/logger';
 import { featureFlags } from './lib/featureFlags';
 import { GoogleGenAI } from "@google/genai";
@@ -9999,6 +10000,7 @@ function AppContent() {
           </div>
         </div>
       </footer>
+      <VoiceWidget />
       </motion.div>
     </div>
   );
