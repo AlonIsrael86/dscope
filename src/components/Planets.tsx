@@ -82,7 +82,6 @@ export const RealisticPlanet = ({
 
   const uid = `pl-${planet.id}-${seed}`;
   const idBody = `${uid}-body`;
-  const idHalo = `${uid}-halo`;
   const idRingGrad = `${uid}-ring`;
 
   return (
@@ -146,13 +145,6 @@ export const RealisticPlanet = ({
             <stop offset="100%" stopColor={p.void_} stopOpacity="0.98" />
           </radialGradient>
 
-          {/* Outside-the-body halo — narrow + low opacity, no contour */}
-          <radialGradient id={idHalo} cx="50%" cy="50%" r="50%">
-            <stop offset="86%" stopColor="transparent" />
-            <stop offset="91%" stopColor={p.halo} stopOpacity="0.18" />
-            <stop offset="100%" stopColor="transparent" />
-          </radialGradient>
-
           {/* Ring gradient — very muted */}
           {(planet.hasRings || planet.id === 'uranus') && (
             <linearGradient id={idRingGrad} x1="0%" y1="50%" x2="100%" y2="50%">
@@ -184,10 +176,7 @@ export const RealisticPlanet = ({
           />
         )}
 
-        {/* Soft outside-body halo */}
-        <circle cx="100" cy="100" r="96" fill={`url(#${idHalo})`} />
-
-        {/* The planet itself — single gradient, no surface clutter */}
+        {/* The planet itself — single gradient, no surface clutter, no halo contour */}
         <circle cx="100" cy="100" r="84" fill={`url(#${idBody})`} />
 
         {/* Saturn ring (front half) */}
