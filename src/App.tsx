@@ -2458,24 +2458,24 @@ const PlatformAnimatedTitle = () => {
        <motion.span
          onMouseEnter={() => setIsConnectsHovered(true)}
          onMouseLeave={() => setIsConnectsHovered(false)}
-         className={`cursor-pointer relative inline-flex items-center justify-center align-middle transition-colors duration-300 mr-3 md:mr-4 ml-3 md:ml-4 min-w-[6em] ${isConnectsHovered ? 'text-white' : 'text-purple-400'}`}
+         className={`cursor-pointer relative inline-block align-middle transition-colors duration-300 mr-3 md:mr-4 ${isConnectsHovered ? 'text-white' : 'text-purple-400'}`}
        >
-         <AnimatePresence mode="popLayout">
-           {isConnectsHovered ? (
+         {/* Connects word always occupies its natural width — invisible when hovered so chain SVG overlays in the same slot, zero layout shift */}
+         <span className={isConnectsHovered ? 'invisible' : ''}>Connects</span>
+         <AnimatePresence>
+           {isConnectsHovered && (
              <motion.span
                key="chain"
-               initial={{ opacity: 0, scale: 0.6, rotate: -8 }}
-               animate={{ opacity: 1, scale: 1, rotate: 0 }}
-               exit={{ opacity: 0, scale: 0.6, rotate: 8 }}
+               initial={{ opacity: 0, scale: 0.6 }}
+               animate={{ opacity: 1, scale: 1 }}
+               exit={{ opacity: 0, scale: 0.6 }}
                transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-               className="inline-flex items-baseline"
+               className="absolute inset-0 flex items-center justify-center pointer-events-none"
                aria-label="Connector"
              >
-               {/* Stylised interlocked chain links — brand-colored, glowing */}
                <svg
                  viewBox="0 0 120 40"
                  className="h-[0.7em] w-auto drop-shadow-[0_0_12px_rgba(79,172,254,0.55)]"
-                 style={{ verticalAlign: 'baseline', transform: 'translateY(-0.15em)' }}
                  fill="none"
                  stroke="currentColor"
                  strokeWidth="4"
@@ -2489,24 +2489,10 @@ const PlatformAnimatedTitle = () => {
                      <stop offset="100%" stopColor="#a78bfa" />
                    </linearGradient>
                  </defs>
-                 {/* Link 1 */}
                  <rect x="4" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
-                 {/* Link 2 — interlocking with link 1 and 3 */}
                  <rect x="37" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
-                 {/* Link 3 */}
                  <rect x="70" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
                </svg>
-             </motion.span>
-           ) : (
-             <motion.span
-               key="word"
-               initial={{ opacity: 0, y: -8 }}
-               animate={{ opacity: 1, y: 0 }}
-               exit={{ opacity: 0, y: 8 }}
-               transition={{ duration: 0.25 }}
-               className="inline-block"
-             >
-               Connects
              </motion.span>
            )}
          </AnimatePresence>
