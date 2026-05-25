@@ -8661,11 +8661,327 @@ const VisionSection = ({ smoothProgress, scrollYProgress }: { smoothProgress: an
   );
 };
 
+const getPhaseForIndustry = (name: string): string => {
+  const n = name.toLowerCase();
+  if (n.includes("insurance") || n.includes("legal") || n.includes("public") || n.includes("strategic") || n.includes("non-profit") || n.includes("governance") || n.includes("interior") || n.includes("planning") || n.includes("mural")) return 'legacy';
+  if (n.includes("financial") || n.includes("learning") || n.includes("retail") || n.includes("marketing") || n.includes("ethnography") || n.includes("wellness") || n.includes("biometrics") || n.includes("music") || n.includes("audio")) return 'cognitive';
+  if (n.includes("delivery") || n.includes("factory") || n.includes("food") || n.includes("shipping") || n.includes("construction") || n.includes("agriculture") || n.includes("aquaponics") || n.includes("cryogenic")) return 'collaborative';
+  if (n.includes("security") || n.includes("telecomm") || n.includes("healthcare") || n.includes("real estate") || n.includes("bio") || n.includes("machining") || n.includes("transit")) return 'agentic';
+  return 'autonomous';
+};
+
+const EvolutionaryRoadmap = ({ onSelectPhase, activePhase }: { onSelectPhase: (phase: string | null) => void, activePhase: string | null }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [hoveredSector, setHoveredSector] = useState<string | null>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"]
+  });
+  const springProgress = useSpring(scrollYProgress, { stiffness: 60, damping: 20 });
+
+  const stages = [
+    {
+      id: 'legacy',
+      num: '01',
+      title: 'Legacy State',
+      era: 'Pre-2024 • System Silos',
+      icon: History,
+      color: '#ef4444',
+      glow: 'rgba(239, 68, 68, 0.4)',
+      bgGradient: 'from-red-500/10 to-red-950/20',
+      borderGlow: 'hover:border-red-500/40',
+      activeBorder: 'border-red-500 shadow-[0_0_30px_rgba(239, 68, 68, 0.25)]',
+      desc: 'Siloed database structures, legacy system barriers, heavy administrative oversight, and high human manual effort.',
+      metric: '92% Manual Oversight',
+      metricLabel: 'Processing bottlenecks',
+      examples: ['Traditional Insurance', 'Legal Discovery', 'Standard Administrative Bureaucracy']
+    },
+    {
+      id: 'cognitive',
+      num: '02',
+      title: 'Cognitive Integration',
+      era: '2024 • Context-Aware Copilots',
+      icon: Brain,
+      color: '#f59e0b',
+      glow: 'rgba(245, 158, 11, 0.4)',
+      bgGradient: 'from-orange-500/10 to-orange-950/20',
+      borderGlow: 'hover:border-orange-500/40',
+      activeBorder: 'border-orange-500 shadow-[0_0_30px_rgba(245, 158, 11, 0.25)]',
+      desc: 'Consolidation of unstructured streams, optical OCR extractions, and contextual search helpers answering user requests.',
+      metric: '3.5x Throughput Increase',
+      metricLabel: 'Retrieval latency speedup',
+      examples: ['Financial Ops', 'AI Scoring Agents', 'Retail Support Systems']
+    },
+    {
+      id: 'collaborative',
+      num: '03',
+      title: 'Collaborative Automation',
+      era: '2025 • Sequential Integrations',
+      icon: Webhook,
+      color: '#10b981',
+      glow: 'rgba(16, 185, 129, 0.4)',
+      bgGradient: 'from-emerald-500/10 to-emerald-950/20',
+      borderGlow: 'hover:border-emerald-500/40',
+      activeBorder: 'border-emerald-500 shadow-[0_0_30px_rgba(16, 185, 129, 0.25)]',
+      desc: 'Seamless multi-step automated pipelines. Systems self-route transactional records with high-performance automated handshakes.',
+      metric: '80% Workload Reduction',
+      metricLabel: 'Routine repetitive workflows',
+      examples: ['Global Delivery Logistics', 'Processes Factory', 'Cryogenic Freight Systems']
+    },
+    {
+      id: 'agentic',
+      num: '04',
+      title: 'Agentic Coordination',
+      era: '2026 • Specialist Multi-Agent Swarms',
+      icon: Bot,
+      color: '#3b82f6',
+      glow: 'rgba(59, 130, 246, 0.4)',
+      bgGradient: 'from-blue-500/10 to-blue-950/20',
+      borderGlow: 'hover:border-blue-500/40',
+      activeBorder: 'border-blue-500 shadow-[0_0_30px_rgba(59, 130, 246, 0.25)]',
+      desc: 'Multi-agent frameworks carrying out complex jobs. Specialist nodes coordinate dynamically to achieve complex high-integrity targets.',
+      metric: '<120ms Dynamic Re-route',
+      metricLabel: 'Complex decision latency',
+      examples: ['Cyber Threats Triage', 'Telecom Networks', 'Smart Real Estate Grids']
+    },
+    {
+      id: 'autonomous',
+      num: '05',
+      title: 'Autonomous Orchestration',
+      era: '2027+ • Self-Evolving Ecosystems',
+      icon: Orbit,
+      color: '#8b5cf6',
+      glow: 'rgba(139, 92, 246, 0.4)',
+      bgGradient: 'from-purple-500/10 to-purple-950/20',
+      borderGlow: 'hover:border-purple-500/40',
+      activeBorder: 'border-purple-500 shadow-[0_0_30px_rgba(139, 92, 246, 0.25)]',
+      desc: 'Self-regulating cybernetic loops governing planetary-scale assets. Agents self-repair and optimize infrastructure in real-time.',
+      metric: '99.999% Zero-Human Touch',
+      metricLabel: 'End-to-end task automation',
+      examples: ['Space Deep Exploration', 'Fusion Smart Grids', 'Quantum Computations Units']
+    }
+  ];
+
+  return (
+    <div ref={containerRef} className="relative max-w-7xl mx-auto py-20 px-4 md:px-8">
+      {/* Visual background gradient blur */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] pointer-events-none rounded-full" />
+      
+      <div className="text-center mb-16 max-w-3xl mx-auto">
+        <span className="text-xs font-mono tracking-[0.4em] text-blue-400 uppercase block mb-3">evolutionary pathway</span>
+        <h3 className="text-3xl md:text-5xl font-display font-light text-white tracking-tight mb-4">The Evolution to Autonomy</h3>
+        <p className="text-white/40 font-light text-base md:text-lg">
+          Trace DeltaScope's transformative road mapping of critical sectors. 
+          <span className="text-blue-400 font-semibold"> Tap any phase card</span> to isolatively filter compatible sectors in the grid below.
+        </p>
+      </div>
+
+      <div className="relative">
+        {/* Dynamic Connected Progress Line */}
+        <div className="absolute top-[32px] bottom-[32px] left-6 md:left-1/2 w-0.5 bg-white/[0.03] -translate-x-1/2 rounded-full overflow-hidden">
+          <motion.div 
+            style={{ scaleY: springProgress }}
+            className="w-full h-full bg-gradient-to-b from-red-500 via-orange-500 via-emerald-500 via-blue-500 to-purple-500 origin-top rounded-full shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+          />
+        </div>
+
+        {/* Timeline Items */}
+        <div className="space-y-16 relative">
+          {stages.map((stage, idx) => {
+            const IconComponent = stage.icon;
+            const isEven = idx % 2 === 0;
+            const isSelected = activePhase === stage.id;
+            const isDimmed = activePhase !== null && !isSelected;
+
+            return (
+              <motion.div
+                key={stage.id}
+                className={`flex flex-col md:flex-row items-stretch md:items-center relative ${
+                  isEven ? 'md:flex-row-reverse' : ''
+                } transition-all duration-500 ${isDimmed ? 'opacity-30 scale-[0.98] blur-[0.5px]' : 'opacity-100'}`}
+              >
+                {/* Timeline center bullet */}
+                <div className="absolute left-6 md:left-1/2 top-8 md:top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 flex items-center justify-center">
+                  <motion.button
+                    onClick={() => onSelectPhase(isSelected ? null : stage.id)}
+                    whileHover={{ scale: 1.2 }}
+                    className={`w-10 h-10 rounded-full border flex items-center justify-center cursor-pointer transition-all duration-300 ${
+                      isSelected 
+                        ? 'border-transparent text-white scale-110 shadow-lg' 
+                        : 'border-white/25 text-white/50 bg-[#06060c]'
+                    }`}
+                    style={{ 
+                      backgroundColor: isSelected ? stage.color : undefined,
+                      boxShadow: isSelected ? `0 0 20px ${stage.glow}` : undefined
+                    }}
+                  >
+                    <IconComponent size={16} strokeWidth={2.5} />
+                  </motion.button>
+                </div>
+
+                {/* Content block */}
+                <div className={`w-full md:w-[45%] pl-16 md:pl-0 ${isEven ? 'md:pr-12 md:text-right' : 'md:pl-12 md:text-left'}`}>
+                  <motion.div
+                    onClick={() => onSelectPhase(isSelected ? null : stage.id)}
+                    whileHover={{ scale: 1.02 }}
+                    className={`p-6 md:p-8 rounded-[2rem] bg-white/[0.01] border backdrop-blur-xl cursor-pointer transition-all duration-300 select-none ${
+                      isSelected ? stage.activeBorder : 'border-white/5 ' + stage.borderGlow + ' hover:bg-white/[0.03]'
+                    }`}
+                  >
+                    <div className={`flex items-center gap-2 mb-3 font-mono text-[10px] uppercase font-black tracking-widest ${
+                      isEven ? 'md:justify-end' : 'md:justify-start'
+                    }`}>
+                      <span style={{ color: stage.color }}>PHASE {stage.num}</span>
+                      <span className="text-white/20">•</span>
+                      <span className="text-white/40">{stage.era}</span>
+                    </div>
+
+                    <h4 className="text-2xl font-display font-medium text-white mb-3 tracking-tight">
+                      {stage.title}
+                    </h4>
+
+                    <p className={`text-sm text-white/50 font-light leading-relaxed mb-4 ${
+                      isEven ? 'md:text-right' : 'md:text-left'
+                    }`}>
+                      {stage.desc}
+                    </p>
+
+                    {/* Shifting industries preview */}
+                    <div className="mb-4">
+                      <span className="text-[9px] font-mono text-white/30 uppercase tracking-widest block mb-2 font-black">Shifting Sectors</span>
+                      <div className={`flex flex-wrap gap-2 ${isEven ? 'md:justify-end' : 'md:justify-start'}`}>
+                        {stage.examples.map((ex, ie) => {
+                          const tech = getTechForSector(ex);
+                          const hoverKey = `${stage.id}-${ex}`;
+                          const isHovered = hoveredSector === hoverKey;
+                          
+                          return (
+                            <div key={ie} className="relative">
+                              <motion.span 
+                                onMouseEnter={() => setHoveredSector(hoverKey)}
+                                onMouseLeave={() => setHoveredSector(null)}
+                                whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.08)", borderColor: stage.color }}
+                                className="text-[10px] font-mono text-white/60 bg-white/5 border border-white/5 rounded-full px-2.5 py-1.5 cursor-pointer block transition-all duration-300 relative z-30"
+                              >
+                                {ex}
+                              </motion.span>
+                              
+                              <AnimatePresence>
+                                {isHovered && (
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.92, y: 8 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.92, y: 8 }}
+                                    transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                                    className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-64 p-3.5 bg-[#070b19] border border-blue-500/30 backdrop-blur-xl rounded-2xl shadow-[0_15px_40px_rgba(0,0,0,0.85)] z-[100] pointer-events-none text-left"
+                                    style={{ borderColor: `${stage.color}50` }}
+                                  >
+                                    <div className="text-[8px] font-mono tracking-widest uppercase mb-1.5 flex items-center gap-1 font-black" style={{ color: stage.color }}>
+                                      <Zap size={10} strokeWidth={3} /> System Architecture
+                                    </div>
+                                    <div className="text-xs font-semibold text-white/90 mb-1 font-display">
+                                      {tech.name}
+                                    </div>
+                                    <div className="text-[10px] text-white/45 font-mono leading-relaxed">
+                                      {tech.desc}
+                                    </div>
+                                    
+                                    {/* Tooltip Chevron Indicator */}
+                                    <div 
+                                      className="absolute top-full left-1/2 -translate-x-1/2 -translate-y-[1px] border-6 border-transparent border-t-[#070b19] z-50 pointer-events-none"
+                                    />
+                                    <div 
+                                      className="absolute top-full left-1/2 -translate-x-1/2 border-6 border-transparent border-t-blue-500/30 -z-10 pointer-events-none"
+                                      style={{ borderTopColor: `${stage.color}50` }}
+                                    />
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Stat / Impact callout */}
+                    <div className={`flex items-center gap-3 pt-4 border-t border-white/5 ${
+                      isEven ? 'md:justify-end' : 'md:justify-start'
+                    }`}>
+                      <div className={isEven ? 'text-right' : 'text-left'}>
+                        <p className="text-lg font-display font-black text-white italic leading-none">{stage.metric}</p>
+                        <p className="text-[9px] font-mono text-white/40 uppercase tracking-wide mt-1">{stage.metricLabel}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+                
+                {/* Symmetry element */}
+                <div className="hidden md:block md:w-[45%]" />
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const getTechForSector = (sectorName: string) => {
+  const normalized = sectorName.toLowerCase();
+  let techId = "govt"; // default
+  if (normalized.includes("insurance") || normalized.includes("security") || normalized.includes("defense")) techId = "defense";
+  else if (normalized.includes("legal") || normalized.includes("finance") || normalized.includes("ops") || normalized.includes("trading") || normalized.includes("monetary") || normalized.includes("coin") || normalized.includes("venture")) techId = "finance";
+  else if (normalized.includes("delivery") || normalized.includes("logistics") || normalized.includes("transit") || normalized.includes("supply")) techId = "logistics";
+  else if (normalized.includes("learning") || normalized.includes("academic") || normalized.includes("research") || normalized.includes("ethnography") || normalized.includes("quantum")) techId = "academic";
+  else if (normalized.includes("factory") || normalized.includes("process") || normalized.includes("machining") || normalized.includes("heavy")) techId = "factory";
+  else if (normalized.includes("food") || normalized.includes("beverage") || normalized.includes("hospitality") || normalized.includes("leisure") || normalized.includes("non-profit")) techId = "hospitality";
+  else if (normalized.includes("shipping") || normalized.includes("freight") || normalized.includes("tourism") || normalized.includes("oceanography")) techId = "shipping";
+  else if (normalized.includes("construction") || normalized.includes("infrastructure") || normalized.includes("architecture") || normalized.includes("mining") || normalized.includes("res")) techId = "construction";
+  else if (normalized.includes("health") || normalized.includes("medical") || normalized.includes("biometric") || normalized.includes("wellness")) techId = "healthcare";
+  else if (normalized.includes("real estate") || normalized.includes("building") || normalized.includes("property") || normalized.includes("interior") || normalized.includes("design")) techId = "realestate";
+  else if (normalized.includes("energy") || normalized.includes("grid") || normalized.includes("power") || normalized.includes("fusion")) techId = "energy";
+  else if (normalized.includes("agriculture") || normalized.includes("farm") || normalized.includes("sprout") || normalized.includes("textile") || normalized.includes("aquaponic") || normalized.includes("circular")) techId = "agriculture";
+  else if (normalized.includes("retail") || normalized.includes("commerce") || normalized.includes("shop")) techId = "retail";
+  else if (normalized.includes("automotive") || normalized.includes("car") || normalized.includes("driving") || normalized.includes("rail")) techId = "automotive";
+  else if (normalized.includes("entertainment") || normalized.includes("film") || normalized.includes("music") || normalized.includes("game") || normalized.includes("esport") || normalized.includes("art")) techId = "entertainment";
+  else if (normalized.includes("telecomm") || normalized.includes("network") || normalized.includes("wifi") || normalized.includes("broadband") || normalized.includes("satellite")) techId = "telecomm";
+  else if (normalized.includes("pharma") || normalized.includes("drug") || normalized.includes("bio-eng") || normalized.includes("chemical")) techId = "pharma";
+  else if (normalized.includes("aerospace") || normalized.includes("aviation") || normalized.includes("rocket") || normalized.includes("space")) techId = "aerospace";
+  else if (normalized.includes("marketing") || normalized.includes("advert") || normalized.includes("brand") || normalized.includes("social")) techId = "marketing";
+
+  return INDUSTRY_TECH.find(t => t.id === techId) || INDUSTRY_TECH[0];
+};
+
 const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
   const [selectedSector, setSelectedSector] = useState<any>(null);
+  const [activePhase, setActivePhase] = useState<string | null>(null);
 
   const handleSelectSector = (sector: any) => {
     setSelectedSector(sector);
+  };
+
+  const getEgyptIdForAreaName = (name: string): string => {
+    const normalized = name.toLowerCase();
+    if (normalized.includes("insurance") || normalized.includes("security") || normalized.includes("defense")) return "defense";
+    if (normalized.includes("legal") || normalized.includes("finance") || normalized.includes("ops") || normalized.includes("trading") || normalized.includes("monetary") || normalized.includes("coin") || normalized.includes("venture")) return "finance";
+    if (normalized.includes("delivery") || normalized.includes("logistics") || normalized.includes("transit") || normalized.includes("supply")) return "logistics";
+    if (normalized.includes("learning") || normalized.includes("academic") || normalized.includes("research") || normalized.includes("ethnography") || normalized.includes("quantum")) return "academic";
+    if (normalized.includes("factory") || normalized.includes("process") || normalized.includes("machining") || normalized.includes("heavy")) return "factory";
+    if (normalized.includes("food") || normalized.includes("beverage") || normalized.includes("hospitality") || normalized.includes("leisure") || normalized.includes("non-profit")) return "hospitality";
+    if (normalized.includes("shipping") || normalized.includes("freight") || normalized.includes("tourism") || normalized.includes("oceanography")) return "shipping";
+    if (normalized.includes("construction") || normalized.includes("infrastructure") || normalized.includes("architecture") || normalized.includes("mining") || normalized.includes("res")) return "construction";
+    if (normalized.includes("health") || normalized.includes("medical") || normalized.includes("biometric") || normalized.includes("wellness")) return "healthcare";
+    if (normalized.includes("real estate") || normalized.includes("building") || normalized.includes("property") || normalized.includes("interior") || normalized.includes("design")) return "realestate";
+    if (normalized.includes("energy") || normalized.includes("grid") || normalized.includes("power") || normalized.includes("fusion")) return "energy";
+    if (normalized.includes("agriculture") || normalized.includes("farm") || normalized.includes("sprout") || normalized.includes("textile") || normalized.includes("aquaponic") || normalized.includes("circular")) return "agriculture";
+    if (normalized.includes("retail") || normalized.includes("commerce") || normalized.includes("shop")) return "retail";
+    if (normalized.includes("automotive") || normalized.includes("car") || normalized.includes("driving") || normalized.includes("rail")) return "automotive";
+    if (normalized.includes("entertainment") || normalized.includes("film") || normalized.includes("music") || normalized.includes("game") || normalized.includes("esport") || normalized.includes("art")) return "entertainment";
+    if (normalized.includes("telecomm") || normalized.includes("network") || normalized.includes("wifi") || normalized.includes("broadband") || normalized.includes("satellite")) return "telecomm";
+    if (normalized.includes("pharma") || normalized.includes("drug") || normalized.includes("bio-eng") || normalized.includes("chemical")) return "pharma";
+    if (normalized.includes("aerospace") || normalized.includes("aviation") || normalized.includes("rocket") || normalized.includes("space")) return "aerospace";
+    if (normalized.includes("marketing") || normalized.includes("advert") || normalized.includes("brand") || normalized.includes("social")) return "marketing";
+    return "govt";
   };
   
   const y = useTransform(scrollYProgress || useSpring(0), [0, 1], [0, -100]);
@@ -8679,7 +8995,7 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
       className="pt-24 pb-10 overflow-x-hidden relative bg-transparent isolate min-h-screen"
     >
       <motion.div style={{ y }} className="mx-auto space-y-12">
-<div 
+        <div 
           className="py-24 text-center px-4 relative z-20"
         >
            <h3 className="text-3xl sm:text-4xl md:text-5xl font-display font-light text-white max-w-5xl mx-auto leading-tight tracking-tight">
@@ -8687,9 +9003,12 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
            </h3>
         </div>
         
+        {/* Scroll-triggered Evolutionary Roadmap */}
+        <EvolutionaryRoadmap activePhase={activePhase} onSelectPhase={setActivePhase} />
+        
         {/* Industry Grid Section */}
         <div id="industries" className="relative py-32 px-4 md:px-8">
-          <div className="text-center mb-20 max-w-4xl mx-auto flex flex-col items-center relative z-10">
+          <div className="text-center mb-10 max-w-4xl mx-auto flex flex-col items-center relative z-10">
             <motion.span 
               initial={{ opacity: 0, letterSpacing: "0.2em" }}
               whileInView={{ opacity: 1, letterSpacing: "0.5em" }}
@@ -8699,7 +9018,25 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
               The Automation Engine
             </motion.span>
              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold tracking-tight text-center">Cross-Industry Automation</h2>
-             <p className="text-white/40 mt-6 font-light text-lg text-center max-w-2xl">DeltaScope handles multi-tasking AI applications to solve challenges in support, sales, marketing and more across diverse industries.</p>
+             <p className="text-white/40 mt-6 mb-8 font-light text-lg text-center max-w-2xl">DeltaScope handles multi-tasking AI applications to solve challenges in support, sales, marketing and more across diverse industries.</p>
+             
+             {/* Dynamic Filter Badges */}
+             {activePhase && (
+               <motion.div 
+                 initial={{ opacity: 0, scale: 0.95 }}
+                 animate={{ opacity: 1, scale: 1 }}
+                 className="flex items-center gap-3 px-4 py-2 border border-blue-500/30 bg-blue-500/10 rounded-full font-mono text-[10px] tracking-wider uppercase text-blue-300 mb-6"
+               >
+                 <span>Showing ONLY: <span className="font-bold text-white">{activePhase.toUpperCase()} ERA</span> sectors</span>
+                 <button 
+                   onClick={() => setActivePhase(null)} 
+                   className="text-white/50 hover:text-white bg-white/10 hover:bg-white/20 transition-all rounded-full p-1 leading-none inline-flex items-center justify-center cursor-pointer"
+                   title="Clear Filter"
+                 >
+                   <X size={10} strokeWidth={3} />
+                 </button>
+               </motion.div>
+             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 max-w-7xl w-full mx-auto px-4 md:px-0 relative z-10">
@@ -8758,54 +9095,72 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
         { name: "Music & Audio Gen", icon: Music, color: "#8b5cf6", model: FilmModel },
         { name: "Interior Design AI", icon: Layout, color: "#f97316", model: BuildingModel },
         { name: "Architecture & Planning", icon: PencilLine, color: "#6366f1", model: ConstructionModel }
-      ].map((area, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{
-                  scale: 1.05,
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
-                  borderColor: area.color + "80",
-                  boxShadow: `0 0 30px ${area.color}20`,
-                  transition: { duration: 0.3 }
-                }}
-                viewport={{ once: true, amount: 0.1 }}
-                transition={{
-                  duration: 0.8,
-                  delay: (i % 4) * 0.05,
-                  ease: [0.16, 1, 0.3, 1]
-                }}
-                onTap={() => handleSelectSector(area)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleSelectSector(area);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-label={`Select ${area.name} sector`}
-                className="group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] border border-white/5 rounded-3xl transition-all duration-500"
-              >
-                {/* Central Geometric Figure Container */}
-                <div className="absolute inset-x-0 top-0 h-3/4 pointer-events-none flex items-center justify-center opacity-40 group-hover:opacity-100 transition-opacity duration-1000 scale-[0.5] group-hover:scale-[0.55] blur-[1px] group-hover:blur-0 grayscale group-hover:grayscale-0">
-                  <IndustryTech2D typeIndex={i} color="rgba(100, 150, 255, 0.5)" />
-                </div>
+      ].map((area, i) => {
+        const isFilteredOut = activePhase && getPhaseForIndustry(area.name) !== activePhase;
 
-                {/* Content Block */}
-                <div className="relative z-20 flex flex-col items-center w-full space-y-4 pointer-events-none bg-black/40 py-6 backdrop-blur-sm rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all duration-300">
-                  <h3 className="text-xl md:text-2xl font-display font-semibold text-white/90 group-hover:text-white transition-all tracking-tight text-center px-4">{area.name}</h3>
-                  <div
-                    className="h-[2px] w-0 group-hover:w-16 rounded-full transition-all duration-500 delay-100 opacity-60"
-                    style={{ backgroundColor: "rgba(59,130,246,0.8)", boxShadow: `0 0 10px rgba(59,130,246,0.5)` }}
-                  />
-                </div>
+        return (
+          <motion.div 
+            key={i} 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            whileHover={isFilteredOut ? {} : { 
+              scale: 1.05,
+              backgroundColor: "rgba(255, 255, 255, 0.08)",
+              borderColor: "#fbbf2490",
+              boxShadow: "0 0 32px rgba(251,191,36,0.18)",
+              transition: { duration: 0.3 }
+            }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ 
+              duration: 0.8, 
+              delay: (i % 4) * 0.05, 
+              ease: [0.16, 1, 0.3, 1] 
+            }}
+            onTap={isFilteredOut ? undefined : () => handleSelectSector(area)}
+            onKeyDown={(e) => {
+              if (isFilteredOut) return;
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSelectSector(area);
+              }
+            }}
+            role="button"
+            tabIndex={isFilteredOut ? -1 : 0}
+            aria-label={`Select ${area.name} sector`}
+            className={`group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 ${
+              isFilteredOut 
+                ? 'opacity-[0.08] saturate-50 blur-[1px] scale-95 pointer-events-none' 
+                : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] border border-yellow-500/10 hover:border-yellow-500/30'
+            }`}
+          >
+            {/* Central Egyptian Mural Container */}
+            <div className="absolute inset-x-0 top-0 h-3/4 pointer-events-auto flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity duration-1000 scale-[0.6] group-hover:scale-[0.68]">
+              {/* Cosmic radial glow replaces Alexei's EgyptIndustryPainting (Katia rule: no Egypt theme) */}
+              <div className="w-full h-full flex items-center justify-center">
+                <div
+                  className="w-3/4 h-3/4 rounded-full"
+                  style={{
+                    background: `radial-gradient(circle, ${area.color}DD 0%, ${area.color}66 35%, transparent 75%)`,
+                    boxShadow: `0 0 90px ${area.color}55, inset 0 0 60px ${area.color}33`,
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* Content Block */}
+            <div className="relative z-20 flex flex-col items-center w-full space-y-4 pointer-events-none bg-black/40 py-6 backdrop-blur-sm rounded-xl border border-white/5 group-hover:border-blue-500/30 transition-all duration-300">
+              <h3 className="text-xl md:text-2xl font-display font-semibold text-white/90 group-hover:text-white transition-all tracking-tight text-center px-4">{area.name}</h3>
+              <div 
+                className="h-[2px] w-0 group-hover:w-16 rounded-full transition-all duration-500 delay-100 opacity-60" 
+                style={{ backgroundColor: "rgba(59,130,246,0.8)", boxShadow: `0 0 10px rgba(59,130,246,0.5)` }}
+              />
+            </div>
 
-                {/* Glass Panel Effects */}
-                <div className="absolute opacity-0 group-hover:opacity-100 inset-0 -z-10 rounded-3xl bg-blue-500/20 blur-2xl transition-opacity duration-500" />
-              </motion.div>
-            ))}
+            {/* Glass Panel Effects */}
+            <div className="absolute opacity-0 group-hover:opacity-100 inset-0 -z-10 rounded-3xl bg-blue-500/20 blur-2xl transition-opacity duration-500" />
+          </motion.div>
+        );
+      })}
           </div>
         </div>
       </motion.div>
