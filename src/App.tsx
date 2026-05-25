@@ -2416,12 +2416,12 @@ const PlatformAnimatedTitle = () => {
   const [isConnectsHovered, setIsConnectsHovered] = useState(false);
 
   return (
-    <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-black uppercase tracking-tighter mb-8 leading-[1.1] drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)]">
-       {/* One -> 1 */}
-       <motion.span 
+    <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-black uppercase tracking-tighter mb-8 leading-[1.1] drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)] flex flex-wrap items-baseline justify-center gap-x-3 md:gap-x-4 gap-y-2">
+       {/* One -> 1 (toggle on hover). Fixed-width slot so the swap doesn't shift the row. */}
+       <motion.span
          onMouseEnter={() => setIsOneActive(true)}
          onMouseLeave={() => setIsOneActive(false)}
-         className="text-blue-400 mr-3 md:mr-4 cursor-pointer inline-flex items-center justify-center relative w-20 md:w-28 text-center"
+         className="text-blue-400 cursor-pointer inline-flex items-center justify-center relative w-[1.4em] text-center"
        >
          <AnimatePresence mode="popLayout">
            {isOneActive ? (
@@ -2436,32 +2436,28 @@ const PlatformAnimatedTitle = () => {
          </AnimatePresence>
        </motion.span>
 
-       <motion.span className="text-emerald-400 mr-3 md:mr-4 inline-block">Platform</motion.span>
-       <motion.span className="text-purple-400 mr-3 md:mr-4 inline-block">That</motion.span>
-       
+       <motion.span className="text-emerald-400 inline-block">Platform</motion.span>
+       <motion.span className="text-purple-400 inline-block">That</motion.span>
+
        <motion.span
          onMouseEnter={() => setIsReplacesHovered(true)}
          onMouseLeave={() => setIsReplacesHovered(false)}
          animate={isReplacesHovered ? { scaleY: 0.8, scaleX: 1.1, borderRadius: "50%" } : { scaleY: 1, scaleX: 1, borderRadius: "0%" }}
          transition={{ type: "spring", stiffness: 300, damping: 15 }}
          style={{ display: "inline-block", originY: 0.5, originX: 0.5 }}
-         className={`cursor-pointer inline-block mr-3 md:mr-4 transition-colors ${isReplacesHovered ? 'text-white bg-blue-500/20 px-4 rounded-full' : 'text-blue-400'}`}
+         className={`cursor-pointer inline-block transition-colors ${isReplacesHovered ? 'text-white bg-blue-500/20 px-4 rounded-full' : 'text-blue-400'}`}
        >
          Replaces
        </motion.span>
-       
-       <motion.span 
-         className={`text-emerald-400 inline-block transition-all duration-300 ${isConnectsHovered ? 'mr-0' : 'mr-3 md:mr-4'}`}
-       >
-         or
-       </motion.span>
-       
+
+       <motion.span className="text-emerald-400 inline-block">or</motion.span>
+
        <motion.span
          onMouseEnter={() => setIsConnectsHovered(true)}
          onMouseLeave={() => setIsConnectsHovered(false)}
-         className={`cursor-pointer relative inline-block align-middle transition-colors duration-300 mr-3 md:mr-4 ${isConnectsHovered ? 'text-white' : 'text-purple-400'}`}
+         className={`cursor-pointer relative inline-block align-middle transition-colors duration-300 ${isConnectsHovered ? 'text-white' : 'text-purple-400'}`}
        >
-         {/* Connects word always occupies its natural width — invisible when hovered so chain SVG overlays in the same slot, zero layout shift */}
+         {/* "Connects" word always occupies its natural width — invisible when hovered so the chain SVG overlays in the same slot, zero layout shift */}
          <span className={isConnectsHovered ? 'invisible' : ''}>Connects</span>
          <AnimatePresence>
            {isConnectsHovered && (
@@ -2498,21 +2494,9 @@ const PlatformAnimatedTitle = () => {
            )}
          </AnimatePresence>
        </motion.span>
-       
-       <AnimatePresence>
-        {!isOneActive && (
-          <motion.span
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "auto" }}
-            exit={{ opacity: 0, width: 0 }}
-            className={`text-blue-400 inline-block overflow-hidden whitespace-nowrap transition-all duration-300 ${isConnectsHovered ? 'ml-0 mr-3 md:mr-4' : 'ml-0 mr-3 md:mr-4'}`}
-          >
-            All
-          </motion.span>
-        )}
-       </AnimatePresence>
 
-       <motion.span className={`text-emerald-400 inline-block ${isOneActive ? 'ml-3 md:ml-4 mr-3 md:mr-4' : 'mr-3 md:mr-4'}`}>SaaS</motion.span>
+       <motion.span className="text-blue-400 inline-block">All</motion.span>
+       <motion.span className="text-emerald-400 inline-block">SaaS</motion.span>
        <motion.span className="text-purple-400 inline-block">Platforms</motion.span>
     </h1>
   );
