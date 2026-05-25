@@ -3377,6 +3377,34 @@ const AutomationDashboard = () => {
   const [selectedRole, setSelectedRole] = useState<'Sales' | 'Support' | 'Operations' | 'Executive' | 'Audience'>('Executive');
   const [secondsSaved, setSecondsSaved] = useState(12845000);
   const [hoveredStatIndex, setHoveredStatIndex] = useState<number | null>(null);
+  const [expandedStats, setExpandedStats] = useState<Record<string, boolean>>({});
+  
+  const getSparklineData = (label: string, valueStr: string) => {
+    const cleanStr = valueStr.replace(/,/g, '');
+    const match = cleanStr.match(/^([0-9.]+)/);
+    const baseValue = match ? parseFloat(match[1]) : 50;
+    
+    const decimalMatch = valueStr.replace(/,/g, '').match(/^([0-9.]+)/);
+    const decimals = (decimalMatch && decimalMatch[1].includes('.')) ? decimalMatch[1].split('.')[1].length : 0;
+    
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    
+    return days.map((day, idx) => {
+      let labelSum = 0;
+      for (let charIdx = 0; charIdx < label.length; charIdx++) {
+        labelSum += label.charCodeAt(charIdx);
+      }
+      
+      const seed = labelSum + idx;
+      const noise = ((seed % 24) - 12) / 100; // -12% to +12%
+      const trend = 0.88 + (idx * 0.02); // 0.88 to 1.0 peak
+      const value = baseValue * trend * (1 + noise);
+      return {
+        day,
+        value: parseFloat(value.toFixed(decimals))
+      };
+    });
+  };
   
   useEffect(() => {
     const interval = setInterval(() => {
@@ -3560,7 +3588,7 @@ const AutomationDashboard = () => {
     <div id="automation-dashboard" className="max-w-7xl mx-auto px-6 py-12 relative" role="region" aria-label="Automation Stats and Analytics">
       <div className="text-center mb-24 px-4">
         <WritingTitle 
-          text="Efficiency Dashboard"
+          text="Custom Dashboards"
           className="text-4xl md:text-7xl font-display font-black text-white tracking-tighter uppercase mb-6 justify-center"
         />
         <motion.div 
@@ -3573,9 +3601,9 @@ const AutomationDashboard = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 text-white/40 font-mono text-[10px] uppercase tracking-[0.4em]"
+          className="mt-6 text-white/60 font-mono text-sm max-w-2xl mx-auto"
         >
-          Real-time Global Performance Matrix
+          Custom dashboards are crucial for organizational alignment. By tailoring metrics and visualization layouts, every role—from executive planning to operational execution—can view the insights most relevant to their responsibilities, driving faster and more informed decisions across the entire enterprise.
         </motion.p>
       </div>
 
@@ -3634,40 +3662,124 @@ const AutomationDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        {currentData.stats.map((stat, i) => (
-          <motion.div
-            key={`${selectedRole}-${i}`}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.1 }}
-            whileHover={{ y: -10, scale: 1.02, backgroundColor: "rgba(255, 255, 255, 0.05)", transition: { duration: 0.3 } }}
-            onMouseEnter={() => setHoveredStatIndex(i)}
-            onMouseLeave={() => setHoveredStatIndex(null)}
-            onFocus={() => setHoveredStatIndex(i)}
-            onBlur={() => setHoveredStatIndex(null)}
-            tabIndex={0}
-            role="article"
-            aria-label={`${stat.label}: ${stat.value} ${stat.unit}`}
-            className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] bg-white/[0.02] border border-white/5 transition-all group overflow-hidden relative focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500/50 cursor-default"
-          >
-            <div className="flex justify-between items-start mb-8 relative z-10">
-              <div className={`p-3 rounded-2xl bg-white/5 ${stat.color} border border-white/10 group-hover:scale-110 group-hover:border-white/20 transition-all relative`}>
-                <stat.icon className="w-6 h-6 drop-shadow-[0_0_8px_currentColor]" aria-hidden="true" />
-                <DiscoveryTooltip 
-                  text={`V_METRIC: ${stat.label.toUpperCase()}`}
-                  isVisible={hoveredStatIndex === i}
-                  className="mb-10"
-                />
+        {currentData.stats.map((stat, i) => {
+          const key = `${selectedRole}-${i}`;
+          const isExpanded = !!expandedStats[key];
+          const sparkData = getSparklineData(stat.label, stat.value);
+          const strokeColor = stat.color.includes('emerald') 
+            ? '#10b981' 
+            : stat.color.includes('blue') 
+            ? '#3b82f6' 
+            : stat.color.includes('purple') 
+            ? '#a78bfa'
+            : stat.color.includes('red')
+            ? '#f87171'
+            : '#a78bfa';
+
+          return (
+            <motion.div
+              layout
+              key={key}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.1 }}
+              whileHover={{ y: -6, scale: 1.01, backgroundColor: "rgba(255, 255, 255, 0.05)", transition: { duration: 0.2 } }}
+              onMouseEnter={() => setHoveredStatIndex(i)}
+              onMouseLeave={() => setHoveredStatIndex(null)}
+              onFocus={() => setHoveredStatIndex(i)}
+              onBlur={() => setHoveredStatIndex(null)}
+              onClick={() => {
+                setExpandedStats(prev => ({ ...prev, [key]: !prev[key] }));
+              }}
+              tabIndex={0}
+              role="button"
+              aria-expanded={isExpanded}
+              aria-label={`${stat.label}: ${stat.value} ${stat.unit}. Click to expand 7-day trend.`}
+              className="p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] bg-white/[0.02] border border-white/5 transition-all group overflow-hidden relative focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500/50 cursor-pointer"
+            >
+              <div className="flex justify-between items-start mb-6 relative z-10">
+                <div className={`p-3 rounded-2xl bg-white/5 ${stat.color} border border-white/10 group-hover:scale-110 group-hover:border-white/20 transition-all relative`}>
+                  <stat.icon className="w-6 h-6 drop-shadow-[0_0_8px_currentColor]" aria-hidden="true" />
+                  <DiscoveryTooltip 
+                    text={`V_METRIC: ${stat.label.toUpperCase()}`}
+                    isVisible={hoveredStatIndex === i}
+                    className="mb-10"
+                  />
+                </div>
+                <div className="flex flex-col items-end gap-1.5">
+                  <span className="text-[10px] font-mono text-white/40 uppercase tracking-widest">{stat.unit}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setExpandedStats(prev => ({ ...prev, [key]: !prev[key] }));
+                    }}
+                    className="px-2 py-0.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 hover:border-blue-500/20 text-[8px] font-mono uppercase tracking-widest text-white/40 hover:text-blue-400 transition-all flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>{isExpanded ? 'Collapse' : 'Expand'}</span>
+                    {isExpanded ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                  </button>
+                </div>
               </div>
-              <span className="text-[10px] font-mono text-white/60 uppercase tracking-widest">{stat.unit}</span>
-            </div>
-            <div className="relative z-10">
-              <p className={`text-2xl font-display font-bold mb-1 tracking-tighter ${stat.color}`}>{stat.value}</p>
-              <p className="text-[10px] font-mono text-white/50 uppercase tracking-widest">{stat.label}</p>
-            </div>
-            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/5 blur-3xl rounded-full group-hover:bg-blue-500/10 transition-colors" />
-          </motion.div>
-        ))}
+              <div className="relative z-10">
+                <p className={`text-2xl font-display font-bold mb-1 tracking-tighter ${stat.color}`}>
+                  <AnimatedNumber value={stat.value} />
+                </p>
+                <p className="text-[10px] font-mono text-white/50 uppercase tracking-widest">{stat.label}</p>
+              </div>
+
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                    animate={{ height: "auto", opacity: 1, marginTop: 16 }}
+                    exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="overflow-hidden border-t border-white/5 pt-4"
+                  >
+                    <div className="flex justify-between items-center mb-2 text-[8px] font-mono text-white/40 uppercase tracking-wider">
+                      <span>7-Day History Trend</span>
+                      <span className="text-emerald-400 font-bold flex items-center gap-0.5">
+                        <TrendingUp size={8}/> +12.4%
+                      </span>
+                    </div>
+                    <div className="h-16 w-full relative">
+                      <ResponsiveContainer width="100%" height="80%">
+                        <AreaChart data={sparkData} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
+                          <defs>
+                            <linearGradient id={`sparkGrad-${selectedRole}-${i}`} x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor={strokeColor} stopOpacity={0.4}/>
+                              <stop offset="100%" stopColor={strokeColor} stopOpacity={0}/>
+                            </linearGradient>
+                          </defs>
+                          <Area 
+                            type="monotone" 
+                            dataKey="value" 
+                            stroke={strokeColor} 
+                            strokeWidth={1.5}
+                            fill={`url(#sparkGrad-${selectedRole}-${i})`}
+                            dot={false}
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                      
+                      <div className="flex justify-between text-[8px] font-mono text-white/30 px-1 mt-1">
+                        <span>M</span>
+                        <span>T</span>
+                        <span>W</span>
+                        <span>T</span>
+                        <span>F</span>
+                        <span>S</span>
+                        <span>S</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-white/5 blur-3xl rounded-full group-hover:bg-blue-500/10 transition-colors" />
+            </motion.div>
+          );
+        })}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
