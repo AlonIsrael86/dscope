@@ -2417,29 +2417,33 @@ const PlatformAnimatedTitle = () => {
 
   return (
     <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-black uppercase tracking-tighter mb-8 leading-[1.1] drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)] flex flex-wrap items-baseline justify-center gap-x-3 md:gap-x-4 gap-y-2">
-       {/* One -> 1 (toggle on hover). Fixed-width slot so the swap doesn't shift the row. */}
+       {/* One -> 1 (toggle on hover). `layout` makes neighbours reflow so
+            the gap-x stays equal even though the swapped element's width
+            differs (One is wider than 1). */}
        <motion.span
+         layout
          onMouseEnter={() => setIsOneActive(true)}
          onMouseLeave={() => setIsOneActive(false)}
-         className="text-blue-400 cursor-pointer inline-flex items-center justify-center relative w-[1.4em] text-center"
+         className="text-blue-400 cursor-pointer inline-flex items-baseline"
        >
-         <AnimatePresence mode="popLayout">
+         <AnimatePresence mode="popLayout" initial={false}>
            {isOneActive ? (
-             <motion.span key="num" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
+             <motion.span key="num" layout initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
                1
              </motion.span>
            ) : (
-             <motion.span key="word" initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
+             <motion.span key="word" layout initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}>
                One
              </motion.span>
            )}
          </AnimatePresence>
        </motion.span>
 
-       <motion.span className="text-emerald-400 inline-block">Platform</motion.span>
-       <motion.span className="text-purple-400 inline-block">That</motion.span>
+       <motion.span layout className="text-emerald-400 inline-block">Platform</motion.span>
+       <motion.span layout className="text-purple-400 inline-block">That</motion.span>
 
        <motion.span
+         layout
          onMouseEnter={() => setIsReplacesHovered(true)}
          onMouseLeave={() => setIsReplacesHovered(false)}
          animate={isReplacesHovered ? { scaleY: 0.8, scaleX: 1.1, borderRadius: "50%" } : { scaleY: 1, scaleX: 1, borderRadius: "0%" }}
@@ -2450,29 +2454,34 @@ const PlatformAnimatedTitle = () => {
          Replaces
        </motion.span>
 
-       <motion.span className="text-emerald-400 inline-block">or</motion.span>
+       <motion.span layout className="text-emerald-400 inline-block">or</motion.span>
 
+       {/* Connects swap. The chain SVG is rendered inline (not absolute-
+           overlayed) and has a smaller natural width than "Connects"; the
+           `layout` props make every neighbour reflow so the gap-x stays
+           uniform when the slot shrinks/grows. */}
        <motion.span
+         layout
          onMouseEnter={() => setIsConnectsHovered(true)}
          onMouseLeave={() => setIsConnectsHovered(false)}
-         className={`cursor-pointer relative inline-block align-middle transition-colors duration-300 ${isConnectsHovered ? 'text-white' : 'text-purple-400'}`}
+         className={`cursor-pointer relative inline-flex items-baseline transition-colors duration-300 ${isConnectsHovered ? 'text-white' : 'text-purple-400'}`}
        >
-         {/* "Connects" word always occupies its natural width — invisible when hovered so the chain SVG overlays in the same slot, zero layout shift */}
-         <span className={isConnectsHovered ? 'invisible' : ''}>Connects</span>
-         <AnimatePresence>
-           {isConnectsHovered && (
+         <AnimatePresence mode="popLayout" initial={false}>
+           {isConnectsHovered ? (
              <motion.span
                key="chain"
+               layout
                initial={{ opacity: 0, scale: 0.6 }}
                animate={{ opacity: 1, scale: 1 }}
                exit={{ opacity: 0, scale: 0.6 }}
                transition={{ type: 'spring', stiffness: 300, damping: 18 }}
-               className="absolute inset-0 flex items-center justify-center pointer-events-none"
+               className="inline-flex items-baseline"
                aria-label="Connector"
              >
                <svg
                  viewBox="0 0 120 40"
                  className="h-[0.7em] w-auto drop-shadow-[0_0_12px_rgba(79,172,254,0.55)]"
+                 style={{ transform: 'translateY(0.05em)' }}
                  fill="none"
                  stroke="currentColor"
                  strokeWidth="4"
@@ -2491,13 +2500,25 @@ const PlatformAnimatedTitle = () => {
                  <rect x="70" y="8" width="46" height="24" rx="12" ry="12" stroke="url(#chainGrad)" />
                </svg>
              </motion.span>
+           ) : (
+             <motion.span
+               key="word"
+               layout
+               initial={{ opacity: 0, scale: 0.9 }}
+               animate={{ opacity: 1, scale: 1 }}
+               exit={{ opacity: 0, scale: 0.9 }}
+               transition={{ duration: 0.25 }}
+               className="inline-block"
+             >
+               Connects
+             </motion.span>
            )}
          </AnimatePresence>
        </motion.span>
 
-       <motion.span className="text-blue-400 inline-block">All</motion.span>
-       <motion.span className="text-emerald-400 inline-block">SaaS</motion.span>
-       <motion.span className="text-purple-400 inline-block">Platforms</motion.span>
+       <motion.span layout className="text-blue-400 inline-block">All</motion.span>
+       <motion.span layout className="text-emerald-400 inline-block">SaaS</motion.span>
+       <motion.span layout className="text-purple-400 inline-block">Platforms</motion.span>
     </h1>
   );
 };
