@@ -386,11 +386,15 @@ export const RealisticPlanet = ({
             <stop offset="100%" stopColor={p.night} />
           </radialGradient>
 
+          {/* Halo paints OUTSIDE the body only — gradient stops scaled to
+              a 96px radius circle, body is 84px. So halo opacity ramp lives
+              at 84→96 px (i.e. 87→100% of the halo circle), leaving the
+              body's own edge crisp and untouched. */}
           <radialGradient id={idHalo} cx="50%" cy="50%" r="50%">
-            <stop offset="45%" stopColor="transparent" />
-            <stop offset="48%" stopColor={p.halo} stopOpacity="0.45" />
-            <stop offset="56%" stopColor={p.halo} stopOpacity="0.10" />
-            <stop offset="80%" stopColor="transparent" />
+            <stop offset="86%" stopColor="transparent" />
+            <stop offset="89%" stopColor={p.halo} stopOpacity="0.50" />
+            <stop offset="94%" stopColor={p.halo} stopOpacity="0.18" />
+            <stop offset="100%" stopColor="transparent" />
           </radialGradient>
 
           <radialGradient id={idLimb} cx="50%" cy="50%" r="50%">
@@ -441,8 +445,8 @@ export const RealisticPlanet = ({
           />
         )}
 
-        {/* Atmospheric halo */}
-        <circle cx="100" cy="100" r="94" fill={`url(#${idHalo})`} />
+        {/* Atmospheric halo (outside-the-body ring) */}
+        <circle cx="100" cy="100" r="96" fill={`url(#${idHalo})`} />
 
         {/* Body */}
         <circle cx="100" cy="100" r="84" fill={`url(#${idBody})`} />
