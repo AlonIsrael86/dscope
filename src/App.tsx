@@ -7,6 +7,7 @@ import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
 import { VoiceWidget } from './components/VoiceWidget';
 import { NebulaBackground } from './components/NebulaBackground';
+import { GalaxyAboutBackground } from './components/GalaxyAboutBackground';
 import { logger } from './lib/logger';
 import { featureFlags } from './lib/featureFlags';
 import { GoogleGenAI } from "@google/genai";
@@ -10185,7 +10186,7 @@ function AppContent() {
         {/* Global Background */}
         {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <GalaxyBackground />}
         {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <OceanHorizonBackground />}
-        {activeTab === 'about' && <NebulaBackground />}
+        {activeTab === 'about' && <GalaxyAboutBackground />}
         {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <MarsBackground />}
         {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <DeepOceanBackground />}
         {activeTab === 'dashboard' && <NebulaBackground />}
