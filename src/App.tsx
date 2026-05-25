@@ -25,6 +25,7 @@ import { BrandBookPhenomena } from './components/BrandBookPhenomena';
 import { OceanGallery } from './components/BrandOceanCreatures';
 import { BrandBookTypographyColors } from './components/BrandBookTypographyColors';
 import { BrandBookSymbols, SYMBOLS } from './components/BrandBookSymbols';
+import { BrandCharacters } from './components/BrandCharacters';
 import { Pricing } from './components/Pricing';
 import { TamCharts } from './components/TamCharts';
 import { SPACE_OBJECT_TYPES } from './data/spaceObjectConstants';
@@ -9214,6 +9215,7 @@ const BrandBook = ({ globalBg, setGlobalBg }: any) => {
       <BrandBookPhenomena />
       <OceanGallery />
       <BrandBookSymbols />
+      <BrandCharacters />
 
     </div>
   );
