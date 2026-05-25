@@ -9921,27 +9921,6 @@ function AppContent() {
           </motion.main>
         )}
 
-        {activeTab === 'team' && (
-          <motion.main
-            key="team"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -30 }}
-            className="pt-32 pb-20"
-          >
-            <div className="max-w-5xl mx-auto px-4 md:px-6 text-center flex flex-col justify-center relative py-12">
-              <span className="text-[10px] font-mono uppercase tracking-[0.5em] text-blue-400 mb-4 block">The People Behind Dscope</span>
-              <h1 className="text-5xl md:text-7xl font-display font-black tracking-tighter italic text-white leading-[0.95]">
-                Operators, not <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4facfe] to-[#00f2fe]">spectators</span>.
-              </h1>
-              <p className="mt-6 text-white/60 max-w-2xl mx-auto text-lg font-light leading-relaxed">
-                The Dscope founding team has built and shipped AI and automation across enterprise travel, financial services, higher education, real estate, government, and B2B SaaS — for clients including Lastminute, Yeda, Calcalist, Dani Levi, Orin Shpalter, MalamTeam, Fischer F|B|C, and Allen Carr Israel.
-              </p>
-            </div>
-            <TeamSection />
-          </motion.main>
-        )}
-
         {activeTab === 'case-studies' && featureFlags.isEnabled('CASE_STUDIES_ENABLED') && (
           <CaseStudies />
         )}
