@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 
 /**
@@ -200,18 +200,62 @@ const STAR_KEYFRAMES = `
   }
 `;
 
+// Per-star micro-jitter parameters — deterministic per (constellation, star)
+// so the constellation breathes gently but the same asterism is always
+// recognizable. Amplitude in viewBox % units (0.5–1.2%), so the shape
+// shifts slightly but stays clearly the same constellation.
+const jitterParams = (index: number, si: number) => {
+  const seed = index * 31 + si * 13;
+  return {
+    freqX: 0.0007 + ((seed * 0.0000037) % 0.0006), // rad/ms
+    freqY: 0.0006 + ((seed * 0.0000041) % 0.0005),
+    phaseX: ((seed * 0.7) % (2 * Math.PI)),
+    phaseY: ((seed * 0.9) % (2 * Math.PI)),
+    ampX: 0.5 + ((seed % 7) * 0.1),  // 0.5 .. 1.2 %
+    ampY: 0.4 + ((seed % 5) * 0.12), // 0.4 .. 0.88 %
+  };
+};
+
 // One constellation: its own absolute-inset layer that gently drifts
-// as a whole, carrying its stars + lines together so the asterism stays
-// intact. Each constellation gets a unique drift path/duration.
+// as a WHOLE, plus each star inside also micro-jitters individually so
+// the asterism subtly breathes. Lines re-render every animation frame
+// from the live star positions so they always connect to the moving
+// endpoints — the shape stays clearly recognizable.
 const ConstellationLayer = React.memo(({ cn, index }: { cn: Constellation; index: number }) => {
-  // Deterministic per-constellation drift: amplitude in viewport %,
-  // period in seconds. Both small so the motion is "gentle, not busy".
-  const dxA = ((index * 17) % 9) - 4;      // -4 .. +4 %
-  const dyA = ((index * 23) % 7) - 3;      // -3 .. +3 %
-  const dxB = ((index * 11) % 7) - 3;      // -3 .. +3 %
-  const dyB = ((index * 31) % 9) - 4;      // -4 .. +4 %
-  const dur = 18 + ((index * 5) % 14);     // 18s .. 32s
-  const delay = (index * 0.9) % 6;         // 0s .. 6s
+  // Group drift (whole constellation glides together)
+  const dxA = ((index * 17) % 9) - 4;
+  const dyA = ((index * 23) % 7) - 3;
+  const dxB = ((index * 11) % 7) - 3;
+  const dyB = ((index * 31) % 9) - 4;
+  const dur = 18 + ((index * 5) % 14);
+  const delay = (index * 0.9) % 6;
+
+  const jitterRefs = useMemo(() => cn.stars.map((_, si) => jitterParams(index, si)), [index, cn.stars]);
+
+  // ~30fps state tick → stars + lines re-position every ~33ms
+  const [t, setT] = useState(0);
+  const rafRef = useRef<number>(0);
+  const lastRef = useRef<number>(0);
+  useEffect(() => {
+    const loop = (now: number) => {
+      if (now - lastRef.current >= 33) {
+        setT(now);
+        lastRef.current = now;
+      }
+      rafRef.current = requestAnimationFrame(loop);
+    };
+    rafRef.current = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []);
+
+  // Compute current (jittered) position for each star at this tick
+  const positions = cn.stars.map((s, si) => {
+    const j = jitterRefs[si];
+    return {
+      x: s.x + Math.sin(t * j.freqX + j.phaseX) * j.ampX,
+      y: s.y + Math.cos(t * j.freqY + j.phaseY) * j.ampY,
+    };
+  });
 
   return (
     <motion.div
@@ -222,22 +266,22 @@ const ConstellationLayer = React.memo(({ cn, index }: { cn: Constellation; index
       }}
       transition={{ duration: dur, delay, repeat: Infinity, ease: 'easeInOut' }}
     >
-      {/* Asterism lines for this constellation only */}
+      {/* Asterism lines — endpoints follow the live jittered star positions */}
       <svg
         className="absolute inset-0 w-full h-full"
         preserveAspectRatio="none"
         viewBox="0 0 100 100"
       >
         {cn.edges.map(([a, b], ei) => {
-          const sa = cn.stars[a];
-          const sb = cn.stars[b];
+          const pa = positions[a];
+          const pb = positions[b];
           return (
             <line
               key={`${cn.name}-e-${ei}`}
-              x1={sa.x}
-              y1={sa.y}
-              x2={sb.x}
-              y2={sb.y}
+              x1={pa.x}
+              y1={pa.y}
+              x2={pb.x}
+              y2={pb.y}
               stroke="rgba(165,180,252,0.32)"
               strokeWidth="0.11"
               strokeLinecap="round"
@@ -246,20 +290,21 @@ const ConstellationLayer = React.memo(({ cn, index }: { cn: Constellation; index
           );
         })}
       </svg>
-      {/* Stars for this constellation only — round divs with per-star twinkle */}
+      {/* Stars — round divs at the same jittered positions, with continuous twinkle */}
       {cn.stars.map((s, si) => {
         const mag = s.mag ?? 1;
         const px = 2.4 + mag * 1.6;
         const seed = index * 31 + si * 13;
         const tDur = 2.6 + ((seed * 0.41) % 4.6);
         const tDelay = (seed * 0.27) % 6;
+        const p = positions[si];
         return (
           <div
             key={`${cn.name}-s-${si}`}
             className="absolute rounded-full bg-white"
             style={{
-              left: `${s.x}%`,
-              top: `${s.y}%`,
+              left: `${p.x}%`,
+              top: `${p.y}%`,
               width: `${px}px`,
               height: `${px}px`,
               boxShadow: `0 0 ${px * 1.6}px rgba(255,255,255,0.55)`,
