@@ -274,8 +274,8 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   // Tier 0 — Comet/Meteor with flame trail
   if (index === 0) {
     return (
-      <div className="relative mb-6 inline-flex items-center justify-center group cursor-pointer select-none">
-        <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125 group-hover:rotate-[15deg]">
+      <div className="relative w-24 h-24 mb-6 flex items-center justify-center overflow-visible select-none">
+        <svg viewBox="0 0 100 100" className="w-20 h-20">
           <defs>
             <linearGradient id="cometGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#fef3c7" />
@@ -292,8 +292,8 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
           <path d="M 70 20 L 35 65" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" opacity="0.6" />
           <path d="M 82 35 L 40 72" stroke="#dc2626" strokeWidth="1.5" strokeLinecap="round" opacity="0.5" />
           <circle cx="78" cy="25" r="14" fill="url(#cometCore)" />
-          <circle cx="78" cy="25" r="6" fill="#fef3c7" className="group-hover:animate-ping" />
-          <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <circle cx="78" cy="25" r="6" fill="#fef3c7" className="" />
+          <g className="opacity-0  transition-opacity duration-300">
             <circle cx="18" cy="82" r="2" fill="#f59e0b" className="animate-ping" style={{animationDelay: '0.1s'}} />
             <circle cx="14" cy="58" r="1.5" fill="#fbbf24" className="animate-ping" style={{animationDelay: '0.3s'}} />
             <circle cx="38" cy="88" r="1.5" fill="#dc2626" className="animate-ping" style={{animationDelay: '0.5s'}} />
@@ -307,8 +307,8 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   // Tier 1 — Satellite with orbiting rings
   if (index === 1) {
     return (
-      <div className="relative mb-6 inline-flex items-center justify-center group cursor-pointer select-none">
-        <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125">
+      <div className="relative w-24 h-24 mb-6 flex items-center justify-center overflow-visible select-none">
+        <svg viewBox="0 0 100 100" className="w-20 h-20">
           <defs>
             <linearGradient id="satBody" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#67e8f9" />
@@ -322,15 +322,15 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
           </defs>
           <ellipse cx="50" cy="50" rx="42" ry="14" fill="none" stroke="#06b6d4" strokeOpacity="0.35" strokeWidth="1.2"
                    style={{transformOrigin: '50px 50px', animation: 'spin 8s linear infinite'}}
-                   className="group-hover:[animation-duration:2s]" />
+                   className="" />
           <ellipse cx="50" cy="50" rx="42" ry="14" fill="none" stroke="#67e8f9" strokeOpacity="0.5" strokeWidth="1.2"
                    transform="rotate(60 50 50)"
                    style={{transformOrigin: '50px 50px', animation: 'spin 6s linear infinite reverse'}}
-                   className="group-hover:[animation-duration:1.5s]" />
+                   className="" />
           <ellipse cx="50" cy="50" rx="42" ry="14" fill="none" stroke="#22d3ee" strokeOpacity="0.4" strokeWidth="1"
                    transform="rotate(-60 50 50)"
                    style={{transformOrigin: '50px 50px', animation: 'spin 7s linear infinite'}}
-                   className="group-hover:[animation-duration:1.8s]" />
+                   className="" />
           <rect x="42" y="42" width="16" height="16" rx="3" fill="url(#satBody)" stroke="#67e8f9" strokeWidth="0.8" />
           <rect x="18" y="46" width="22" height="8" fill="url(#satPanel)" stroke="#67e8f9" strokeWidth="0.6" />
           <rect x="60" y="46" width="22" height="8" fill="url(#satPanel)" stroke="#67e8f9" strokeWidth="0.6" />
@@ -338,8 +338,8 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
           <line x1="62" y1="50" x2="78" y2="50" stroke="#67e8f9" strokeWidth="0.4" />
           <line x1="50" y1="42" x2="50" y2="30" stroke="#67e8f9" strokeWidth="1" />
           <circle cx="50" cy="29" r="2.5" fill="#67e8f9" className="animate-pulse" />
-          <circle cx="50" cy="29" r="5" fill="none" stroke="#67e8f9" strokeWidth="0.5" opacity="0"
-                  className="group-hover:opacity-80" style={{animation: 'ping 1.2s cubic-bezier(0,0,0.2,1) infinite'}} />
+          <circle cx="50" cy="29" r="5" fill="none" stroke="#67e8f9" strokeWidth="0.5" opacity="0.8"
+                  style={{animation: 'ping 1.2s cubic-bezier(0,0,0.2,1) infinite'}} />
         </svg>
       </div>
     );
@@ -348,8 +348,8 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   // Tier 2 — Telescope with starfield
   if (index === 2) {
     return (
-      <div className="relative mb-6 inline-flex items-center justify-center group cursor-pointer select-none">
-        <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125 group-hover:rotate-[-8deg]">
+      <div className="relative w-24 h-24 mb-6 flex items-center justify-center overflow-visible select-none">
+        <svg viewBox="0 0 100 100" className="w-20 h-20">
           <defs>
             <linearGradient id="teleBody" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#6ee7b7" />
@@ -364,7 +364,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
             <rect x="22" y="50" width="56" height="11" rx="3" fill="url(#teleBody)" stroke="#6ee7b7" strokeWidth="0.6" />
             <rect x="24" y="52" width="52" height="2" fill="#34d399" opacity="0.4" />
             <ellipse cx="80" cy="55.5" rx="6" ry="9" fill="url(#lensGlow)" stroke="#6ee7b7" strokeWidth="1.2" />
-            <circle cx="80" cy="55.5" r="3" fill="#34d399" className="group-hover:animate-pulse" />
+            <circle cx="80" cy="55.5" r="3" fill="#34d399" className="animate-pulse" />
             <rect x="18" y="48" width="6" height="15" rx="1.5" fill="#059669" />
           </g>
           <line x1="40" y1="65" x2="35" y2="92" stroke="#059669" strokeWidth="2" strokeLinecap="round" />
@@ -376,7 +376,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
             <circle cx="85" cy="12" r="1.5" fill="#34d399" className="animate-pulse" style={{animationDelay: '0.6s'}}/>
             <circle cx="62" cy="8" r="1" fill="#fff" className="animate-pulse" style={{animationDelay: '0.9s'}}/>
           </g>
-          <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <g className="opacity-0  transition-opacity duration-500">
             <circle cx="14" cy="28" r="1" fill="#6ee7b7" className="animate-ping" style={{animationDelay: '0.1s'}}/>
             <circle cx="92" cy="32" r="1" fill="#34d399" className="animate-ping" style={{animationDelay: '0.4s'}}/>
             <circle cx="50" cy="6" r="0.8" fill="#fff" className="animate-ping" style={{animationDelay: '0.7s'}}/>
@@ -389,8 +389,8 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
 
   // Tier 3 — Black Hole with accretion disk
   return (
-    <div className="relative mb-6 inline-flex items-center justify-center group cursor-pointer select-none">
-      <svg viewBox="0 0 100 100" className="w-20 h-20 transition-all duration-500 ease-out group-hover:scale-125">
+    <div className="relative w-24 h-24 mb-6 flex items-center justify-center overflow-visible select-none">
+      <svg viewBox="0 0 100 100" className="w-20 h-20">
         <defs>
           <radialGradient id="bhCore" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#000" />
@@ -410,18 +410,18 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
         </defs>
         <ellipse cx="50" cy="50" rx="46" ry="11" fill="none" stroke="url(#accretion1)" strokeWidth="3.5"
                  style={{transformOrigin: '50px 50px', animation: 'spin 5s linear infinite'}}
-                 className="group-hover:[animation-duration:1.2s]" />
+                 className="" />
         <ellipse cx="50" cy="50" rx="40" ry="7" fill="none" stroke="url(#accretion2)" strokeWidth="2.5" opacity="0.7"
                  style={{transformOrigin: '50px 50px', animation: 'spin 3.5s linear infinite reverse'}}
-                 className="group-hover:[animation-duration:1s]" />
+                 className="" />
         <ellipse cx="50" cy="50" rx="34" ry="4" fill="none" stroke="#fbbf24" strokeWidth="1.5" opacity="0.5"
                  style={{transformOrigin: '50px 50px', animation: 'spin 2.5s linear infinite'}}
-                 className="group-hover:[animation-duration:0.8s]" />
+                 className="" />
         <circle cx="50" cy="50" r="16" fill="url(#bhCore)" stroke="#a855f7" strokeWidth="1" strokeOpacity="0.7" />
         <circle cx="50" cy="50" r="9" fill="#000" />
         <circle cx="50" cy="50" r="9" fill="none" stroke="#fbbf24" strokeWidth="0.5" opacity="0.4"
-                className="group-hover:opacity-100" />
-        <g className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                className="" />
+        <g className="opacity-0  transition-opacity duration-500">
           <circle cx="85" cy="50" r="1.5" fill="#fbbf24" className="animate-ping" style={{animationDelay: '0s'}}/>
           <circle cx="15" cy="50" r="1.5" fill="#a855f7" className="animate-ping" style={{animationDelay: '0.4s'}}/>
           <circle cx="50" cy="15" r="1" fill="#fff" className="animate-ping" style={{animationDelay: '0.8s'}}/>

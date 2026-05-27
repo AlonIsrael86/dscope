@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, memo, Component, ErrorInfo
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContactPlaceholder } from './routes/Contact';
 import { CaseStudies } from './routes/CaseStudies';
-import { TestimonialsSection } from './routes/Testimonials';
+import { RealClientCases } from './routes/RealClientCases';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
 import { VoiceWidget } from './components/VoiceWidget';
@@ -6444,48 +6444,41 @@ const CLIENTS = [
   }
 ];
 
-const ClientLogoItem = ({ name, color }: { name: string; color: string }) => {
-  const ref = React.useRef<HTMLDivElement>(null);
-  React.useEffect(() => {
-    let raf = 0;
-    const tick = () => {
-      const el = ref.current;
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const vcx = window.innerWidth / 2;
-        const d = Math.abs(cx - vcx);
-        const md = window.innerWidth / 2;
-        const t = Math.min(d / md, 1); // 0 at center, 1 at edges
-        const scale = 0.7 + (1 - t) * 0.75; // 0.7 at edges, 1.45 at center
-        const opacity = 0.35 + (1 - t) * 0.65; // 0.35 → 1
-        el.style.transform = `scale(${scale})`;
-        el.style.opacity = String(opacity);
-        el.style.color = t < 0.25 ? color : 'rgba(255,255,255,0.8)';
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [color]);
+// Brand-book palette — only these colours are allowed on client logos.
+// (Electric Blue / Bio Emerald / Plasma Purple / Cyan / Pink / Amber)
+const BRAND_PALETTE = ['#4facfe', '#34d399', '#a855f7', '#22d3ee', '#ec4899', '#fbbf24'];
+
+const FloatingClientLogo = ({
+  name, color, lane, duration, delay,
+}: { name: string; color: string; lane: number; duration: number; delay: number }) => {
+  // Each logo travels right-to-left across the viewport on its own y-lane,
+  // own duration, own start delay → never a single row, always chaotic.
   return (
-    <div
-      ref={ref}
-      className="whitespace-nowrap font-display font-bold uppercase tracking-tight text-2xl md:text-3xl will-change-transform"
-      style={{ transition: 'color 0.5s ease' }}
+    <motion.div
+      className="absolute whitespace-nowrap font-display font-bold uppercase tracking-tight text-xl md:text-3xl will-change-transform pointer-events-none"
+      style={{ top: `${lane}%`, color }}
+      initial={{ x: '110vw' }}
+      animate={{ x: ['110vw', '-40vw'] }}
+      transition={{ duration, delay, repeat: Infinity, ease: 'linear' }}
     >
       {name}
-    </div>
+    </motion.div>
   );
 };
 
 const ClientMarquee = () => {
-  // Loop the client list twice so the horizontal translate from 0 → -50%
-  // wraps seamlessly. Each logo scales up + brightens as it crosses the
-  // viewport centre via a per-frame requestAnimationFrame in
-  // ClientLogoItem — no two names ever sit on top of each other because
-  // the row is a flex with a fixed gap.
-  const loop = [...CLIENTS, ...CLIENTS];
+  // Pre-compute deterministic lane / duration / delay per client so the field
+  // looks chaotic but doesn't reshuffle on every React re-render. Brand-only
+  // colour picked deterministically too.
+  const items = CLIENTS.map((c, i) => {
+    const seed = (i * 31 + 7) % 100;
+    const lane = 8 + ((i * 37) % 80);           // 8% → 88% of band height
+    const duration = 28 + ((seed * 0.27) % 18); // 28s → 46s, varied
+    const delay = -((i * 4.2) % 35);            // negative delay so they're already spread across the screen at mount
+    const color = BRAND_PALETTE[i % BRAND_PALETTE.length];
+    return { ...c, lane, duration, delay, color };
+  });
+
   return (
     <div className="w-screen relative left-1/2 -translate-x-1/2 mt-24 z-20">
       <div className="flex flex-row items-center justify-center mb-10 px-6 relative z-30">
@@ -6494,24 +6487,20 @@ const ClientMarquee = () => {
         </h3>
       </div>
 
-      {/* Edge-to-edge marquee — no side frame, soft fade only at the very
-          extremes of the viewport so logos slide in/out smoothly. */}
-      <div
-        className="relative w-full overflow-hidden h-32 md:h-40"
-        style={{
-          WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
-          maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
-        }}
-      >
-        <motion.div
-          className="flex items-center gap-16 md:gap-24 absolute top-1/2 -translate-y-1/2 will-change-transform"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
-        >
-          {loop.map((c, i) => (
-            <ClientLogoItem key={`${c.name}-${i}`} name={c.name} color={c.color} />
-          ))}
-        </motion.div>
+      {/* Chaotic floating field — each client travels its own y-lane / speed
+          right→left. No row, no frame, no side mask. Logos can pass each
+          other at different speeds and lanes. */}
+      <div className="relative w-full overflow-hidden h-[420px] md:h-[480px]">
+        {items.map((it) => (
+          <FloatingClientLogo
+            key={it.name}
+            name={it.name}
+            color={it.color}
+            lane={it.lane}
+            duration={it.duration}
+            delay={it.delay}
+          />
+        ))}
       </div>
     </div>
   );
@@ -10243,10 +10232,12 @@ function AppContent() {
                  </div>
               </div>
             </InViewGate>
-            {/* Testimonials block (4 cards) — also used as scroll target for the floating astronaut (#4) */}
+            {/* Verified Signal — the same 4-card real-client block used on
+                /case-studies (per Katia). Wrapper id is the astronaut's
+                scroll-to target. */}
             <InViewGate minHeight="80vh">
               <div id="home-testimonials">
-                <TestimonialsSection />
+                <RealClientCases />
               </div>
             </InViewGate>
             <InViewGate minHeight="80vh">
