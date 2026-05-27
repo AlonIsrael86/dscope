@@ -119,6 +119,154 @@ const PACKAGE_TABS = [
   }
 ];
 
+/** CallCenterIllustration — line-art two-operator scene. All strokes share
+ *  one colour (text-[#4facfe] inherited via currentColor) so it reads as
+ *  a single-tone diagram, not a busy illustration. Continuously animated
+ *  with Framer Motion: characters nod, headset mics bob, phones ring with
+ *  pulsing rings, sound-wave arcs travel out from each operator. */
+const CallCenterIllustration = () => (
+  <div className="shrink-0 w-full lg:w-[300px] max-w-[340px] mx-auto lg:mx-0 self-center">
+    <svg viewBox="0 0 320 220" className="w-full h-auto text-[#4facfe]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <defs>
+        <linearGradient id="ccDeskGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="currentColor" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="currentColor" stopOpacity="0.18" />
+        </linearGradient>
+      </defs>
+
+      {/* === LEFT OPERATOR === */}
+      <motion.g animate={{ y: [0, -2, 0, 2, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}>
+        {/* Sound-wave arcs from headset */}
+        <motion.g
+          animate={{ opacity: [0, 0.9, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <path d="M 38 56 Q 30 60 33 70" />
+          <path d="M 33 50 Q 22 58 26 74" />
+        </motion.g>
+        {/* Head */}
+        <circle cx="62" cy="62" r="16" />
+        {/* Hair / cap line */}
+        <path d="M 47 60 Q 62 44 77 60" />
+        {/* Eyes */}
+        <circle cx="58" cy="62" r="1.2" fill="currentColor" />
+        <circle cx="68" cy="62" r="1.2" fill="currentColor" />
+        {/* Headset band */}
+        <path d="M 46 60 Q 46 44 62 44 Q 78 44 78 60" />
+        {/* Ear cups */}
+        <rect x="44" y="58" width="4" height="9" rx="1.5" />
+        <rect x="76" y="58" width="4" height="9" rx="1.5" />
+        {/* Mic boom */}
+        <motion.path
+          d="M 78 64 Q 86 70 78 78"
+          animate={{ rotate: [0, 4, 0, -4, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ transformOrigin: '78px 64px' }}
+        />
+        <circle cx="78" cy="78" r="2" />
+        {/* Body */}
+        <path d="M 44 96 L 80 96 L 86 150 L 38 150 Z" />
+        {/* Shoulder line */}
+        <path d="M 50 100 L 74 100" />
+      </motion.g>
+
+      {/* === LEFT DESK + COMPUTER === */}
+      <rect x="20" y="148" width="110" height="6" rx="1.5" fill="url(#ccDeskGrad)" />
+      <rect x="44" y="118" width="50" height="30" rx="2" />
+      <path d="M 44 142 L 94 142" />
+      <rect x="62" y="148" width="14" height="3" />
+      {/* Phone receiver (ringing) */}
+      <motion.g
+        animate={{ rotate: [0, -8, 0, 8, 0] }}
+        transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
+        style={{ transformOrigin: '110px 140px' }}
+      >
+        <rect x="100" y="128" width="20" height="9" rx="3" />
+        <circle cx="104" cy="132.5" r="1" fill="currentColor" />
+        <circle cx="116" cy="132.5" r="1" fill="currentColor" />
+      </motion.g>
+      {/* Ring waves from left phone */}
+      <motion.g
+        animate={{ opacity: [0, 0.8, 0], scale: [0.6, 1.4, 0.6] }}
+        transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut' }}
+        style={{ transformOrigin: '110px 132px' }}
+      >
+        <path d="M 125 124 Q 132 132 125 140" />
+        <path d="M 132 118 Q 144 132 132 146" />
+      </motion.g>
+
+      {/* === RIGHT OPERATOR === */}
+      <motion.g animate={{ y: [0, 2, 0, -2, 0] }} transition={{ duration: 4.4, repeat: Infinity, ease: 'easeInOut' }}>
+        {/* Sound-wave arcs from headset */}
+        <motion.g
+          animate={{ opacity: [0, 0.9, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+        >
+          <path d="M 282 56 Q 290 60 287 70" />
+          <path d="M 287 50 Q 298 58 294 74" />
+        </motion.g>
+        {/* Head */}
+        <circle cx="258" cy="62" r="16" />
+        {/* Hair / cap line */}
+        <path d="M 243 60 Q 258 44 273 60" />
+        {/* Eyes */}
+        <circle cx="254" cy="62" r="1.2" fill="currentColor" />
+        <circle cx="264" cy="62" r="1.2" fill="currentColor" />
+        {/* Headset band */}
+        <path d="M 242 60 Q 242 44 258 44 Q 274 44 274 60" />
+        {/* Ear cups */}
+        <rect x="240" y="58" width="4" height="9" rx="1.5" />
+        <rect x="272" y="58" width="4" height="9" rx="1.5" />
+        {/* Mic boom */}
+        <motion.path
+          d="M 242 64 Q 234 70 242 78"
+          animate={{ rotate: [0, -4, 0, 4, 0] }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ transformOrigin: '242px 64px' }}
+        />
+        <circle cx="242" cy="78" r="2" />
+        {/* Body */}
+        <path d="M 240 96 L 276 96 L 282 150 L 234 150 Z" />
+        {/* Shoulder line */}
+        <path d="M 246 100 L 270 100" />
+      </motion.g>
+
+      {/* === RIGHT DESK + COMPUTER === */}
+      <rect x="190" y="148" width="110" height="6" rx="1.5" fill="url(#ccDeskGrad)" />
+      <rect x="226" y="118" width="50" height="30" rx="2" />
+      <path d="M 226 142 L 276 142" />
+      <rect x="244" y="148" width="14" height="3" />
+      {/* Phone receiver (ringing, mirrored) */}
+      <motion.g
+        animate={{ rotate: [0, 8, 0, -8, 0] }}
+        transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut', delay: 0.3 }}
+        style={{ transformOrigin: '210px 140px' }}
+      >
+        <rect x="200" y="128" width="20" height="9" rx="3" />
+        <circle cx="204" cy="132.5" r="1" fill="currentColor" />
+        <circle cx="216" cy="132.5" r="1" fill="currentColor" />
+      </motion.g>
+      {/* Ring waves from right phone */}
+      <motion.g
+        animate={{ opacity: [0, 0.8, 0], scale: [0.6, 1.4, 0.6] }}
+        transition={{ duration: 1.2, repeat: Infinity, ease: 'easeOut', delay: 0.4 }}
+        style={{ transformOrigin: '210px 132px' }}
+      >
+        <path d="M 195 124 Q 188 132 195 140" />
+        <path d="M 188 118 Q 176 132 188 146" />
+      </motion.g>
+
+      {/* Floor line under both desks */}
+      <path d="M 14 156 L 306 156" strokeOpacity="0.4" />
+
+      {/* Caption */}
+      <text x="160" y="200" textAnchor="middle" fontSize="9" fontFamily="ui-monospace, monospace" letterSpacing="1.5" fill="currentColor" fillOpacity="0.5" stroke="none">
+        LIVE · INBOUND · 24/7
+      </text>
+    </svg>
+  </div>
+);
+
 const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   // Custom cosmic SVG icons per tier with rich hover effects
   // 0=Starter (Comet/Meteor), 1=Growth (Satellite+orbits), 2=Scale (Telescope+stars), 3=Elite (Black Hole+accretion)
@@ -765,22 +913,29 @@ export const Pricing = () => {
           transition={{ delay: 0.2 }}
           className="max-w-[1400px] mx-auto mb-20 text-left bg-gradient-to-r from-[#4facfe]/10 to-transparent border-l-4 border-[#4facfe] p-5 sm:p-6 rounded-r-xl backdrop-blur-sm"
         >
-          <div className="flex items-start gap-4">
-            <div className="mt-1 bg-[#4facfe]/20 p-2 rounded-full shrink-0">
-              <Info className="w-5 h-5 text-[#00f2fe]" />
-            </div>
-            <div className="w-full">
-              <h3 className="text-white font-display font-bold uppercase tracking-wider mb-2 text-sm sm:text-base">What is a Ticket?</h3>
-              <p className="text-white/80 font-sans text-xs sm:text-sm leading-relaxed max-w-4xl mb-4">
-                A ticket represents a <strong className="text-white font-bold">fully resolved, end-to-end task or case</strong> completed by our AI, integrations, and automation layer. Rather than counting individual messages, minutes, or API calls, a ticket constitutes the entire workflow—handled seamlessly by the cooperative abilities of voice, chat, email, and agentic workflows from the moment a request is initiated until its 100% completion.
-              </p>
-              <div className="bg-white/5 border border-white/10 p-4 rounded-lg max-w-4xl">
-                <h4 className="text-[#4facfe] font-mono text-[10px] uppercase tracking-widest mb-2">Real-World Application: Tourism & Aviation</h4>
-                <p className="text-white/70 font-sans text-xs sm:text-sm leading-relaxed">
-                  A customer contacts support to change their travel itinerary. A <strong className="text-white">single ticket</strong> encompasses the AI agent answering the call, authenticating the passenger, querying the airline's database for availability, successfully rebooking the flight date and departure hours, updating the core CRM, and dispatching the new boarding passes via email—all autonomously executed without human intervention.
+          <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-10">
+            <div className="flex items-start gap-4 flex-1 min-w-0">
+              <div className="mt-1 bg-[#4facfe]/20 p-2 rounded-full shrink-0">
+                <Info className="w-5 h-5 text-[#00f2fe]" />
+              </div>
+              <div className="w-full">
+                <h3 className="text-white font-display font-bold uppercase tracking-wider mb-2 text-sm sm:text-base">What is a Ticket?</h3>
+                <p className="text-white/80 font-sans text-xs sm:text-sm leading-relaxed max-w-4xl mb-4">
+                  A ticket represents a <strong className="text-white font-bold">fully resolved, end-to-end task or case</strong> completed by our AI, integrations, and automation layer. Rather than counting individual messages, minutes, or API calls, a ticket constitutes the entire workflow—handled seamlessly by the cooperative abilities of voice, chat, email, and agentic workflows from the moment a request is initiated until its 100% completion.
                 </p>
+                <div className="bg-white/5 border border-white/10 p-4 rounded-lg max-w-4xl">
+                  <h4 className="text-[#4facfe] font-mono text-[10px] uppercase tracking-widest mb-2">Real-World Application: Tourism & Aviation</h4>
+                  <p className="text-white/70 font-sans text-xs sm:text-sm leading-relaxed">
+                    A customer contacts support to change their travel itinerary. A <strong className="text-white">single ticket</strong> encompasses the AI agent answering the call, authenticating the passenger, querying the airline's database for availability, successfully rebooking the flight date and departure hours, updating the core CRM, and dispatching the new boarding passes via email—all autonomously executed without human intervention.
+                  </p>
+                </div>
               </div>
             </div>
+            {/* Animated call-center illustration (Katia #8): two operators
+                answering ringing phones. Single-colour line art so it sits
+                quietly to the right of the explanation without competing
+                with the cosmic page palette. */}
+            <CallCenterIllustration />
           </div>
         </motion.div>
 

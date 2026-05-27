@@ -6444,107 +6444,74 @@ const CLIENTS = [
   }
 ];
 
-const ClientMarquee = () => {
+const ClientLogoItem = ({ name, color }: { name: string; color: string }) => {
+  const ref = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const el = ref.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const vcx = window.innerWidth / 2;
+        const d = Math.abs(cx - vcx);
+        const md = window.innerWidth / 2;
+        const t = Math.min(d / md, 1); // 0 at center, 1 at edges
+        const scale = 0.7 + (1 - t) * 0.75; // 0.7 at edges, 1.45 at center
+        const opacity = 0.35 + (1 - t) * 0.65; // 0.35 → 1
+        el.style.transform = `scale(${scale})`;
+        el.style.opacity = String(opacity);
+        el.style.color = t < 0.25 ? color : 'rgba(255,255,255,0.8)';
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [color]);
   return (
-    <div className="w-full mt-24 z-20 flex flex-col relative group">
-      <div className="flex flex-row items-center gap-6 justify-center w-full max-w-7xl mx-auto px-6 mb-8 relative z-30">
-        <h3 className="text-white text-2xl md:text-3xl lg:text-4xl font-display font-bold tracking-[0.05em] uppercase text-center drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">Our Clients</h3>
+    <div
+      ref={ref}
+      className="whitespace-nowrap font-display font-bold uppercase tracking-tight text-2xl md:text-3xl will-change-transform"
+      style={{ transition: 'color 0.5s ease' }}
+    >
+      {name}
+    </div>
+  );
+};
+
+const ClientMarquee = () => {
+  // Loop the client list twice so the horizontal translate from 0 → -50%
+  // wraps seamlessly. Each logo scales up + brightens as it crosses the
+  // viewport centre via a per-frame requestAnimationFrame in
+  // ClientLogoItem — no two names ever sit on top of each other because
+  // the row is a flex with a fixed gap.
+  const loop = [...CLIENTS, ...CLIENTS];
+  return (
+    <div className="w-screen relative left-1/2 -translate-x-1/2 mt-24 z-20">
+      <div className="flex flex-row items-center justify-center mb-10 px-6 relative z-30">
+        <h3 className="text-white text-2xl md:text-3xl lg:text-4xl font-display font-bold tracking-[0.05em] uppercase text-center drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">
+          Our Clients
+        </h3>
       </div>
 
-      {/* Taller container + top/bottom mask so names fade smoothly at edges
-          instead of being clipped. Mask also keeps clients from visually
-          overlapping the heading above. */}
+      {/* Edge-to-edge marquee — no side frame, soft fade only at the very
+          extremes of the viewport so logos slide in/out smoothly. */}
       <div
-        className="flex justify-center items-center w-full relative overflow-hidden h-[560px] md:h-[680px]"
+        className="relative w-full overflow-hidden h-32 md:h-40"
         style={{
-          perspective: '800px',
-          transformStyle: 'preserve-3d',
-          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)',
-          maskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)'
+          WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
+          maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
         }}
       >
-        {CLIENTS.map((client, i) => {
-          // Randomized X/Y lanes — distribute names across the screen so the
-          // sequence doesn't feel like a left-to-right ladder.
-          const count = CLIENTS.length;
-          // Evenly-spaced lanes from -18vw to +18vw, shuffled deterministically
-          // via i*7 % count. Tighter spread so long names (e.g. "Dani Levi
-          // Communication Ltd", "Orin Shpalter") don't get clipped at viewport edges.
-          const X_LANES = Array.from({ length: count }, (_, idx) => ((idx + 0.5) / count) * 36 - 18);
-          const Y_LANES = [-180, -90, 0, 90, 180];
-          const xLane = X_LANES[(i * 7) % count];
-          const yLane = Y_LANES[(i * 3 + 2) % Y_LANES.length];
-          const xOffset = `${xLane}vw`;
-          const yOffset = `${yLane}px`;
-
-          // Faster cycle but wider visibility window — names move quicker
-          // through space while staying readable on screen longer
-          const cycleDuration = 18;
-
-          // Each client gets one of the 3 platform colors at peak proximity
-          // (when the description tooltip is reachable). Cycle pink → emerald → blue.
-          const PEAK_COLORS = ['#ec4899', '#34d399', '#4facfe'];
-          const peakColor = PEAK_COLORS[i % PEAK_COLORS.length];
-
-          return (
-            <motion.div
-              key={i}
-              className="absolute group/logo text-[clamp(0.95rem,2.4vw,1.75rem)] font-bold tracking-tight text-center whitespace-nowrap drop-shadow-2xl cursor-default"
-              initial={{ z: -2000, opacity: 0, x: xOffset, y: yOffset }}
-              animate={{
-                z: [-2000, -200, 0, 200, 800],
-                // Visibility window ≈ 44% of cycle (~7.9s on screen). With
-                // 18s cycle and 11 clients staggered ~1.64s apart, ~5 names
-                // are readable at once across the larger container.
-                opacity: [0, 0, 0.9, 0, 0]
-              }}
-              transition={{
-                duration: cycleDuration,
-                times: [0, 0.28, 0.5, 0.72, 1],
-                repeat: Infinity,
-                ease: "linear",
-                delay: i * (cycleDuration / count)
-              }}
-              whileHover={{ scale: 1.1, zIndex: 100 }}
-            >
-              <div className="relative flex flex-col items-center">
-                <motion.span
-                  className="group-hover/logo:text-[var(--hover-color)]"
-                  style={{ '--hover-color': client.color } as any}
-                  animate={{
-                    color: [
-                      'rgba(255,255,255,0.85)',
-                      'rgba(255,255,255,0.85)',
-                      peakColor,
-                      'rgba(255,255,255,0.85)',
-                      'rgba(255,255,255,0.85)'
-                    ]
-                  }}
-                  transition={{
-                    duration: cycleDuration,
-                    times: [0, 0.45, 0.5, 0.55, 1],
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                    delay: i * (cycleDuration / count)
-                  }}
-                >
-                  {client.name}
-                </motion.span>
-                
-                {/* Info Tooltip */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 md:w-80 p-4 bg-black/90 border border-white/10 rounded-xl opacity-0 group-hover/logo:opacity-100 transition-opacity duration-300 pointer-events-none drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] shadow-2xl flex flex-col gap-3 z-50 text-left">
-                  <div className="flex items-center gap-3 border-b border-white/10 pb-2">
-                    <div className="w-3 h-3 rounded-full shrink-0 shadow-inner" style={{ backgroundColor: client.color, boxShadow: `0 0 10px ${client.color}` }} />
-                    <span className="text-sm font-mono text-white/90 tracking-widest uppercase truncate">{client.name}</span>
-                  </div>
-                  <p className="text-xs md:text-sm text-white/60 leading-relaxed font-sans font-normal tracking-normal whitespace-normal">
-                    {client.description}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          );
-        })}
+        <motion.div
+          className="flex items-center gap-16 md:gap-24 absolute top-1/2 -translate-y-1/2 will-change-transform"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
+        >
+          {loop.map((c, i) => (
+            <ClientLogoItem key={`${c.name}-${i}`} name={c.name} color={c.color} />
+          ))}
+        </motion.div>
       </div>
     </div>
   );
