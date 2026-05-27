@@ -6457,9 +6457,10 @@ const CLIENTS = [
   }
 ];
 
-// Brand-book palette — only these colours are allowed on client logos.
-// (Electric Blue / Bio Emerald / Plasma Purple / Cyan / Pink / Amber)
-const BRAND_PALETTE = ['#4facfe', '#34d399', '#a855f7', '#22d3ee', '#ec4899', '#fbbf24'];
+// Brand-book palette for OUR CLIENTS — per Katia 2026-05-27: «в
+// брендбук було три — зелений, блакитний і рожевий». Limited to the
+// three core brand colours.
+const BRAND_PALETTE = ['#4facfe', '#34d399', '#ec4899']; // Electric Blue / Bio Emerald / Pink
 
 const FloatingClientLogo = ({
   name, description, brandColor, lane, duration, delay,
