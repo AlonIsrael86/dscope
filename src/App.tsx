@@ -10337,7 +10337,7 @@ function AppContent() {
             aria-label="Go to DeltaScope home"
             className="cursor-pointer bg-transparent border-0 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
           >
-            <Logo className="scale-100 origin-left" cycling aria-label="DeltaScope Corporate Home" />
+            <Logo className="scale-125 origin-left" cycling aria-label="DeltaScope Corporate Home" />
           </button>
         </header>
 
