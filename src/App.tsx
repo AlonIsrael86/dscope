@@ -5195,77 +5195,37 @@ const DataClusterGallery = () => {
         </div>
 
         <div className="relative flex flex-col items-center text-center">
-          <motion.div
-            style={{
-              // y travel reduced from [100, -400] → [40, -80] so the
-              // heading never travels above the viewport edge (per Katia
-              // 2026-05-27: «все ще назва обрізана»). It still moves
-              // subtly while scrolling for the parallax feel, but the
-              // top of the letters stays inside the visible area.
-              scale: useTransform(scrollYProgress, [0, 0.4, 1], [1, 0.97, 0.85]),
-              opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 0.95], [1, 0.85, 0.5, 0]),
-              y: useTransform(scrollYProgress, [0, 1], [40, -80]),
-              rotateX: useTransform(scrollYProgress, [0, 1], [0, 8]),
-              perspective: 1000,
-              willChange: "transform, opacity"
-            }}
-            className="mb-4"
-          >
-            <motion.span 
-              initial={{ opacity: 0, letterSpacing: "0em", filter: 'blur(10px)' }}
-              whileInView={{ opacity: 0.7, letterSpacing: "2.5em", filter: 'blur(0px)' }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[10px] md:text-[14px] font-mono uppercase text-blue-400 mb-6 block"
-            >
+          {/* Heading block — fully rebuilt per Katia 2026-05-27:
+              «прибери весь цей напис з усіма ефектами і замість нього
+              створи новий щоб був не обрізаний і ця назва заголовок
+              переливалась різними кольорами». No more scroll-driven
+              y/scale/rotateX transforms (they were what pushed the
+              letters above the viewport top). No italic, no tight
+              negative tracking, slightly smaller base size so the
+              phrase always fits comfortably. Only effect is the
+              continuously-shifting brand-colour gradient flowing
+              through the letters. */}
+          <div className="flex flex-col items-center text-center mb-4">
+            <span className="text-[10px] md:text-[14px] font-mono uppercase text-blue-400/70 tracking-[0.4em] mb-6 block">
               Axiomatic Hub
-            </motion.span>
-            <motion.h3
-              initial={{ opacity: 0, y: 40, filter: 'blur(10px)', scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              /*
-                Was wrapped in a black/60 backdrop-blur card with md:px-32
-                padding + border + rounded-[5rem] + overflow-hidden. The
-                text-[10rem] heading didn't fit inside (per Katia
-                2026-05-27: «тут не влізає фраза»). Dropped the card
-                completely — heading now sits directly on the section
-                background with its gradient + glow, no clipping container.
-                Font scale also softened a touch (lg:text-[10rem] →
-                lg:text-[8rem]).
-              */
-              className="text-[14vw] sm:text-[10vw] md:text-[7rem] lg:text-[8rem] leading-[0.85] font-display font-black tracking-[-0.04em] uppercase italic drop-shadow-[0_0_30px_rgba(59,130,246,0.25)] relative group w-full text-center mx-auto flex flex-col justify-center items-center"
-            >
-              {/* Animated multi-stop brand gradient flowing through the
-                  letters (per Katia 2026-05-27: «додай назві заголовку
-                  якийсь ефект цікавий»). 300% background size + animated
-                  backgroundPosition = the gradient continuously slides
-                  across the heading. Colours are the 3 brand-book hues
-                  (Electric Blue, Bio Emerald, Pink) plus white. */}
+            </span>
+            <h3 className="text-[9vw] sm:text-[7vw] md:text-[5.5rem] lg:text-[6.5rem] leading-[1] font-display font-black tracking-tight uppercase drop-shadow-[0_0_40px_rgba(79,172,254,0.25)]">
               <motion.span
-                className="relative z-10 text-transparent bg-clip-text uppercase block drop-shadow-[0_0_30px_rgba(255,255,255,0.35)]"
+                className="text-transparent bg-clip-text inline-block"
                 style={{
-                  backgroundImage: 'linear-gradient(120deg, #4facfe 0%, #ffffff 25%, #34d399 50%, #ffffff 75%, #ec4899 100%)',
+                  backgroundImage:
+                    'linear-gradient(120deg, #4facfe 0%, #34d399 33%, #ec4899 66%, #4facfe 100%)',
                   backgroundSize: '300% 100%',
                   WebkitBackgroundClip: 'text',
                   backgroundClip: 'text',
                 }}
                 animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
               >
                 THE CORE VALUES
               </motion.span>
-              {/* Glimmer sweep — kept from the previous design but
-                  faster (3s → 4s for breathing room with the colour
-                  flow). */}
-              <motion.div
-                animate={{ x: ["-100%", "200%"] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent skew-x-12 z-0"
-              />
-            </motion.h3>
-          </motion.div>
+            </h3>
+          </div>
         </div>
       </div>
       
