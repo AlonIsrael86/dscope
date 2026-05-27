@@ -638,7 +638,7 @@ export const Pricing = () => {
                   className={`flex flex-col relative bg-[#020617]/80 backdrop-blur-md rounded-3xl border transition-all duration-300 overflow-visible ${
                     isRecommended 
                       ? 'z-10 lg:-translate-y-4' 
-                      : 'border-white/10 hover:border-white/30 z-0'
+                      : 'border-white/10 z-0'
                   }`}
                   style={isRecommended ? { borderColor: bundle.colors[0], boxShadow: `0 0 35px ${bundle.colors[0]}35` } : {}}
                 >

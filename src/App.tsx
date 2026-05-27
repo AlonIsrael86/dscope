@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, memo, Component, ErrorInfo
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContactPlaceholder } from './routes/Contact';
 import { CaseStudies } from './routes/CaseStudies';
+import { TestimonialsSection } from './routes/Testimonials';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
 import { VoiceWidget } from './components/VoiceWidget';
@@ -5664,7 +5665,7 @@ const SatelliteNav = memo(({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300, damping: 35 }}
-            className="fixed inset-0 bg-[#00000a]/95 backdrop-blur-3xl z-[999] flex flex-col p-6 pt-16 md:p-12 overflow-y-auto"
+            className="fixed inset-0 bg-[#00000a]/95 backdrop-blur-3xl z-[999] flex flex-col p-6 pt-16 md:p-12 overflow-hidden"
             onClick={() => setIsOpen(false)}
           >
             <div className="absolute top-6 right-6 md:top-12 md:right-12 z-[1002]">
@@ -5681,7 +5682,7 @@ const SatelliteNav = memo(({
             </div>
 
             <div 
-              className="grid grid-cols-2 gap-x-2 sm:gap-x-8 md:gap-x-16 lg:gap-x-32 gap-y-4 sm:gap-y-6 md:gap-y-8 lg:gap-y-10 w-full max-w-5xl mx-auto min-h-full place-content-center overflow-y-auto px-2 sm:px-4 py-8 sm:py-12"
+              className="grid grid-cols-2 gap-x-2 sm:gap-x-8 md:gap-x-16 lg:gap-x-32 gap-y-3 sm:gap-y-4 md:gap-y-5 lg:gap-y-6 w-full max-w-5xl mx-auto h-full place-content-center px-2 sm:px-4 py-4 sm:py-6"
               onClick={(e) => e.stopPropagation()}
             >
               {tabs.map((tab, i) => (
@@ -6261,11 +6262,17 @@ const FloatingAstronaut = ({ progress }: { progress: any }) => {
   
   return (
     <motion.div
-      onClick={() => setIsFlying(true)}
-      style={{ 
-        y: isFlying ? undefined : y, 
-        rotate: isFlying ? undefined : rotateValue, 
-        opacity: isFlying ? undefined : opacityValue 
+      onClick={() => {
+        // Smooth-scroll to the testimonials block before flying off,
+        // so the click takes the visitor where the astronaut "points".
+        const el = document.getElementById('home-testimonials');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setIsFlying(true);
+      }}
+      style={{
+        y: isFlying ? undefined : y,
+        rotate: isFlying ? undefined : rotateValue,
+        opacity: isFlying ? undefined : opacityValue
       }}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={isFlying ? {
@@ -6276,18 +6283,20 @@ const FloatingAstronaut = ({ progress }: { progress: any }) => {
         rotate: [0, 180, 360],
         x: [0, -100, -200],
         filter: ["blur(0px)", "blur(10px)", "blur(20px)"]
-      } : { 
-        opacity: 1, 
-        scale: 1 
+      } : {
+        opacity: 1,
+        scale: 1
       }}
-      transition={isFlying ? { 
-        duration: 2.5, 
-        ease: "easeInOut" 
-      } : { 
-        duration: 2.5, 
-        ease: [0.23, 1, 0.32, 1] 
+      transition={isFlying ? {
+        duration: 2.5,
+        ease: "easeInOut"
+      } : {
+        duration: 2.5,
+        ease: [0.23, 1, 0.32, 1]
       }}
-      className="absolute top-[65%] left-1/2 -translate-x-1/2 w-48 h-64 md:w-80 md:h-96 z-[5] cursor-pointer pointer-events-auto hidden md:block"
+      // Pinned to the upper-right area so it never overlaps the
+      // bottom-left VoiceWidget / Messengers chip.
+      className="absolute top-[28%] right-[8%] w-40 h-56 md:w-64 md:h-80 z-[5] cursor-pointer pointer-events-auto hidden md:block"
     >
       <motion.div
         animate={isFlying ? {} : { 
@@ -10265,6 +10274,12 @@ function AppContent() {
                    />
                    <LunarCommandHub />
                  </div>
+              </div>
+            </InViewGate>
+            {/* Testimonials block (4 cards) — also used as scroll target for the floating astronaut (#4) */}
+            <InViewGate minHeight="80vh">
+              <div id="home-testimonials">
+                <TestimonialsSection />
               </div>
             </InViewGate>
             <InViewGate minHeight="80vh">
