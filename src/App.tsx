@@ -5209,7 +5209,21 @@ const DataClusterGallery = () => {
             <span className="text-[10px] md:text-[14px] font-mono uppercase text-blue-400/70 tracking-[0.4em] mb-6 block">
               Axiomatic Hub
             </span>
-            <h3 className="text-[9vw] sm:text-[7vw] md:text-[5.5rem] lg:text-[6.5rem] leading-[1] font-display font-black tracking-tight uppercase drop-shadow-[0_0_40px_rgba(79,172,254,0.25)]">
+            {/* Pop-in scale: starts small, overshoots to 1.25 then
+                settles back to 1 when the heading enters the viewport
+                (per Katia 2026-05-27: «треба щоб заголовок збільшився
+                і потім повернувся в нормальну форму коли скролять і
+                доходять до цього заголовку»). Triggers every time the
+                heading scrolls back into view (viewport once: false).
+                Max scale 1.25 — safely within viewport for the
+                lg:text-[6.5rem] base. */}
+            <motion.h3
+              initial={{ scale: 0.6, opacity: 0 }}
+              whileInView={{ scale: [0.6, 1.25, 1], opacity: 1 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], times: [0, 0.55, 1] }}
+              className="text-[9vw] sm:text-[7vw] md:text-[5.5rem] lg:text-[6.5rem] leading-[1] font-display font-black tracking-tight uppercase drop-shadow-[0_0_40px_rgba(79,172,254,0.25)]"
+            >
               <motion.span
                 className="text-transparent bg-clip-text inline-block"
                 style={{
@@ -5224,19 +5238,18 @@ const DataClusterGallery = () => {
               >
                 THE CORE VALUES
               </motion.span>
-            </h3>
+            </motion.h3>
           </div>
         </div>
       </div>
       
       {/* GRID ITEMS - Staggered Appearance & Parallax */}
       <div className="sticky top-0 h-[100dvh] w-full flex items-start justify-center z-20 pointer-events-none lg:pointer-events-auto">
-        {/* pt was [35vh] md:[45dvh] originally, then [22vh] md:[28dvh].
-            Tightening further to [12vh] md:[16dvh] — cards now sit
-            right under the heading with just a comfortable gap, no
-            big empty band (per Katia: «треба ще прибрати пустий
-            простір між назвою і наступними елементами»). */}
-        <div className="max-w-7xl w-full flex flex-wrap justify-center items-center gap-4 md:gap-12 px-6 md:px-12 pt-[12vh] md:pt-[16dvh]">
+        {/* pt was [35vh]→[22vh]→[12vh]. Tightening yet again per
+            Katia 2026-05-27: «ще зменши відстань між назвою і
+            наступними елементами». Now [2vh] md:[4dvh] — cards sit
+            essentially right under the heading. */}
+        <div className="max-w-7xl w-full flex flex-wrap justify-center items-center gap-4 md:gap-12 px-6 md:px-12 pt-[2vh] md:pt-[4dvh]">
           {[...coreValuesData, ...moreCoreValuesData].map((value: any, i: number) => {
             return (
               <DataClusterItem 
