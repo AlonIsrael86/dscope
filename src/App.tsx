@@ -1246,9 +1246,9 @@ const CelestialBody = () => {
         className="absolute inset-0 blur-[140px] rounded-full group-hover:opacity-100 group-hover:blur-[180px] transition-all duration-700"
       />
       
-      <motion.div 
-        style={{ background: bodyColor, boxShadow: outerShadow }}
-        className="absolute inset-[35%] rounded-full overflow-hidden shadow-2xl group-hover:inset-[33%] transition-all duration-500"
+      <motion.div
+        style={{ background: bodyColor }}
+        className="absolute inset-[35%] rounded-full overflow-hidden group-hover:inset-[33%] transition-all duration-500"
       >
         {/* Dynamic Surface Pattern */}
         <motion.div 
@@ -6449,16 +6449,57 @@ const CLIENTS = [
 const BRAND_PALETTE = ['#4facfe', '#34d399', '#a855f7', '#22d3ee', '#ec4899', '#fbbf24'];
 
 const FloatingClientLogo = ({
-  name, color, lane, duration, delay,
-}: { name: string; color: string; lane: number; duration: number; delay: number }) => {
-  // Each logo travels right-to-left across the viewport on its own y-lane,
-  // own duration, own start delay → never a single row, always chaotic.
+  name, brandColor, lane, duration, delay,
+}: { name: string; brandColor: string; lane: number; duration: number; delay: number }) => {
+  // Each logo travels left → right across the viewport on its own y-lane,
+  // own duration, own start delay. While moving, a per-frame rAF computes
+  // its current distance from the viewport's horizontal centre and:
+  //   - colour:   white at the edges → brandColor at the centre
+  //   - opacity:  0.35 at the edges  → 1.0 at the centre
+  //   - scale:    0.75 at the edges  → 1.55 at the centre
+  // No React re-render per frame — direct style mutation on the ref.
+  const ref = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const el = ref.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const vcx = window.innerWidth / 2;
+        const d = Math.abs(cx - vcx);
+        const md = window.innerWidth / 2;
+        const t = Math.min(d / md, 1);             // 0 at centre → 1 at the edges
+        const k = 1 - t;                            // closeness to centre
+        const scale = 0.75 + k * 0.8;               // 0.75 → 1.55
+        const opacity = 0.35 + k * 0.65;            // 0.35 → 1.0
+        // White at the edges, brand colour ONLY in the inner 30% zone.
+        let color: string;
+        if (k > 0.7) {
+          color = brandColor;
+        } else {
+          // Smooth white → brand interpolation in the 30-70% window
+          color = k > 0.4
+            ? `color-mix(in srgb, ${brandColor} ${Math.round((k - 0.4) / 0.3 * 100)}%, white)`
+            : '#ffffff';
+        }
+        el.style.transform = `scale(${scale})`;
+        el.style.opacity = String(opacity);
+        el.style.color = color;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [brandColor]);
+
   return (
     <motion.div
+      ref={ref}
       className="absolute whitespace-nowrap font-display font-bold uppercase tracking-tight text-xl md:text-3xl will-change-transform pointer-events-none"
-      style={{ top: `${lane}%`, color }}
-      initial={{ x: '110vw' }}
-      animate={{ x: ['110vw', '-40vw'] }}
+      style={{ top: `${lane}%`, color: '#ffffff' }}
+      initial={{ x: '-40vw' }}
+      animate={{ x: ['-40vw', '110vw'] }}
       transition={{ duration, delay, repeat: Infinity, ease: 'linear' }}
     >
       {name}
@@ -6468,15 +6509,14 @@ const FloatingClientLogo = ({
 
 const ClientMarquee = () => {
   // Pre-compute deterministic lane / duration / delay per client so the field
-  // looks chaotic but doesn't reshuffle on every React re-render. Brand-only
-  // colour picked deterministically too.
+  // looks chaotic but doesn't reshuffle on every React re-render.
   const items = CLIENTS.map((c, i) => {
     const seed = (i * 31 + 7) % 100;
     const lane = 8 + ((i * 37) % 80);           // 8% → 88% of band height
     const duration = 28 + ((seed * 0.27) % 18); // 28s → 46s, varied
-    const delay = -((i * 4.2) % 35);            // negative delay so they're already spread across the screen at mount
-    const color = BRAND_PALETTE[i % BRAND_PALETTE.length];
-    return { ...c, lane, duration, delay, color };
+    const delay = -((i * 4.2) % 35);            // negative delay → already spread at mount
+    const brandColor = BRAND_PALETTE[i % BRAND_PALETTE.length];
+    return { ...c, lane, duration, delay, brandColor };
   });
 
   return (
@@ -6487,15 +6527,15 @@ const ClientMarquee = () => {
         </h3>
       </div>
 
-      {/* Chaotic floating field — each client travels its own y-lane / speed
-          right→left. No row, no frame, no side mask. Logos can pass each
-          other at different speeds and lanes. */}
+      {/* Chaotic floating field — each client on its own y-lane / speed,
+          travelling LEFT → RIGHT. White + dim at the edges, picks up its
+          brand colour + scales up as it crosses the viewport centre. */}
       <div className="relative w-full overflow-hidden h-[420px] md:h-[480px]">
         {items.map((it) => (
           <FloatingClientLogo
             key={it.name}
             name={it.name}
-            color={it.color}
+            brandColor={it.brandColor}
             lane={it.lane}
             duration={it.duration}
             delay={it.delay}
@@ -10228,7 +10268,27 @@ function AppContent() {
                        lightning={true}
                        pulse={true}
                    />
-                   <LunarCommandHub />
+                   {/* Clicking the satellite hub scrolls to the Verified Signal
+                       block below — same target as the floating astronaut. */}
+                   <div
+                     role="button"
+                     tabIndex={0}
+                     className="cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 rounded-2xl"
+                     onClick={() => {
+                       const el = document.getElementById('home-testimonials');
+                       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                     }}
+                     onKeyDown={(e) => {
+                       if (e.key === 'Enter' || e.key === ' ') {
+                         e.preventDefault();
+                         const el = document.getElementById('home-testimonials');
+                         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                       }
+                     }}
+                     aria-label="Scroll to Verified Signal client results"
+                   >
+                     <LunarCommandHub />
+                   </div>
                  </div>
               </div>
             </InViewGate>

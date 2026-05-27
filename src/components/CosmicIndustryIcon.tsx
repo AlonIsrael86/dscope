@@ -1,22 +1,16 @@
 import React from 'react';
-import { motion } from 'motion/react';
 import type { LucideIcon } from 'lucide-react';
 
 /**
  * CosmicIndustryIcon
  *
- * Wraps a stock lucide industry icon (Shield, Globe, Target, …) in cosmic
- * decoration so each industry tile reads like a tiny solar system, while
- * the central glyph keeps the original semantic meaning the user expects:
+ * Mirrors the Pricing tier icon look-and-feel (clean, no halo bubble,
+ * orbits + satellites + central glow) but keeps the industry's lucide
+ * glyph as the central semantic element (Shield for Insurance, Globe
+ * for Global Delivery, …).
  *
- *   - Pulsing halo in the area's brand color (the "atmosphere")
- *   - Subtle outer ring (the "exosphere")
- *   - Dashed mid-orbit ring rotating opposite to the satellites
- *   - Two orbital satellites at different radii and speeds
- *     (outer color dot + inner white-hot dot)
- *   - The lucide icon at the center with a layered drop-shadow glow
- *
- * Same idea, cosmic execution — per Katia.
+ * Per Katia: "ці іконки треба замінити щоб були по стилю як ті що ти
+ * робив для цін" — same visual language as /pricing tier badges.
  */
 
 interface Props {
@@ -25,75 +19,49 @@ interface Props {
 }
 
 export const CosmicIndustryIcon = React.memo(({ icon: Icon, color }: Props) => {
+  // Tailwind-arbitrary `style={{ '--c': color }}` so the same CSS rules
+  // pick up the per-industry brand colour without baking colour into class.
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      {/* Atmosphere — pulsing halo */}
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{
-          background: `radial-gradient(circle, ${color}55 0%, ${color}1f 42%, transparent 75%)`,
-        }}
-        animate={{ scale: [1, 1.08, 1], opacity: [0.55, 0.9, 0.55] }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      {/* Static outer ring — exosphere */}
-      <div
-        className="absolute w-[92%] h-[92%] rounded-full border opacity-25"
-        style={{ borderColor: color }}
-      />
-
-      {/* Outer orbit — slow CW satellite (brand color) */}
-      <motion.div
-        className="absolute w-[88%] h-[88%]"
-        animate={{ rotate: 360 }}
-        transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
+    <div className="relative w-full h-full flex items-center justify-center" style={{ color }}>
+      {/* Orbits / satellites — pure SVG, no halo bubble */}
+      <svg
+        viewBox="0 0 100 100"
+        className="absolute inset-0 w-full h-full"
+        fill="none"
+        stroke="currentColor"
       >
-        <div
-          className="absolute w-2 h-2 rounded-full"
-          style={{
-            backgroundColor: color,
-            boxShadow: `0 0 10px ${color}, 0 0 20px ${color}77`,
-            top: 0,
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
+        {/* Outer orbit — slow CW */}
+        <g style={{ transformOrigin: '50px 50px', animation: 'spin 14s linear infinite' }}>
+          <ellipse cx="50" cy="50" rx="44" ry="14" strokeOpacity="0.45" strokeWidth="0.7" />
+          <circle cx="94" cy="50" r="2.2" fill="currentColor" stroke="none" />
+        </g>
+        {/* Mid orbit — dashed CCW */}
+        <ellipse
+          cx="50" cy="50" rx="44" ry="14"
+          strokeOpacity="0.30"
+          strokeWidth="0.5"
+          strokeDasharray="2 2"
+          transform="rotate(60 50 50)"
+          style={{ transformOrigin: '50px 50px', animation: 'spin 22s linear infinite reverse' }}
         />
-      </motion.div>
+        {/* Inner orbit — faster CCW with a small white satellite */}
+        <g
+          transform="rotate(-60 50 50)"
+          style={{ transformOrigin: '50px 50px', animation: 'spin 8s linear infinite reverse' }}
+        >
+          <ellipse cx="50" cy="50" rx="44" ry="14" strokeOpacity="0.35" strokeWidth="0.55" />
+          <circle cx="6" cy="50" r="1.8" fill="#ffffff" stroke="none" style={{ filter: `drop-shadow(0 0 4px currentColor)` }} />
+        </g>
+        {/* Central glow disk under the icon — sharp, no fade */}
+        <circle cx="50" cy="50" r="14" fill="currentColor" fillOpacity="0.18" stroke="none" />
+        <circle cx="50" cy="50" r="14" strokeOpacity="0.6" strokeWidth="0.7" />
+      </svg>
 
-      {/* Mid dashed orbital ring (CCW) */}
-      <motion.div
-        className="absolute w-[72%] h-[72%] rounded-full border border-dashed"
-        style={{ borderColor: `${color}66` }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
-      />
-
-      {/* Inner orbit — faster CCW satellite (white-hot) */}
-      <motion.div
-        className="absolute w-[60%] h-[60%]"
-        animate={{ rotate: -360 }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'linear' }}
-      >
-        <div
-          className="absolute w-1.5 h-1.5 rounded-full"
-          style={{
-            backgroundColor: '#ffffff',
-            boxShadow: `0 0 8px #ffffff, 0 0 16px ${color}`,
-            top: 0,
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-          }}
-        />
-      </motion.div>
-
-      {/* Central industry glyph — original lucide icon, cosmic glow */}
+      {/* Central industry glyph */}
       <Icon
-        className="relative z-10 w-14 h-14 md:w-16 md:h-16 text-white"
-        strokeWidth={1.3}
-        style={{
-          filter: `drop-shadow(0 0 8px ${color}) drop-shadow(0 0 18px ${color}aa)`,
-        }}
+        className="relative z-10 w-12 h-12 md:w-14 md:h-14 text-white"
+        strokeWidth={1.4}
+        style={{ filter: `drop-shadow(0 0 10px ${color}) drop-shadow(0 0 22px ${color}aa)` }}
       />
     </div>
   );
