@@ -10299,13 +10299,14 @@ function AppContent() {
               </div>
             </InViewGate>
             {/* Verified Signal — the same 4-card real-client block used on
-                /case-studies (per Katia). Wrapper id is the astronaut's
-                scroll-to target. */}
-            <InViewGate minHeight="80vh">
-              <div id="home-testimonials">
+                /case-studies (per Katia). The scroll-to anchor lives on the
+                OUTER wrapper so it's always in the DOM, even before
+                InViewGate has lazily mounted the cards. */}
+            <div id="home-testimonials">
+              <InViewGate minHeight="80vh">
                 <RealClientCases />
-              </div>
-            </InViewGate>
+              </InViewGate>
+            </div>
             <InViewGate minHeight="80vh">
               <motion.section
                 initial="hidden"
