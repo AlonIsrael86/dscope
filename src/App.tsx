@@ -5358,6 +5358,9 @@ const TeamSection = () => {
   // generic Freepik placeholders until real headshots are supplied.
   // Each member's "former" role is what they did before joining Dscope;
   // current role is their operational role inside the company.
+  // Order per Katia 2026-05-27: «там де team darren перемісти щоб був
+  // другим і поміняй місцями kateryna і vitalina».
+  // Resulting order: Alexei, Darren, Alon, Vitalina, Nir, Yoav, Michael, Kateryna.
   const team = [
     {
       name: "Alexei Kogan",
@@ -5367,6 +5370,16 @@ const TeamSection = () => {
       agents: [
         { type: "Vision Agent", task: "Architecting Strategy", icon: Telescope, color: "bg-blue-500", position: "top-[20%] right-4" },
         { type: "Growth Bot", task: "Scaling Operations", icon: Rocket, color: "bg-purple-500", position: "bottom-[40%] left-4" }
+      ]
+    },
+    {
+      name: "Darren Rozowsky",
+      role: "Chairman",
+      oldRole: "Board Member",
+      img: "/team/darren.jpg",
+      agents: [
+        { type: "Compass Agent", task: "Plotting Direction", icon: Compass, color: "bg-blue-500", position: "top-[18%] left-4" },
+        { type: "Governance Bot", task: "Anchoring Vision", icon: Landmark, color: "bg-purple-500", position: "bottom-[40%] right-4" }
       ]
     },
     {
@@ -5380,13 +5393,13 @@ const TeamSection = () => {
       ]
     },
     {
-      name: "Kateryna Dlugach",
-      role: "Chief Product Officer",
-      oldRole: "Product Designer",
-      img: "/team/katia.jpg",
+      name: "Vitalina Rebalsky",
+      role: "Customer Success Manager",
+      oldRole: "Client Relations Specialist",
+      img: "/team/vitalina.jpg",
       agents: [
-        { type: "Design Agent", task: "Refining Surfaces", icon: Palette, color: "bg-purple-500", position: "top-[25%] right-4" },
-        { type: "Quality Bot", task: "Auditing Experience", icon: Eye, color: "bg-emerald-500", position: "top-[40%] left-4" }
+        { type: "Loyalty Agent", task: "Nurturing Relationships", icon: HeartHandshake, color: "bg-purple-500", position: "top-[20%] right-4" },
+        { type: "Pulse Bot", task: "Mapping Sentiment", icon: MessageSquare, color: "bg-emerald-500", position: "bottom-[35%] left-4" }
       ]
     },
     {
@@ -5420,23 +5433,13 @@ const TeamSection = () => {
       ]
     },
     {
-      name: "Vitalina Rebalsky",
-      role: "Customer Success Manager",
-      oldRole: "Client Relations Specialist",
-      img: "/team/vitalina.jpg",
+      name: "Kateryna Dlugach",
+      role: "Chief Product Officer",
+      oldRole: "Product Designer",
+      img: "/team/katia.jpg",
       agents: [
-        { type: "Loyalty Agent", task: "Nurturing Relationships", icon: HeartHandshake, color: "bg-purple-500", position: "top-[20%] right-4" },
-        { type: "Pulse Bot", task: "Mapping Sentiment", icon: MessageSquare, color: "bg-emerald-500", position: "bottom-[35%] left-4" }
-      ]
-    },
-    {
-      name: "Darren Rozowsky",
-      role: "Chairman",
-      oldRole: "Board Member",
-      img: "/team/darren.jpg",
-      agents: [
-        { type: "Compass Agent", task: "Plotting Direction", icon: Compass, color: "bg-blue-500", position: "top-[18%] left-4" },
-        { type: "Governance Bot", task: "Anchoring Vision", icon: Landmark, color: "bg-purple-500", position: "bottom-[40%] right-4" }
+        { type: "Design Agent", task: "Refining Surfaces", icon: Palette, color: "bg-purple-500", position: "top-[25%] right-4" },
+        { type: "Quality Bot", task: "Auditing Experience", icon: Eye, color: "bg-emerald-500", position: "top-[40%] left-4" }
       ]
     }
   ];

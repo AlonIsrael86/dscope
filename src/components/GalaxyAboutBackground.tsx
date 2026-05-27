@@ -322,10 +322,18 @@ ConstellationLayer.displayName = 'ConstellationLayer';
 export const GalaxyAboutBackground = React.memo(() => {
   const { scrollYProgress } = useScroll();
 
-  const colorTop = useTransform(scrollYProgress, [0, 0.5, 1], ['#1e1b4b', '#3b0764', '#0e1a3a']);
-  const colorMid = useTransform(scrollYProgress, [0, 0.5, 1], ['#312e81', '#581c87', '#0c4a6e']);
-  const colorBottom = useTransform(scrollYProgress, [0, 0.5, 1], ['#020617', '#0b021a', '#020617']);
-  const coreColor = useTransform(scrollYProgress, [0, 0.5, 1], ['rgba(99,102,241,0.30)', 'rgba(168,85,247,0.30)', 'rgba(34,211,238,0.28)']);
+  // Per Katia 2026-05-27: «на сторінці about фон щоб не був таким
+  // рожевим, він має змінювати кольори але тільки темні щоб
+  // фотографії на фоні виглядали гарно».
+  // Was: indigo → bright purple/magenta (#3b0764, #581c87) → blue —
+  // the mid-scroll stop became a strong pink/magenta tone that
+  // clashed with team portraits. New palette: all 3 stops stay DARK
+  // and rotate through brand-aligned hues (deep blue → deep emerald
+  // → deep navy), no bright purples / pinks anywhere.
+  const colorTop    = useTransform(scrollYProgress, [0, 0.5, 1], ['#0a1535', '#022c22', '#0e1a3a']);
+  const colorMid    = useTransform(scrollYProgress, [0, 0.5, 1], ['#0c1a4a', '#053e2c', '#0c2540']);
+  const colorBottom = useTransform(scrollYProgress, [0, 0.5, 1], ['#020617', '#000b08', '#020617']);
+  const coreColor   = useTransform(scrollYProgress, [0, 0.5, 1], ['rgba(79,172,254,0.18)', 'rgba(52,211,153,0.18)', 'rgba(79,172,254,0.18)']);
 
   const gradient = useTransform(
     [colorTop, colorMid, colorBottom],
