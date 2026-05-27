@@ -6449,16 +6449,15 @@ const CLIENTS = [
 const BRAND_PALETTE = ['#4facfe', '#34d399', '#a855f7', '#22d3ee', '#ec4899', '#fbbf24'];
 
 const FloatingClientLogo = ({
-  name, brandColor, lane, duration, delay,
-}: { name: string; brandColor: string; lane: number; duration: number; delay: number }) => {
-  // Two-div structure: the OUTER motion.div owns the L→R translateX
-  // animation (Framer Motion mutates transform). The INNER div is the
-  // only one we touch with rAF — we read its bounding rect and write
-  // `scale` (via CSS `scale` property, NOT `transform`), `opacity` and
-  // `color`. Separating the two prevents the rAF write from clobbering
-  // Framer Motion's transform on every frame (which was the bug —
-  // logos appeared frozen because scale() overwrote translateX()).
+  name, description, brandColor, lane, duration, delay,
+}: { name: string; description: string; brandColor: string; lane: number; duration: number; delay: number }) => {
+  // Two-div structure (see commit 8c5a5ff for the full why): the OUTER
+  // motion.div owns Framer Motion's translateX, the INNER div is the
+  // only one we touch with rAF and we write the CSS `scale` PROPERTY
+  // (not `transform`) so the two don't fight.
   const innerRef = React.useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = React.useState(false);
+
   React.useEffect(() => {
     let raf = 0;
     const tick = () => {
@@ -6482,8 +6481,6 @@ const FloatingClientLogo = ({
         } else {
           color = '#ffffff';
         }
-        // CSS `scale` property is independent of `transform` so it
-        // doesn't fight Framer Motion's translateX on the parent.
         el.style.scale = String(scale);
         el.style.opacity = String(opacity);
         el.style.color = color;
@@ -6496,18 +6493,49 @@ const FloatingClientLogo = ({
 
   return (
     <motion.div
-      className="absolute will-change-transform pointer-events-none"
+      className="absolute will-change-transform"
       style={{ top: `${lane}%` }}
       initial={{ x: '-40vw' }}
-      animate={{ x: '110vw' }}
+      animate={isHovered ? undefined : { x: '110vw' }}
       transition={{ duration, delay, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
     >
       <div
         ref={innerRef}
-        className="whitespace-nowrap font-display font-bold uppercase tracking-tight text-xl md:text-3xl"
+        className="whitespace-nowrap font-display font-bold uppercase tracking-tight text-xl md:text-3xl cursor-pointer pointer-events-auto relative"
         style={{ color: '#ffffff', transformOrigin: 'left center' }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {name}
+        {/* Tooltip — name + description card that fades in on hover.
+            Marquee animation pauses while hovered (animate=undefined). */}
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              key="tooltip"
+              initial={{ opacity: 0, y: 8, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="absolute left-1/2 top-full -translate-x-1/2 mt-3 w-72 md:w-80 z-50 pointer-events-none"
+            >
+              <div
+                className="rounded-2xl border bg-black/90 backdrop-blur-xl px-5 py-4 text-left shadow-[0_10px_40px_rgba(0,0,0,0.6)]"
+                style={{ borderColor: `${brandColor}66`, boxShadow: `0 0 30px ${brandColor}33` }}
+              >
+                <div
+                  className="font-display font-bold uppercase tracking-wider text-sm mb-1.5"
+                  style={{ color: brandColor }}
+                >
+                  {name}
+                </div>
+                <div className="font-sans normal-case font-normal text-xs leading-relaxed tracking-normal text-white/75">
+                  {description}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.div>
   );
@@ -6541,6 +6569,7 @@ const ClientMarquee = () => {
           <FloatingClientLogo
             key={it.name}
             name={it.name}
+            description={it.description}
             brandColor={it.brandColor}
             lane={it.lane}
             duration={it.duration}
