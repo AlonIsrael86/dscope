@@ -5207,12 +5207,22 @@ const DataClusterGallery = () => {
             >
               Axiomatic Hub
             </motion.span>
-            <motion.h3 
+            <motion.h3
               initial={{ opacity: 0, y: 40, filter: 'blur(10px)', scale: 0.95 }}
               whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="text-[14vw] sm:text-[10vw] md:text-[8rem] lg:text-[10rem] leading-[0.8] sm:leading-[0.85] font-display font-black tracking-[-0.06em] uppercase italic bg-black/60 backdrop-blur-[40px] px-6 sm:px-16 md:px-32 py-10 md:py-16 rounded-[3rem] md:rounded-[5rem] border border-white/10 shadow-[0_0_150px_rgba(59,130,246,0.15)] ring-1 ring-white/10 relative group overflow-hidden w-full max-w-[98vw] md:w-auto text-center mx-auto flex flex-col justify-center items-center"
+              /*
+                Was wrapped in a black/60 backdrop-blur card with md:px-32
+                padding + border + rounded-[5rem] + overflow-hidden. The
+                text-[10rem] heading didn't fit inside (per Katia
+                2026-05-27: «тут не влізає фраза»). Dropped the card
+                completely — heading now sits directly on the section
+                background with its gradient + glow, no clipping container.
+                Font scale also softened a touch (lg:text-[10rem] →
+                lg:text-[8rem]).
+              */
+              className="text-[14vw] sm:text-[10vw] md:text-[7rem] lg:text-[8rem] leading-[0.85] font-display font-black tracking-[-0.04em] uppercase italic drop-shadow-[0_0_30px_rgba(59,130,246,0.25)] relative group w-full text-center mx-auto flex flex-col justify-center items-center"
             >
               <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-br from-blue-300 via-white to-sky-400 saturate-[1.4] block drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
                 THE CORE VALUES
