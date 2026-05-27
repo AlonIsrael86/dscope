@@ -103,6 +103,11 @@ html, body {
   100% { transform: translateY(400%); }
 }
 
+@keyframes clientFlow {
+  from { transform: translateX(-40vw); }
+  to   { transform: translateX(110vw); }
+}
+
 @keyframes lightningGlow {
   0%, 100% { text-shadow: 0 0 10px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.2); }
   90% { text-shadow: 0 0 10px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.2); }

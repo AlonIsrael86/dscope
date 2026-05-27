@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, memo, Component, ErrorInfo
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContactPlaceholder } from './routes/Contact';
 import { CaseStudies } from './routes/CaseStudies';
+import { RealClientCases } from './routes/RealClientCases';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
 import { VoiceWidget } from './components/VoiceWidget';
@@ -1245,9 +1246,9 @@ const CelestialBody = () => {
         className="absolute inset-0 blur-[140px] rounded-full group-hover:opacity-100 group-hover:blur-[180px] transition-all duration-700"
       />
       
-      <motion.div 
-        style={{ background: bodyColor, boxShadow: outerShadow }}
-        className="absolute inset-[35%] rounded-full overflow-hidden shadow-2xl group-hover:inset-[33%] transition-all duration-500"
+      <motion.div
+        style={{ background: bodyColor }}
+        className="absolute inset-[35%] rounded-full overflow-hidden group-hover:inset-[33%] transition-all duration-500"
       >
         {/* Dynamic Surface Pattern */}
         <motion.div 
@@ -1333,7 +1334,7 @@ const URL_TO_TAB: Record<string, string> = {
   '/services': 'services',
   '/industries': 'industries',
   '/pricing': 'pricing',
-  '/company': 'about',
+  '/about': 'about',
   '/case-studies': 'case-studies',
   '/contact': 'contact',
 };
@@ -1350,7 +1351,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/services': 'Services - Dscope',
   '/industries': 'Industries - Dscope',
   '/pricing': 'Pricing - Dscope',
-  '/company': 'Company - Dscope',
+  '/about': 'About - Dscope',
   '/case-studies': 'Case Studies - Dscope',
   '/brand-book': 'Brand Book - Dscope',
   '/contact': 'Contact - Dscope',
@@ -1364,7 +1365,7 @@ const PAGE_DESCRIPTIONS: Record<string, string> = {
   '/services': 'Dscope services - implementation, integration, and managed operations for enterprise AI automation.',
   '/industries': 'Dscope in the wild - travel, finance, education, real estate, government, and beyond. Industry-specific deployments at planetary scale.',
   '/pricing': 'Dscope decagon pricelist. Transparent enterprise pricing for the multi-tasking AI automation platform. Updating - final v2.1 pricing lands soon.',
-  '/company': 'The Dscope company - mission, vision, and operating philosophy behind the AI automation platform.',
+  '/about': 'About Dscope - mission, vision, team, and operating philosophy behind the AI automation platform.',
   '/case-studies': 'Dscope case studies. How enterprise teams ship AI automation faster with the decagon platform.',
   '/brand-book': 'The Dscope brand book - typography, color, symbols, motion, and the cosmic visual language.',
   '/contact': 'Talk to the Dscope team. Schedule a platform walk-through, request a pilot, or contact the founders directly.',
@@ -5004,9 +5005,16 @@ const DataClusterItem = ({ value, i, totalItems, scrollYProgress }: { value: any
     [i % 2 === 0 ? 15 : -15, 0, 0, i % 2 === 0 ? -15 : 15]
   );
 
-  // Responsive offsets
-  const xOffsetBase = [(i % 4 === 0 ? -120 : i % 4 === 1 ? 120 : -40), 0, (i % 4 === 2 ? 80 : i % 4 === 3 ? -120 : 60)];
-  const yOffsetBase = [(i % 3 === 0 ? -300 : i % 3 === 1 ? 300 : -200), 0, (i % 3 === 0 ? 200 : i % 3 === 1 ? -400 : 250)];
+  // Responsive offsets — y range reduced ~90% per Katia 2026-05-27:
+  // «тут зново забагато відстані між заголовком і наступними
+  // елементами, прибери 90 відсотків цього простору». Was [-300,
+  // 0, 300] which pushed cards 300px below their layout position at
+  // scroll start, creating a huge gap to the heading. Now [-30,
+  // 0, 30] — cards barely drift, sit right under the heading.
+  // X offsets slightly reduced too so cards don't fly off-screen
+  // sideways.
+  const xOffsetBase = [(i % 4 === 0 ? -60 : i % 4 === 1 ? 60 : -20), 0, (i % 4 === 2 ? 40 : i % 4 === 3 ? -60 : 30)];
+  const yOffsetBase = [(i % 3 === 0 ? -30 : i % 3 === 1 ? 30 : -20), 0, (i % 3 === 0 ? 20 : i % 3 === 1 ? -40 : 25)];
 
   const xOffset = useTransform(scrollYProgress, [0, 0.5, 1], xOffsetBase);
   const yOffset = useTransform(scrollYProgress, [0, 0.5, 1], yOffsetBase);
@@ -5152,11 +5160,31 @@ const DataClusterGallery = () => {
     { radius: 220, speed: 1.6, angleOffset: 240, depth: 1.2, driftIntensity: 0.2 },
   ], []);
 
+  // Section overflow-hidden removed — per Katia 2026-05-27: «не
+  // зменшуй шрифт, а збільши рамку чи прибери її чи що там що
+  // обрізає текст». THE CORE VALUES italic heading at lg:text-[8rem]
+  // is wider than the section's centred axis; without this clip the
+  // full text reads end-to-end. Ambient orbital satellites have their
+  // own `overflow-hidden` wrapper so they stay contained, and body
+  // has overflow-x: hidden globally so no horizontal scroll bar
+  // appears.
+  //
+  // Section height was min-h-[320vh] (3.2 viewports) — most of that
+  // was empty scroll room AFTER cards finished animating. Cut to
+  // min-h-[140vh] per Katia 2026-05-27: «після цих елементів також
+  // багато вільного місця, прибере 80 відсотків цього вільного
+  // місця». 140vh still leaves comfortable scroll room for the
+  // heading pop-in and cards staggered fade-in / parallax, but kills
+  // the huge empty band underneath.
   return (
-    <section ref={containerRef} className="py-16 md:py-24 relative min-h-[320vh] flex flex-col justify-start overflow-hidden border-t border-white/5">
+    <section ref={containerRef} className="py-16 md:py-24 relative min-h-[140vh] flex flex-col justify-start border-t border-white/5">
       
-      {/* FIXED HEADER - More fluid transitions */}
-      <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-center z-30 pointer-events-none">
+      {/* FIXED HEADER — was justify-center (heading sat in middle of
+          viewport, big gap to cards below). Changed to justify-start
+          + pt-[10vh] so the heading sits near the TOP of viewport;
+          cards sticky below sits much closer visually. Per Katia
+          2026-05-27: «ще зменш простір між заголовком і елементами». */}
+      <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-start pt-[8vh] md:pt-[10vh] z-30 pointer-events-none">
         
         {/* Ambient Orbitals */}
         <div className="absolute inset-0 overflow-hidden">
@@ -5186,49 +5214,61 @@ const DataClusterGallery = () => {
         </div>
 
         <div className="relative flex flex-col items-center text-center">
-          <motion.div 
-            style={{ 
-              scale: useTransform(scrollYProgress, [0, 0.4, 1], [1, 0.95, 0.7]),
-              opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 0.95], [1, 0.8, 0.4, 0]),
-              y: useTransform(scrollYProgress, [0, 1], [100, -400]),
-              rotateX: useTransform(scrollYProgress, [0, 1], [0, 20]),
-              perspective: 1000,
-              willChange: "transform, opacity"
-            }}
-            className="mb-8"
-          >
-            <motion.span 
-              initial={{ opacity: 0, letterSpacing: "0em", filter: 'blur(10px)' }}
-              whileInView={{ opacity: 0.7, letterSpacing: "2.5em", filter: 'blur(0px)' }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[10px] md:text-[14px] font-mono uppercase text-blue-400 mb-6 block"
-            >
+          {/* Heading block — fully rebuilt per Katia 2026-05-27:
+              «прибери весь цей напис з усіма ефектами і замість нього
+              створи новий щоб був не обрізаний і ця назва заголовок
+              переливалась різними кольорами». No more scroll-driven
+              y/scale/rotateX transforms (they were what pushed the
+              letters above the viewport top). No italic, no tight
+              negative tracking, slightly smaller base size so the
+              phrase always fits comfortably. Only effect is the
+              continuously-shifting brand-colour gradient flowing
+              through the letters. */}
+          <div className="flex flex-col items-center text-center mb-4">
+            <span className="text-[10px] md:text-[14px] font-mono uppercase text-blue-400/70 tracking-[0.4em] mb-6 block">
               Axiomatic Hub
-            </motion.span>
-            <motion.h3 
-              initial={{ opacity: 0, y: 40, filter: 'blur(10px)', scale: 0.95 }}
-              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="text-[14vw] sm:text-[10vw] md:text-[8rem] lg:text-[10rem] leading-[0.8] sm:leading-[0.85] font-display font-black tracking-[-0.06em] uppercase italic bg-black/60 backdrop-blur-[40px] px-6 sm:px-16 md:px-32 py-10 md:py-16 rounded-[3rem] md:rounded-[5rem] border border-white/10 shadow-[0_0_150px_rgba(59,130,246,0.15)] ring-1 ring-white/10 relative group overflow-hidden w-full max-w-[98vw] md:w-auto text-center mx-auto flex flex-col justify-center items-center"
+            </span>
+            {/* Pop-in scale: starts small, overshoots to 1.25 then
+                settles back to 1 when the heading enters the viewport
+                (per Katia 2026-05-27: «треба щоб заголовок збільшився
+                і потім повернувся в нормальну форму коли скролять і
+                доходять до цього заголовку»). Triggers every time the
+                heading scrolls back into view (viewport once: false).
+                Max scale 1.25 — safely within viewport for the
+                lg:text-[6.5rem] base. */}
+            <motion.h3
+              initial={{ scale: 0.6, opacity: 0 }}
+              whileInView={{ scale: [0.6, 1.25, 1], opacity: 1 }}
+              viewport={{ once: false, amount: 0.3 }}
+              transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], times: [0, 0.55, 1] }}
+              className="text-[9vw] sm:text-[7vw] md:text-[5.5rem] lg:text-[6.5rem] leading-[1] font-display font-black tracking-tight uppercase drop-shadow-[0_0_40px_rgba(79,172,254,0.25)]"
             >
-              <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-br from-blue-300 via-white to-sky-400 saturate-[1.4] block drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+              <motion.span
+                className="text-transparent bg-clip-text inline-block"
+                style={{
+                  backgroundImage:
+                    'linear-gradient(120deg, #4facfe 0%, #34d399 33%, #ec4899 66%, #4facfe 100%)',
+                  backgroundSize: '300% 100%',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                }}
+                animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
+              >
                 THE CORE VALUES
-              </span>
-              <motion.div 
-                animate={{ x: ["-100%", "200%"] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 z-0" 
-              />
+              </motion.span>
             </motion.h3>
-          </motion.div>
+          </div>
         </div>
       </div>
       
       {/* GRID ITEMS - Staggered Appearance & Parallax */}
       <div className="sticky top-0 h-[100dvh] w-full flex items-start justify-center z-20 pointer-events-none lg:pointer-events-auto">
-        <div className="max-w-7xl w-full flex flex-wrap justify-center items-center gap-4 md:gap-12 px-6 md:px-12 pt-[35vh] md:pt-[45dvh]">
+        {/* pt was [35vh]→[22vh]→[12vh]. Tightening yet again per
+            Katia 2026-05-27: «ще зменши відстань між назвою і
+            наступними елементами». Now [2vh] md:[4dvh] — cards sit
+            essentially right under the heading. */}
+        <div className="max-w-7xl w-full flex flex-wrap justify-center items-center gap-4 md:gap-12 px-6 md:px-12 pt-[2vh] md:pt-[4dvh]">
           {[...coreValuesData, ...moreCoreValuesData].map((value: any, i: number) => {
             return (
               <DataClusterItem 
@@ -5297,16 +5337,21 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
       tabIndex={0}
       aria-label={`View details for ${member.name}, ${member.role}`}
     >
-      <div className="aspect-[3/4] md:aspect-[4/5] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] hover:border-blue-500/40">
+      {/* Card aspect — was `aspect-[3/4] md:aspect-[4/5]` (vertical
+          portrait). New team photos are landscape 1536×1024 (3:2), so
+          the card now mirrors that: `aspect-[4/3] md:aspect-[3/2]`.
+          object-position centred so faces stay framed even with the
+          1.1× zoom + parallax. */}
+      <div className="aspect-[4/3] md:aspect-[3/2] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] hover:border-blue-500/40">
         {/* Realistic Portrait */}
         <motion.img
-          style={{ y: yParallax, scale: 1.1 }}
+          style={{ y: yParallax, scale: 1.1, objectPosition: 'center 35%' }}
           src={member.img}
           alt={`${member.name}`}
           loading="lazy"
           decoding="async"
-          width={800}
-          height={1000}
+          width={1400}
+          height={933}
           className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.05] saturate-100"
         />
         
@@ -5352,6 +5397,9 @@ const TeamSection = () => {
   // generic Freepik placeholders until real headshots are supplied.
   // Each member's "former" role is what they did before joining Dscope;
   // current role is their operational role inside the company.
+  // Order per Katia 2026-05-27: «там де team darren перемісти щоб був
+  // другим і поміняй місцями kateryna і vitalina».
+  // Resulting order: Alexei, Darren, Alon, Vitalina, Nir, Yoav, Michael, Kateryna.
   const team = [
     {
       name: "Alexei Kogan",
@@ -5361,6 +5409,16 @@ const TeamSection = () => {
       agents: [
         { type: "Vision Agent", task: "Architecting Strategy", icon: Telescope, color: "bg-blue-500", position: "top-[20%] right-4" },
         { type: "Growth Bot", task: "Scaling Operations", icon: Rocket, color: "bg-purple-500", position: "bottom-[40%] left-4" }
+      ]
+    },
+    {
+      name: "Darren Rozowsky",
+      role: "Chairman",
+      oldRole: "Board Member",
+      img: "/team/darren.jpg",
+      agents: [
+        { type: "Compass Agent", task: "Plotting Direction", icon: Compass, color: "bg-blue-500", position: "top-[18%] left-4" },
+        { type: "Governance Bot", task: "Anchoring Vision", icon: Landmark, color: "bg-purple-500", position: "bottom-[40%] right-4" }
       ]
     },
     {
@@ -5374,13 +5432,13 @@ const TeamSection = () => {
       ]
     },
     {
-      name: "Kateryna Dlugach",
-      role: "Chief Product Officer",
-      oldRole: "Product Designer",
-      img: "/team/katia.jpg",
+      name: "Vitalina Rebalsky",
+      role: "Customer Success Manager",
+      oldRole: "Client Relations Specialist",
+      img: "/team/vitalina.jpg",
       agents: [
-        { type: "Design Agent", task: "Refining Surfaces", icon: Palette, color: "bg-purple-500", position: "top-[25%] right-4" },
-        { type: "Quality Bot", task: "Auditing Experience", icon: Eye, color: "bg-emerald-500", position: "top-[40%] left-4" }
+        { type: "Loyalty Agent", task: "Nurturing Relationships", icon: HeartHandshake, color: "bg-purple-500", position: "top-[20%] right-4" },
+        { type: "Pulse Bot", task: "Mapping Sentiment", icon: MessageSquare, color: "bg-emerald-500", position: "bottom-[35%] left-4" }
       ]
     },
     {
@@ -5414,23 +5472,13 @@ const TeamSection = () => {
       ]
     },
     {
-      name: "Vitalina Rebalsky",
-      role: "Customer Success Manager",
-      oldRole: "Client Relations Specialist",
-      img: "/team/vitalina.jpg",
+      name: "Kateryna Dlugach",
+      role: "Chief Product Officer",
+      oldRole: "Product Designer",
+      img: "/team/katia.jpg",
       agents: [
-        { type: "Loyalty Agent", task: "Nurturing Relationships", icon: HeartHandshake, color: "bg-purple-500", position: "top-[20%] right-4" },
-        { type: "Pulse Bot", task: "Mapping Sentiment", icon: MessageSquare, color: "bg-emerald-500", position: "bottom-[35%] left-4" }
-      ]
-    },
-    {
-      name: "Darren Rozowsky",
-      role: "Chairman",
-      oldRole: "Board Member",
-      img: "/team/darren.jpg",
-      agents: [
-        { type: "Compass Agent", task: "Plotting Direction", icon: Compass, color: "bg-blue-500", position: "top-[18%] left-4" },
-        { type: "Governance Bot", task: "Anchoring Vision", icon: Landmark, color: "bg-purple-500", position: "bottom-[40%] right-4" }
+        { type: "Design Agent", task: "Refining Surfaces", icon: Palette, color: "bg-purple-500", position: "top-[25%] right-4" },
+        { type: "Quality Bot", task: "Auditing Experience", icon: Eye, color: "bg-emerald-500", position: "top-[40%] left-4" }
       ]
     }
   ];
@@ -5448,7 +5496,13 @@ const TeamSection = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {/* Grid — was 3-col vertical-portrait grid. New team photos are
+          landscape (1536×1024), so the grid is now 2-col on md+. Eight
+          landscape cards in 4×2 rows; each card gets more horizontal
+          space + photos display at their natural aspect ratio
+          (per Katia 2026-05-27: «придумай як гарно на сторінці
+          розтавити фото»). */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 max-w-6xl mx-auto">
         {team.map((member, i) => (
           <TeamMemberCard key={i} member={member} index={i} />
         ))}
@@ -5664,7 +5718,7 @@ const SatelliteNav = memo(({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300, damping: 35 }}
-            className="fixed inset-0 bg-[#00000a]/95 backdrop-blur-3xl z-[999] flex flex-col p-6 pt-16 md:p-12 overflow-y-auto"
+            className="fixed inset-0 bg-[#00000a]/95 backdrop-blur-3xl z-[999] flex flex-col p-6 pt-16 md:p-12 overflow-hidden"
             onClick={() => setIsOpen(false)}
           >
             <div className="absolute top-6 right-6 md:top-12 md:right-12 z-[1002]">
@@ -5681,7 +5735,7 @@ const SatelliteNav = memo(({
             </div>
 
             <div 
-              className="grid grid-cols-2 gap-x-2 sm:gap-x-8 md:gap-x-16 lg:gap-x-32 gap-y-4 sm:gap-y-6 md:gap-y-8 lg:gap-y-10 w-full max-w-5xl mx-auto min-h-full place-content-center overflow-y-auto px-2 sm:px-4 py-8 sm:py-12"
+              className="grid grid-cols-2 gap-x-2 sm:gap-x-8 md:gap-x-16 lg:gap-x-32 gap-y-3 sm:gap-y-4 md:gap-y-5 lg:gap-y-6 w-full max-w-5xl mx-auto h-full place-content-center px-2 sm:px-4 py-4 sm:py-6"
               onClick={(e) => e.stopPropagation()}
             >
               {tabs.map((tab, i) => (
@@ -5703,17 +5757,19 @@ const SatelliteNav = memo(({
                         ? 'bg-blue-500/20 scale-100 opacity-100' 
                         : 'bg-blue-500/10 scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100'
                     }`} />
-                    <SymbolIcon 
-                      symbolId={(tab as any).symbolId} 
-                      size={isMobile ? 24 : 48} 
+                    <SymbolIcon
+                      symbolId={(tab as any).symbolId}
+                      size={isMobile ? 32 : 72}
                       className={`relative z-10 transition-transform duration-500 ${
                         activeTab === tab.id ? 'scale-110 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] text-blue-400' : 'group-hover:scale-110 group-hover:-rotate-3'
                       }`}
                     />
                   </div>
-                  
+
                   <div className="flex flex-col items-center sm:items-start mt-1 sm:mt-0">
-                    <h4 className={`text-sm sm:text-xl md:text-2xl lg:text-3xl font-display font-black tracking-tighter uppercase transition-all duration-300 leading-none ${
+                    {/* Bumped per Katia 2026-05-27: «в меню треба збільшити
+                        розмір сторінок». Was sm/xl/2xl/3xl → now base/2xl/4xl/5xl. */}
+                    <h4 className={`text-base sm:text-2xl md:text-4xl lg:text-5xl font-display font-black tracking-tighter uppercase transition-all duration-300 leading-none ${
                       activeTab === tab.id ? 'text-white' : 'text-white/40 group-hover:text-white'
                     }`}>
                       {tab.label}
@@ -5992,7 +6048,12 @@ const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = 
 
   return (
     <section ref={containerRef} className={`relative ${height}`}>
-      <div className={`sticky top-0 min-h-[100dvh] flex items-center overflow-x-hidden z-10 w-full ${innerClassName}`}>
+      {/* No overflow-x-hidden — per Katia 2026-05-27: «фраза досі
+          обрізається коли збільшується, там не має бути ніяких
+          рамок». The horizontal clip cut off scaled headings on the
+          dashboard route. The parent `motion.main` already has its
+          own overflow guard, so we don't reintroduce one here. */}
+      <div className={`sticky top-0 min-h-[100dvh] flex items-center z-10 w-full ${innerClassName}`}>
         {React.Children.map(children, child => {
           if (React.isValidElement(child)) {
             // @ts-ignore - Injecting progress into children
@@ -6261,11 +6322,17 @@ const FloatingAstronaut = ({ progress }: { progress: any }) => {
   
   return (
     <motion.div
-      onClick={() => setIsFlying(true)}
-      style={{ 
-        y: isFlying ? undefined : y, 
-        rotate: isFlying ? undefined : rotateValue, 
-        opacity: isFlying ? undefined : opacityValue 
+      onClick={() => {
+        // Smooth-scroll to the testimonials block before flying off,
+        // so the click takes the visitor where the astronaut "points".
+        const el = document.getElementById('home-testimonials');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setIsFlying(true);
+      }}
+      style={{
+        y: isFlying ? undefined : y,
+        rotate: isFlying ? undefined : rotateValue,
+        opacity: isFlying ? undefined : opacityValue
       }}
       initial={{ opacity: 0, scale: 0.8 }}
       animate={isFlying ? {
@@ -6276,18 +6343,20 @@ const FloatingAstronaut = ({ progress }: { progress: any }) => {
         rotate: [0, 180, 360],
         x: [0, -100, -200],
         filter: ["blur(0px)", "blur(10px)", "blur(20px)"]
-      } : { 
-        opacity: 1, 
-        scale: 1 
+      } : {
+        opacity: 1,
+        scale: 1
       }}
-      transition={isFlying ? { 
-        duration: 2.5, 
-        ease: "easeInOut" 
-      } : { 
-        duration: 2.5, 
-        ease: [0.23, 1, 0.32, 1] 
+      transition={isFlying ? {
+        duration: 2.5,
+        ease: "easeInOut"
+      } : {
+        duration: 2.5,
+        ease: [0.23, 1, 0.32, 1]
       }}
-      className="absolute top-[65%] left-1/2 -translate-x-1/2 w-48 h-64 md:w-80 md:h-96 z-[5] cursor-pointer pointer-events-auto hidden md:block"
+      // Pinned to the upper-right area so it never overlaps the
+      // bottom-left VoiceWidget / Messengers chip.
+      className="absolute top-[28%] right-[8%] w-40 h-56 md:w-64 md:h-80 z-[5] cursor-pointer pointer-events-auto hidden md:block"
     >
       <motion.div
         animate={isFlying ? {} : { 
@@ -6435,107 +6504,192 @@ const CLIENTS = [
   }
 ];
 
-const ClientMarquee = () => {
+// Brand-book palette for OUR CLIENTS — per Katia 2026-05-27: «в
+// брендбук було три — зелений, блакитний і рожевий». Limited to the
+// three core brand colours.
+const BRAND_PALETTE = ['#4facfe', '#34d399', '#ec4899']; // Electric Blue / Bio Emerald / Pink
+
+const FloatingClientLogo = ({
+  name, description, brandColor, lane, duration, delay,
+}: { name: string; description: string; brandColor: string; lane: number; duration: number; delay: number }) => {
+  // Two-div structure: OUTER does the L→R CSS translateX animation
+  // (we use a CSS @keyframes rather than Framer Motion specifically so
+  // that `animation-play-state: paused` cleanly freezes the logo on
+  // hover without rewinding / reversing — Framer's `animate=undefined`
+  // pause was the source of the "moves in opposite direction" bug).
+  // INNER div is only touched by rAF (scale / opacity / colour) and
+  // writes the CSS `scale` PROPERTY (separate from transform) so the
+  // two layers don't fight.
+  const innerRef = React.useRef<HTMLDivElement>(null);
+  const outerRef = React.useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  // Mirror hover into the OUTER via inline style so the CSS animation
+  // pauses cleanly. (React state alone would force a re-render of the
+  // CSS-animated outer div, which CAN reset transform momentarily.)
+  // Also bump z-index while hovered so the tooltip sits ABOVE every
+  // other client logo flying past — per Katia: «це пояснення має бути
+  // на першому плані, так щоб інші назви не перекривали його».
+  React.useEffect(() => {
+    const el = outerRef.current;
+    if (el) {
+      el.style.animationPlayState = isHovered ? 'paused' : 'running';
+      el.style.zIndex = isHovered ? '100' : '1';
+    }
+  }, [isHovered]);
+
+  // Flip tooltip to ABOVE the logo when the client is in the bottom
+  // half of the band — otherwise the tooltip extends past the bottom
+  // edge and gets clipped (per Katia, screenshot: REGBA tooltip cut
+  // off at the bottom).
+  const tooltipAbove = lane > 50;
+
+  React.useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const el = innerRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const vcx = window.innerWidth / 2;
+        const d = Math.abs(cx - vcx);
+        const md = window.innerWidth / 2;
+        const t = Math.min(d / md, 1);   // 0 at centre → 1 at edges
+        const k = 1 - t;                 // closeness to centre
+        const scale = 0.75 + k * 0.8;    // 0.75 → 1.55
+        const opacity = 0.35 + k * 0.65; // 0.35 → 1.0
+        let color: string;
+        if (k > 0.7) {
+          color = brandColor;
+        } else if (k > 0.4) {
+          const pct = Math.round(((k - 0.4) / 0.3) * 100);
+          color = `color-mix(in srgb, ${brandColor} ${pct}%, white)`;
+        } else {
+          color = '#ffffff';
+        }
+        el.style.scale = String(scale);
+        el.style.opacity = String(opacity);
+        el.style.color = color;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [brandColor]);
+
   return (
-    <div className="w-full mt-24 z-20 flex flex-col relative group">
-      <div className="flex flex-row items-center gap-6 justify-center w-full max-w-7xl mx-auto px-6 mb-8 relative z-30">
-        <h3 className="text-white text-2xl md:text-3xl lg:text-4xl font-display font-bold tracking-[0.05em] uppercase text-center drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">Our Clients</h3>
-      </div>
-
-      {/* Taller container + top/bottom mask so names fade smoothly at edges
-          instead of being clipped. Mask also keeps clients from visually
-          overlapping the heading above. */}
+    <div
+      ref={outerRef}
+      className="absolute will-change-transform"
+      style={{
+        top: `${lane}%`,
+        animationName: 'clientFlow',
+        animationDuration: `${duration}s`,
+        animationDelay: `${delay}s`,
+        animationTimingFunction: 'linear',
+        animationIterationCount: 'infinite',
+      }}
+    >
       <div
-        className="flex justify-center items-center w-full relative overflow-hidden h-[560px] md:h-[680px]"
-        style={{
-          perspective: '800px',
-          transformStyle: 'preserve-3d',
-          WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)',
-          maskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)'
-        }}
+        ref={innerRef}
+        className="whitespace-nowrap font-display font-bold uppercase tracking-tight text-xl md:text-3xl cursor-pointer pointer-events-auto relative"
+        style={{ color: '#ffffff', transformOrigin: 'left center' }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        {CLIENTS.map((client, i) => {
-          // Randomized X/Y lanes — distribute names across the screen so the
-          // sequence doesn't feel like a left-to-right ladder.
-          const count = CLIENTS.length;
-          // Evenly-spaced lanes from -18vw to +18vw, shuffled deterministically
-          // via i*7 % count. Tighter spread so long names (e.g. "Dani Levi
-          // Communication Ltd", "Orin Shpalter") don't get clipped at viewport edges.
-          const X_LANES = Array.from({ length: count }, (_, idx) => ((idx + 0.5) / count) * 36 - 18);
-          const Y_LANES = [-180, -90, 0, 90, 180];
-          const xLane = X_LANES[(i * 7) % count];
-          const yLane = Y_LANES[(i * 3 + 2) % Y_LANES.length];
-          const xOffset = `${xLane}vw`;
-          const yOffset = `${yLane}px`;
-
-          // Faster cycle but wider visibility window — names move quicker
-          // through space while staying readable on screen longer
-          const cycleDuration = 18;
-
-          // Each client gets one of the 3 platform colors at peak proximity
-          // (when the description tooltip is reachable). Cycle pink → emerald → blue.
-          const PEAK_COLORS = ['#ec4899', '#34d399', '#4facfe'];
-          const peakColor = PEAK_COLORS[i % PEAK_COLORS.length];
-
-          return (
+        {name}
+        {/* Tooltip — fixed-width card that sits below the logo. Marquee
+            animation pauses while hovered via animationPlayState. The
+            tooltip is `pointer-events-none` so moving the mouse from
+            the logo into the tooltip area never re-fires onMouseLeave
+            (which was the flicker source). Description text wraps
+            inside the card (whitespace-normal overrides the outer
+            whitespace-nowrap on the logo). */}
+        <AnimatePresence>
+          {isHovered && (
             <motion.div
-              key={i}
-              className="absolute group/logo text-[clamp(0.95rem,2.4vw,1.75rem)] font-bold tracking-tight text-center whitespace-nowrap drop-shadow-2xl cursor-default"
-              initial={{ z: -2000, opacity: 0, x: xOffset, y: yOffset }}
-              animate={{
-                z: [-2000, -200, 0, 200, 800],
-                // Visibility window ≈ 44% of cycle (~7.9s on screen). With
-                // 18s cycle and 11 clients staggered ~1.64s apart, ~5 names
-                // are readable at once across the larger container.
-                opacity: [0, 0, 0.9, 0, 0]
-              }}
-              transition={{
-                duration: cycleDuration,
-                times: [0, 0.28, 0.5, 0.72, 1],
-                repeat: Infinity,
-                ease: "linear",
-                delay: i * (cycleDuration / count)
-              }}
-              whileHover={{ scale: 1.1, zIndex: 100 }}
+              key="tooltip"
+              initial={{ opacity: 0, y: tooltipAbove ? -8 : 8, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: tooltipAbove ? -8 : 8, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className={`absolute left-1/2 -translate-x-1/2 w-72 md:w-80 z-50 pointer-events-none whitespace-normal ${
+                tooltipAbove ? 'bottom-full mb-3' : 'top-full mt-3'
+              }`}
             >
-              <div className="relative flex flex-col items-center">
-                <motion.span
-                  className="group-hover/logo:text-[var(--hover-color)]"
-                  style={{ '--hover-color': client.color } as any}
-                  animate={{
-                    color: [
-                      'rgba(255,255,255,0.85)',
-                      'rgba(255,255,255,0.85)',
-                      peakColor,
-                      'rgba(255,255,255,0.85)',
-                      'rgba(255,255,255,0.85)'
-                    ]
-                  }}
-                  transition={{
-                    duration: cycleDuration,
-                    times: [0, 0.45, 0.5, 0.55, 1],
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                    delay: i * (cycleDuration / count)
-                  }}
+              <div
+                className="rounded-2xl border bg-black/90 backdrop-blur-xl px-5 py-4 text-left shadow-[0_10px_40px_rgba(0,0,0,0.6)]"
+                style={{ borderColor: `${brandColor}66`, boxShadow: `0 0 30px ${brandColor}33` }}
+              >
+                <div
+                  className="font-display font-bold uppercase tracking-wider text-sm mb-1.5 break-words"
+                  style={{ color: brandColor }}
                 >
-                  {client.name}
-                </motion.span>
-                
-                {/* Info Tooltip */}
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 md:w-80 p-4 bg-black/90 border border-white/10 rounded-xl opacity-0 group-hover/logo:opacity-100 transition-opacity duration-300 pointer-events-none drop-shadow-[0_0_30px_rgba(0,0,0,0.8)] shadow-2xl flex flex-col gap-3 z-50 text-left">
-                  <div className="flex items-center gap-3 border-b border-white/10 pb-2">
-                    <div className="w-3 h-3 rounded-full shrink-0 shadow-inner" style={{ backgroundColor: client.color, boxShadow: `0 0 10px ${client.color}` }} />
-                    <span className="text-sm font-mono text-white/90 tracking-widest uppercase truncate">{client.name}</span>
-                  </div>
-                  <p className="text-xs md:text-sm text-white/60 leading-relaxed font-sans font-normal tracking-normal whitespace-normal">
-                    {client.description}
-                  </p>
+                  {name}
+                </div>
+                <div className="font-sans normal-case font-normal text-xs leading-relaxed tracking-normal text-white/75 break-words">
+                  {description}
                 </div>
               </div>
             </motion.div>
-          );
-        })}
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+const ClientMarquee = () => {
+  // Pre-compute deterministic lane / duration / delay per client.
+  //
+  // LANES: evenly spread across the band so two clients are NEVER on
+  // the same vertical line (was: `lane = 8 + ((i*37) % 80)` which could
+  // collide). With 11 clients and 84% range (4%→88%), gap = ~8.4% of
+  // band height = ~46px on desktop band height 560px — comfortably
+  // larger than the rendered name height (~45px at full 1.55× scale),
+  // so names always have visible breathing room.
+  //
+  // DURATIONS / DELAYS stay varied so the field still feels chaotic
+  // and the per-row crossings happen at different times.
+  const N = CLIENTS.length;
+  const items = CLIENTS.map((c, i) => {
+    const seed = (i * 31 + 7) % 100;
+    // Spread lanes evenly across 4% → 88%.
+    const lane = 4 + (i * (84 / Math.max(N - 1, 1)));
+    const duration = 30 + ((seed * 0.27) % 18); // 30s → 48s, varied per client
+    const delay = -((i * 4.2) % 35);            // negative delay → already spread at mount
+    const brandColor = BRAND_PALETTE[i % BRAND_PALETTE.length];
+    return { ...c, lane, duration, delay, brandColor };
+  });
+
+  return (
+    <div className="w-screen relative left-1/2 -translate-x-1/2 mt-24 z-20">
+      <div className="flex flex-row items-center justify-center mb-10 px-6 relative z-30">
+        <h3 className="text-white text-2xl md:text-3xl lg:text-4xl font-display font-bold tracking-[0.05em] uppercase text-center drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">
+          Our Clients
+        </h3>
+      </div>
+
+      {/* Floating field — each client on its own y-lane / speed,
+          travelling LEFT → RIGHT. White + dim at the edges, picks up
+          its brand colour + scales up as it crosses the viewport
+          centre. Band is taller (560px) so each evenly-spread lane has
+          room for the logo at full scale + tooltip below. */}
+      {/* overflow-x-hidden (NOT overflow-hidden) so off-screen marquee
+          is clipped horizontally but tooltips on the bottom lane can
+          extend a bit below the band without being cut. */}
+      <div className="relative w-full overflow-x-hidden h-[520px] md:h-[600px]">
+        {items.map((it) => (
+          <FloatingClientLogo
+            key={it.name}
+            name={it.name}
+            description={it.description}
+            brandColor={it.brandColor}
+            lane={it.lane}
+            duration={it.duration}
+            delay={it.delay}
+          />
+        ))}
       </div>
     </div>
   );
@@ -7157,11 +7311,14 @@ ServiceItem.displayName = 'ServiceItem';
 
 const DashboardHeader = ({ progress }: { progress?: any }) => {
   const headerOpacity = useTransform(progress || 0, [0, 0.05, 0.9, 1], [1, 1, 1, 0]);
-  
-  // Title zooming while keeping it readable and centered on the screen
-  const mainTitleScale = useTransform(progress || 0, [0, 0.5, 1], [1, 1.3, 1.5]);
+
+  // Title zoom — softened (was [1, 1.3, 1.5], now [1, 1.05, 1.1]) so
+  // even at max-scroll the heading stays inside its container instead
+  // of getting clipped at the section edges (per Katia 2026-05-27:
+  // «фраза досі обрізається коли збільшується»).
+  const mainTitleScale = useTransform(progress || 0, [0, 0.5, 1], [1, 1.05, 1.1]);
   const mainTitleY = useTransform(progress || 0, [0, 0.5, 1], [0, 10, -50]); // Move slightly up to stay readable
-  const mainTitleRotate = useTransform(progress || 0, [0, 0.5, 1], [0, 1, 2]); // Very subtle tilt
+  const mainTitleRotate = useTransform(progress || 0, [0, 0.5, 1], [0, 0.5, 1]); // Very subtle tilt
 
   const headerScale = useTransform(progress || 0, [0.85, 0.98], [1, 1.1]);
   const headerY = useTransform(progress || 0, [0.85, 0.98], [0, -100]);
@@ -7220,7 +7377,15 @@ const DashboardHeader = ({ progress }: { progress?: any }) => {
         ))}
       </motion.h1>
       
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[600px] bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-emerald-600/20 blur-[100px] -z-10 pointer-events-none mix-blend-screen" />
+      {/* Background glow — was `w-full h-[600px]` rectangle whose
+          hard edges (even with blur-[100px]) showed as a visible
+          rectangular "frame" around the heading and clipped the
+          fly-in animation per Katia 2026-05-27: «видно рамку для
+          текста і коли вилітає текст він обрізається через цю
+          рамку». Switched to a circular blob — same colour palette,
+          no rectangular silhouette, text can fly in without any
+          visible bounding region. */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-emerald-600/20 blur-[120px] -z-10 pointer-events-none mix-blend-screen" />
     </motion.header>
   );
 };
@@ -9025,7 +9190,7 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
         { name: "Insurance", icon: Shield, color: "#3b82f6", model: ShieldModel },
         { name: "Global Delivery", icon: Globe, color: "#10b981", model: GlobeModel },
         { name: "Strategic Mgmt", icon: Target, color: "#f59e0b", model: TargetModel },
-        { name: "Financial Ops", icon: LineChart, color: "#8b5cf6", model: ChartModel },
+        { name: "Financial Ops", icon: TrendingUp, color: "#8b5cf6", model: ChartModel },
         { name: "Learning", icon: GraduationCap, color: "#ef4444", model: LearningModel },
         { name: "Factory Processes", icon: Factory, color: "#06b6d4", model: FactoryModel },
         { name: "Food & Beverage", icon: Coffee, color: "#f97316", model: CoffeeModel },
@@ -9108,10 +9273,10 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
             role="button"
             tabIndex={isFilteredOut ? -1 : 0}
             aria-label={`Select ${area.name} sector`}
-            className={`group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 ${
-              isFilteredOut 
-                ? 'opacity-[0.08] saturate-50 blur-[1px] scale-95 pointer-events-none' 
-                : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] border border-yellow-500/10 hover:border-yellow-500/30'
+            className={`group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 overflow-hidden ${
+              isFilteredOut
+                ? 'opacity-[0.08] saturate-50 blur-[1px] scale-95 pointer-events-none'
+                : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-[#010610]/95 backdrop-blur-md border border-yellow-500/10 hover:border-yellow-500/30'
             }`}
           >
             {/* Industry symbol — same lucide glyph (semantic meaning kept) but
@@ -9119,7 +9284,7 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
                 glow. Per Katia: "ті самі ідеї, але з космічним". */}
             <div className="absolute inset-x-0 top-0 h-3/5 pointer-events-auto flex items-start justify-center pt-[6%] opacity-90 group-hover:opacity-100 transition-all duration-700 scale-[0.72] group-hover:scale-[0.82]">
               <div className="relative w-3/4 h-full">
-                <CosmicIndustryIcon icon={area.icon} color={area.color} />
+                <CosmicIndustryIcon icon={area.icon} color={area.color} variant={i} />
               </div>
             </div>
             
@@ -10219,7 +10384,7 @@ function AppContent() {
             aria-label="Go to DeltaScope home"
             className="cursor-pointer bg-transparent border-0 p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black rounded"
           >
-            <Logo className="scale-100 origin-left" cycling aria-label="DeltaScope Corporate Home" />
+            <Logo className="scale-125 origin-left" cycling aria-label="DeltaScope Corporate Home" />
           </button>
         </header>
 
@@ -10263,10 +10428,39 @@ function AppContent() {
                        lightning={true}
                        pulse={true}
                    />
-                   <LunarCommandHub />
+                   {/* Clicking the satellite hub scrolls to the Verified Signal
+                       block below — same target as the floating astronaut. */}
+                   <div
+                     role="button"
+                     tabIndex={0}
+                     className="cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 rounded-2xl"
+                     onClick={() => {
+                       const el = document.getElementById('home-testimonials');
+                       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                     }}
+                     onKeyDown={(e) => {
+                       if (e.key === 'Enter' || e.key === ' ') {
+                         e.preventDefault();
+                         const el = document.getElementById('home-testimonials');
+                         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                       }
+                     }}
+                     aria-label="Scroll to Verified Signal client results"
+                   >
+                     <LunarCommandHub />
+                   </div>
                  </div>
               </div>
             </InViewGate>
+            {/* Verified Signal — the same 4-card real-client block used on
+                /case-studies (per Katia). The scroll-to anchor lives on the
+                OUTER wrapper so it's always in the DOM, even before
+                InViewGate has lazily mounted the cards. */}
+            <div id="home-testimonials">
+              <InViewGate minHeight="80vh">
+                <RealClientCases />
+              </InViewGate>
+            </div>
             <InViewGate minHeight="80vh">
               <motion.section
                 initial="hidden"
