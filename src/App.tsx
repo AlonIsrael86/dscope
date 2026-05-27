@@ -5298,16 +5298,21 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
       tabIndex={0}
       aria-label={`View details for ${member.name}, ${member.role}`}
     >
-      <div className="aspect-[3/4] md:aspect-[4/5] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] hover:border-blue-500/40">
+      {/* Card aspect — was `aspect-[3/4] md:aspect-[4/5]` (vertical
+          portrait). New team photos are landscape 1536×1024 (3:2), so
+          the card now mirrors that: `aspect-[4/3] md:aspect-[3/2]`.
+          object-position centred so faces stay framed even with the
+          1.1× zoom + parallax. */}
+      <div className="aspect-[4/3] md:aspect-[3/2] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] hover:border-blue-500/40">
         {/* Realistic Portrait */}
         <motion.img
-          style={{ y: yParallax, scale: 1.1 }}
+          style={{ y: yParallax, scale: 1.1, objectPosition: 'center 35%' }}
           src={member.img}
           alt={`${member.name}`}
           loading="lazy"
           decoding="async"
-          width={800}
-          height={1000}
+          width={1400}
+          height={933}
           className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.05] saturate-100"
         />
         
@@ -5449,7 +5454,13 @@ const TeamSection = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      {/* Grid — was 3-col vertical-portrait grid. New team photos are
+          landscape (1536×1024), so the grid is now 2-col on md+. Eight
+          landscape cards in 4×2 rows; each card gets more horizontal
+          space + photos display at their natural aspect ratio
+          (per Katia 2026-05-27: «придумай як гарно на сторінці
+          розтавити фото»). */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 max-w-6xl mx-auto">
         {team.map((member, i) => (
           <TeamMemberCard key={i} member={member} index={i} />
         ))}
