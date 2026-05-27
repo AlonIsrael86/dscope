@@ -6009,7 +6009,12 @@ const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = 
 
   return (
     <section ref={containerRef} className={`relative ${height}`}>
-      <div className={`sticky top-0 min-h-[100dvh] flex items-center overflow-x-hidden z-10 w-full ${innerClassName}`}>
+      {/* No overflow-x-hidden — per Katia 2026-05-27: «фраза досі
+          обрізається коли збільшується, там не має бути ніяких
+          рамок». The horizontal clip cut off scaled headings on the
+          dashboard route. The parent `motion.main` already has its
+          own overflow guard, so we don't reintroduce one here. */}
+      <div className={`sticky top-0 min-h-[100dvh] flex items-center z-10 w-full ${innerClassName}`}>
         {React.Children.map(children, child => {
           if (React.isValidElement(child)) {
             // @ts-ignore - Injecting progress into children
@@ -7267,11 +7272,14 @@ ServiceItem.displayName = 'ServiceItem';
 
 const DashboardHeader = ({ progress }: { progress?: any }) => {
   const headerOpacity = useTransform(progress || 0, [0, 0.05, 0.9, 1], [1, 1, 1, 0]);
-  
-  // Title zooming while keeping it readable and centered on the screen
-  const mainTitleScale = useTransform(progress || 0, [0, 0.5, 1], [1, 1.3, 1.5]);
+
+  // Title zoom — softened (was [1, 1.3, 1.5], now [1, 1.05, 1.1]) so
+  // even at max-scroll the heading stays inside its container instead
+  // of getting clipped at the section edges (per Katia 2026-05-27:
+  // «фраза досі обрізається коли збільшується»).
+  const mainTitleScale = useTransform(progress || 0, [0, 0.5, 1], [1, 1.05, 1.1]);
   const mainTitleY = useTransform(progress || 0, [0, 0.5, 1], [0, 10, -50]); // Move slightly up to stay readable
-  const mainTitleRotate = useTransform(progress || 0, [0, 0.5, 1], [0, 1, 2]); // Very subtle tilt
+  const mainTitleRotate = useTransform(progress || 0, [0, 0.5, 1], [0, 0.5, 1]); // Very subtle tilt
 
   const headerScale = useTransform(progress || 0, [0.85, 0.98], [1, 1.1]);
   const headerY = useTransform(progress || 0, [0.85, 0.98], [0, -100]);
