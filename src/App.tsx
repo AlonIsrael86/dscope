@@ -5172,8 +5172,12 @@ const DataClusterGallery = () => {
   return (
     <section ref={containerRef} className="py-16 md:py-24 relative min-h-[140vh] flex flex-col justify-start border-t border-white/5">
       
-      {/* FIXED HEADER - More fluid transitions */}
-      <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-center z-30 pointer-events-none">
+      {/* FIXED HEADER — was justify-center (heading sat in middle of
+          viewport, big gap to cards below). Changed to justify-start
+          + pt-[10vh] so the heading sits near the TOP of viewport;
+          cards sticky below sits much closer visually. Per Katia
+          2026-05-27: «ще зменш простір між заголовком і елементами». */}
+      <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-start pt-[8vh] md:pt-[10vh] z-30 pointer-events-none">
         
         {/* Ambient Orbitals */}
         <div className="absolute inset-0 overflow-hidden">
