@@ -53,8 +53,13 @@ export const CosmicLoader = () => {
       {/* Logo (the only foreground element) */}
       <div className="relative z-20">
         <div className="relative flex items-center font-display font-black tracking-tighter text-6xl md:text-8xl text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.1)] group p-2 -m-2 overflow-visible">
-          {/* Cycling first symbol — D / Δ / Delta, every 1.5 s */}
-          <div className="flex justify-center min-w-[1ch] md:min-w-[1.5ch]">
+          {/* Cycling first symbol — D / Δ / Delta, every 1.5 s.
+              No min-width: the wrapper auto-sizes to the current glyph so
+              "Scope" sits flush right next to D/Δ (no extra padding) and
+              flush against "Delta" (per Katia: "коли пишеться deltascope
+              то все супер — це залиш"). The motion layout animation
+              smooths the width swap. */}
+          <div className="flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.span
                 key={logoState}
@@ -69,7 +74,7 @@ export const CosmicLoader = () => {
             </AnimatePresence>
           </div>
 
-          <span className="uppercase tracking-[-0.05em] ml-2">Scope</span>
+          <span className="uppercase tracking-[-0.05em]">Scope</span>
 
           {/* Alon's Glimmer sweep — runs once across the wordmark on load
               and fades out (opacity:[1,1,0]) so it doesn't sit parked to

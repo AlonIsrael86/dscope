@@ -6451,12 +6451,25 @@ const BRAND_PALETTE = ['#4facfe', '#34d399', '#a855f7', '#22d3ee', '#ec4899', '#
 const FloatingClientLogo = ({
   name, description, brandColor, lane, duration, delay,
 }: { name: string; description: string; brandColor: string; lane: number; duration: number; delay: number }) => {
-  // Two-div structure (see commit 8c5a5ff for the full why): the OUTER
-  // motion.div owns Framer Motion's translateX, the INNER div is the
-  // only one we touch with rAF and we write the CSS `scale` PROPERTY
-  // (not `transform`) so the two don't fight.
+  // Two-div structure: OUTER does the L→R CSS translateX animation
+  // (we use a CSS @keyframes rather than Framer Motion specifically so
+  // that `animation-play-state: paused` cleanly freezes the logo on
+  // hover without rewinding / reversing — Framer's `animate=undefined`
+  // pause was the source of the "moves in opposite direction" bug).
+  // INNER div is only touched by rAF (scale / opacity / colour) and
+  // writes the CSS `scale` PROPERTY (separate from transform) so the
+  // two layers don't fight.
   const innerRef = React.useRef<HTMLDivElement>(null);
+  const outerRef = React.useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = React.useState(false);
+
+  // Mirror hover into the OUTER via inline style so the CSS animation
+  // pauses cleanly. (React state alone would force a re-render of the
+  // CSS-animated outer div, which CAN reset transform momentarily.)
+  React.useEffect(() => {
+    const el = outerRef.current;
+    if (el) el.style.animationPlayState = isHovered ? 'paused' : 'running';
+  }, [isHovered]);
 
   React.useEffect(() => {
     let raf = 0;
@@ -6492,12 +6505,17 @@ const FloatingClientLogo = ({
   }, [brandColor]);
 
   return (
-    <motion.div
+    <div
+      ref={outerRef}
       className="absolute will-change-transform"
-      style={{ top: `${lane}%` }}
-      initial={{ x: '-40vw' }}
-      animate={isHovered ? undefined : { x: '110vw' }}
-      transition={{ duration, delay, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
+      style={{
+        top: `${lane}%`,
+        animationName: 'clientFlow',
+        animationDuration: `${duration}s`,
+        animationDelay: `${delay}s`,
+        animationTimingFunction: 'linear',
+        animationIterationCount: 'infinite',
+      }}
     >
       <div
         ref={innerRef}
@@ -6507,8 +6525,13 @@ const FloatingClientLogo = ({
         onMouseLeave={() => setIsHovered(false)}
       >
         {name}
-        {/* Tooltip — name + description card that fades in on hover.
-            Marquee animation pauses while hovered (animate=undefined). */}
+        {/* Tooltip — fixed-width card that sits below the logo. Marquee
+            animation pauses while hovered via animationPlayState. The
+            tooltip is `pointer-events-none` so moving the mouse from
+            the logo into the tooltip area never re-fires onMouseLeave
+            (which was the flicker source). Description text wraps
+            inside the card (whitespace-normal overrides the outer
+            whitespace-nowrap on the logo). */}
         <AnimatePresence>
           {isHovered && (
             <motion.div
@@ -6517,19 +6540,19 @@ const FloatingClientLogo = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.95 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="absolute left-1/2 top-full -translate-x-1/2 mt-3 w-72 md:w-80 z-50 pointer-events-none"
+              className="absolute left-1/2 top-full -translate-x-1/2 mt-3 w-72 md:w-80 z-50 pointer-events-none whitespace-normal"
             >
               <div
                 className="rounded-2xl border bg-black/90 backdrop-blur-xl px-5 py-4 text-left shadow-[0_10px_40px_rgba(0,0,0,0.6)]"
                 style={{ borderColor: `${brandColor}66`, boxShadow: `0 0 30px ${brandColor}33` }}
               >
                 <div
-                  className="font-display font-bold uppercase tracking-wider text-sm mb-1.5"
+                  className="font-display font-bold uppercase tracking-wider text-sm mb-1.5 break-words"
                   style={{ color: brandColor }}
                 >
                   {name}
                 </div>
-                <div className="font-sans normal-case font-normal text-xs leading-relaxed tracking-normal text-white/75">
+                <div className="font-sans normal-case font-normal text-xs leading-relaxed tracking-normal text-white/75 break-words">
                   {description}
                 </div>
               </div>
@@ -6537,17 +6560,28 @@ const FloatingClientLogo = ({
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
 const ClientMarquee = () => {
-  // Pre-compute deterministic lane / duration / delay per client so the field
-  // looks chaotic but doesn't reshuffle on every React re-render.
+  // Pre-compute deterministic lane / duration / delay per client.
+  //
+  // LANES: evenly spread across the band so two clients are NEVER on
+  // the same vertical line (was: `lane = 8 + ((i*37) % 80)` which could
+  // collide). With 11 clients and 84% range (4%→88%), gap = ~8.4% of
+  // band height = ~46px on desktop band height 560px — comfortably
+  // larger than the rendered name height (~45px at full 1.55× scale),
+  // so names always have visible breathing room.
+  //
+  // DURATIONS / DELAYS stay varied so the field still feels chaotic
+  // and the per-row crossings happen at different times.
+  const N = CLIENTS.length;
   const items = CLIENTS.map((c, i) => {
     const seed = (i * 31 + 7) % 100;
-    const lane = 8 + ((i * 37) % 80);           // 8% → 88% of band height
-    const duration = 28 + ((seed * 0.27) % 18); // 28s → 46s, varied
+    // Spread lanes evenly across 4% → 88%.
+    const lane = 4 + (i * (84 / Math.max(N - 1, 1)));
+    const duration = 30 + ((seed * 0.27) % 18); // 30s → 48s, varied per client
     const delay = -((i * 4.2) % 35);            // negative delay → already spread at mount
     const brandColor = BRAND_PALETTE[i % BRAND_PALETTE.length];
     return { ...c, lane, duration, delay, brandColor };
@@ -6561,10 +6595,12 @@ const ClientMarquee = () => {
         </h3>
       </div>
 
-      {/* Chaotic floating field — each client on its own y-lane / speed,
-          travelling LEFT → RIGHT. White + dim at the edges, picks up its
-          brand colour + scales up as it crosses the viewport centre. */}
-      <div className="relative w-full overflow-hidden h-[420px] md:h-[480px]">
+      {/* Floating field — each client on its own y-lane / speed,
+          travelling LEFT → RIGHT. White + dim at the edges, picks up
+          its brand colour + scales up as it crosses the viewport
+          centre. Band is taller (560px) so each evenly-spread lane has
+          room for the logo at full scale + tooltip below. */}
+      <div className="relative w-full overflow-hidden h-[520px] md:h-[600px]">
         {items.map((it) => (
           <FloatingClientLogo
             key={it.name}
@@ -9148,10 +9184,10 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
             role="button"
             tabIndex={isFilteredOut ? -1 : 0}
             aria-label={`Select ${area.name} sector`}
-            className={`group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 ${
-              isFilteredOut 
-                ? 'opacity-[0.08] saturate-50 blur-[1px] scale-95 pointer-events-none' 
-                : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-white/[0.02] border border-yellow-500/10 hover:border-yellow-500/30'
+            className={`group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 overflow-hidden ${
+              isFilteredOut
+                ? 'opacity-[0.08] saturate-50 blur-[1px] scale-95 pointer-events-none'
+                : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-[#010610]/95 backdrop-blur-md border border-yellow-500/10 hover:border-yellow-500/30'
             }`}
           >
             {/* Industry symbol — same lucide glyph (semantic meaning kept) but
