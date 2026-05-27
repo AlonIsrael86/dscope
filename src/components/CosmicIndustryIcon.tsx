@@ -151,25 +151,31 @@ export const CosmicIndustryIcon = React.memo(({ icon: Icon, color, variant = 0 }
         )}
 
         {/* ─── v=3  Comet with flame trail ─── */}
+        {/* Trail used to run M 78 25 → 22 78 (corner to corner) which
+            passes straight through the SVG centre (50,50) — wiping out
+            the lucide glyph rendered there (per Katia 2026-05-27:
+            «financial ops там не вистачає іконки всередині»). Trail
+            now sits in the upper-right quadrant only, stopping ~62,42
+            so it never reaches the centre. */}
         {v === 3 && (
           <g style={{ transformOrigin: '50px 50px', animation: 'spin 22s linear infinite' }}>
-            {/* trail */}
-            <path d="M 78 25 L 22 78" stroke={`url(#${uid}-ring)`} strokeWidth="3.5" strokeLinecap="round" opacity="0.9" />
-            <path d="M 70 18 L 32 64" stroke="currentColor" strokeOpacity="0.55" strokeWidth="1.4" strokeLinecap="round" />
-            <path d="M 84 32 L 40 78" stroke="currentColor" strokeOpacity="0.45" strokeWidth="1.2" strokeLinecap="round" />
-            {/* sparks scattering off trail */}
-            <circle cx="44" cy="62" r="0.8" fill="currentColor" stroke="none">
+            {/* trail — upper-right quadrant only, never crosses centre */}
+            <path d="M 84 22 L 62 42" stroke={`url(#${uid}-ring)`} strokeWidth="3.5" strokeLinecap="round" opacity="0.9" />
+            <path d="M 78 14 L 60 32" stroke="currentColor" strokeOpacity="0.55" strokeWidth="1.4" strokeLinecap="round" />
+            <path d="M 90 30 L 68 50" stroke="currentColor" strokeOpacity="0.45" strokeWidth="1.2" strokeLinecap="round" />
+            {/* sparks scattering off trail — none on the centre line */}
+            <circle cx="70" cy="20" r="0.8" fill="currentColor" stroke="none">
               <animate attributeName="opacity" values="0.2;1;0.2" dur="1.6s" repeatCount="indefinite" />
             </circle>
-            <circle cx="34" cy="74" r="0.6" fill="#ffffff" stroke="none">
+            <circle cx="58" cy="14" r="0.6" fill="#ffffff" stroke="none">
               <animate attributeName="opacity" values="0.2;1;0.2" dur="1.4s" begin="0.4s" repeatCount="indefinite" />
             </circle>
-            <circle cx="56" cy="50" r="0.7" fill="currentColor" stroke="none">
+            <circle cx="92" cy="14" r="0.7" fill="currentColor" stroke="none">
               <animate attributeName="opacity" values="0.2;1;0.2" dur="1.8s" begin="0.2s" repeatCount="indefinite" />
             </circle>
-            {/* comet head */}
-            <circle cx="78" cy="25" r="11" fill={`url(#${uid}-bright)`} stroke="none" />
-            <circle cx="78" cy="25" r="4.5" fill="#ffffff" stroke="none" />
+            {/* comet head — pushed further into the corner */}
+            <circle cx="84" cy="22" r="11" fill={`url(#${uid}-bright)`} stroke="none" />
+            <circle cx="84" cy="22" r="4.5" fill="#ffffff" stroke="none" />
           </g>
         )}
 
@@ -249,12 +255,13 @@ export const CosmicIndustryIcon = React.memo(({ icon: Icon, color, variant = 0 }
         </circle>
       </svg>
 
-      {/* Semantic lucide glyph — kept smaller so the cosmic scene reads as
-          the hero, but the icon still anchors the card meaning. */}
+      {/* Semantic lucide glyph — slightly larger now (w-10 → w-11)
+          and stronger drop-shadow so it always reads as the anchor
+          element even when the cosmic scene is busy around it. */}
       <Icon
-        className="relative z-10 w-8 h-8 md:w-9 md:h-9 text-white"
-        strokeWidth={1.6}
-        style={{ filter: `drop-shadow(0 0 8px ${color}) drop-shadow(0 0 18px ${color}aa)` }}
+        className="relative z-10 w-10 h-10 md:w-11 md:h-11 text-white"
+        strokeWidth={1.7}
+        style={{ filter: `drop-shadow(0 0 10px ${color}) drop-shadow(0 0 22px ${color}cc)` }}
       />
     </div>
   );
