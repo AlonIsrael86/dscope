@@ -5153,15 +5153,15 @@ const DataClusterGallery = () => {
     { radius: 220, speed: 1.6, angleOffset: 240, depth: 1.2, driftIntensity: 0.2 },
   ], []);
 
+  // Section overflow-hidden removed — per Katia 2026-05-27: «не
+  // зменшуй шрифт, а збільши рамку чи прибери її чи що там що
+  // обрізає текст». THE CORE VALUES italic heading at lg:text-[8rem]
+  // is wider than the section's centred axis; without this clip the
+  // full text reads end-to-end. Ambient orbital satellites have their
+  // own `overflow-hidden` wrapper so they stay contained, and body
+  // has overflow-x: hidden globally so no horizontal scroll bar
+  // appears.
   return (
-    {/* Section overflow-hidden removed — per Katia 2026-05-27: «не
-        зменшуй шрифт, а збільши рамку чи прибери її чи що там що
-        обрізає текст». THE CORE VALUES italic heading at lg:text-[8rem]
-        is wider than the section's centred axis; without this clip the
-        full text reads end-to-end. Ambient orbital satellites have
-        their own `overflow-hidden` wrapper so they stay contained, and
-        body has overflow-x: hidden globally so no horizontal scroll
-        bar appears. */}
     <section ref={containerRef} className="py-16 md:py-24 relative min-h-[320vh] flex flex-col justify-start border-t border-white/5">
       
       {/* FIXED HEADER - More fluid transitions */}
