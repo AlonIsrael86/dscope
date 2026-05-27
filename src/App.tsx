@@ -5195,16 +5195,21 @@ const DataClusterGallery = () => {
         </div>
 
         <div className="relative flex flex-col items-center text-center">
-          <motion.div 
-            style={{ 
-              scale: useTransform(scrollYProgress, [0, 0.4, 1], [1, 0.95, 0.7]),
-              opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 0.95], [1, 0.8, 0.4, 0]),
-              y: useTransform(scrollYProgress, [0, 1], [100, -400]),
-              rotateX: useTransform(scrollYProgress, [0, 1], [0, 20]),
+          <motion.div
+            style={{
+              // y travel reduced from [100, -400] → [40, -80] so the
+              // heading never travels above the viewport edge (per Katia
+              // 2026-05-27: «все ще назва обрізана»). It still moves
+              // subtly while scrolling for the parallax feel, but the
+              // top of the letters stays inside the visible area.
+              scale: useTransform(scrollYProgress, [0, 0.4, 1], [1, 0.97, 0.85]),
+              opacity: useTransform(scrollYProgress, [0, 0.2, 0.8, 0.95], [1, 0.85, 0.5, 0]),
+              y: useTransform(scrollYProgress, [0, 1], [40, -80]),
+              rotateX: useTransform(scrollYProgress, [0, 1], [0, 8]),
               perspective: 1000,
               willChange: "transform, opacity"
             }}
-            className="mb-8"
+            className="mb-4"
           >
             <motion.span 
               initial={{ opacity: 0, letterSpacing: "0em", filter: 'blur(10px)' }}
@@ -5266,11 +5271,12 @@ const DataClusterGallery = () => {
       
       {/* GRID ITEMS - Staggered Appearance & Parallax */}
       <div className="sticky top-0 h-[100dvh] w-full flex items-start justify-center z-20 pointer-events-none lg:pointer-events-auto">
-        {/* pt was [35vh] md:[45dvh] — too much empty space between
-            heading and cards (per Katia 2026-05-27: «від назви до
-            наступних елементів дуже багато вільного простору»).
-            Tightened to [22vh] md:[28dvh]. */}
-        <div className="max-w-7xl w-full flex flex-wrap justify-center items-center gap-4 md:gap-12 px-6 md:px-12 pt-[22vh] md:pt-[28dvh]">
+        {/* pt was [35vh] md:[45dvh] originally, then [22vh] md:[28dvh].
+            Tightening further to [12vh] md:[16dvh] — cards now sit
+            right under the heading with just a comfortable gap, no
+            big empty band (per Katia: «треба ще прибрати пустий
+            простір між назвою і наступними елементами»). */}
+        <div className="max-w-7xl w-full flex flex-wrap justify-center items-center gap-4 md:gap-12 px-6 md:px-12 pt-[12vh] md:pt-[16dvh]">
           {[...coreValuesData, ...moreCoreValuesData].map((value: any, i: number) => {
             return (
               <DataClusterItem 
