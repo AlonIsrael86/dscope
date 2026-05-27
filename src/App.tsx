@@ -5154,7 +5154,15 @@ const DataClusterGallery = () => {
   ], []);
 
   return (
-    <section ref={containerRef} className="py-16 md:py-24 relative min-h-[320vh] flex flex-col justify-start overflow-hidden border-t border-white/5">
+    {/* Section overflow-hidden removed — per Katia 2026-05-27: «не
+        зменшуй шрифт, а збільши рамку чи прибери її чи що там що
+        обрізає текст». THE CORE VALUES italic heading at lg:text-[8rem]
+        is wider than the section's centred axis; without this clip the
+        full text reads end-to-end. Ambient orbital satellites have
+        their own `overflow-hidden` wrapper so they stay contained, and
+        body has overflow-x: hidden globally so no horizontal scroll
+        bar appears. */}
+    <section ref={containerRef} className="py-16 md:py-24 relative min-h-[320vh] flex flex-col justify-start border-t border-white/5">
       
       {/* FIXED HEADER - More fluid transitions */}
       <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-center z-30 pointer-events-none">
@@ -5224,13 +5232,32 @@ const DataClusterGallery = () => {
               */
               className="text-[14vw] sm:text-[10vw] md:text-[7rem] lg:text-[8rem] leading-[0.85] font-display font-black tracking-[-0.04em] uppercase italic drop-shadow-[0_0_30px_rgba(59,130,246,0.25)] relative group w-full text-center mx-auto flex flex-col justify-center items-center"
             >
-              <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-br from-blue-300 via-white to-sky-400 saturate-[1.4] block drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+              {/* Animated multi-stop brand gradient flowing through the
+                  letters (per Katia 2026-05-27: «додай назві заголовку
+                  якийсь ефект цікавий»). 300% background size + animated
+                  backgroundPosition = the gradient continuously slides
+                  across the heading. Colours are the 3 brand-book hues
+                  (Electric Blue, Bio Emerald, Pink) plus white. */}
+              <motion.span
+                className="relative z-10 text-transparent bg-clip-text uppercase block drop-shadow-[0_0_30px_rgba(255,255,255,0.35)]"
+                style={{
+                  backgroundImage: 'linear-gradient(120deg, #4facfe 0%, #ffffff 25%, #34d399 50%, #ffffff 75%, #ec4899 100%)',
+                  backgroundSize: '300% 100%',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text',
+                }}
+                animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+                transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+              >
                 THE CORE VALUES
-              </span>
-              <motion.div 
+              </motion.span>
+              {/* Glimmer sweep — kept from the previous design but
+                  faster (3s → 4s for breathing room with the colour
+                  flow). */}
+              <motion.div
                 animate={{ x: ["-100%", "200%"] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 z-0" 
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-white/8 to-transparent skew-x-12 z-0"
               />
             </motion.h3>
           </motion.div>
@@ -5239,7 +5266,11 @@ const DataClusterGallery = () => {
       
       {/* GRID ITEMS - Staggered Appearance & Parallax */}
       <div className="sticky top-0 h-[100dvh] w-full flex items-start justify-center z-20 pointer-events-none lg:pointer-events-auto">
-        <div className="max-w-7xl w-full flex flex-wrap justify-center items-center gap-4 md:gap-12 px-6 md:px-12 pt-[35vh] md:pt-[45dvh]">
+        {/* pt was [35vh] md:[45dvh] — too much empty space between
+            heading and cards (per Katia 2026-05-27: «від назви до
+            наступних елементів дуже багато вільного простору»).
+            Tightened to [22vh] md:[28dvh]. */}
+        <div className="max-w-7xl w-full flex flex-wrap justify-center items-center gap-4 md:gap-12 px-6 md:px-12 pt-[22vh] md:pt-[28dvh]">
           {[...coreValuesData, ...moreCoreValuesData].map((value: any, i: number) => {
             return (
               <DataClusterItem 
