@@ -5704,17 +5704,19 @@ const SatelliteNav = memo(({
                         ? 'bg-blue-500/20 scale-100 opacity-100' 
                         : 'bg-blue-500/10 scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100'
                     }`} />
-                    <SymbolIcon 
-                      symbolId={(tab as any).symbolId} 
-                      size={isMobile ? 24 : 48} 
+                    <SymbolIcon
+                      symbolId={(tab as any).symbolId}
+                      size={isMobile ? 32 : 72}
                       className={`relative z-10 transition-transform duration-500 ${
                         activeTab === tab.id ? 'scale-110 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] text-blue-400' : 'group-hover:scale-110 group-hover:-rotate-3'
                       }`}
                     />
                   </div>
-                  
+
                   <div className="flex flex-col items-center sm:items-start mt-1 sm:mt-0">
-                    <h4 className={`text-sm sm:text-xl md:text-2xl lg:text-3xl font-display font-black tracking-tighter uppercase transition-all duration-300 leading-none ${
+                    {/* Bumped per Katia 2026-05-27: «в меню треба збільшити
+                        розмір сторінок». Was sm/xl/2xl/3xl → now base/2xl/4xl/5xl. */}
+                    <h4 className={`text-base sm:text-2xl md:text-4xl lg:text-5xl font-display font-black tracking-tighter uppercase transition-all duration-300 leading-none ${
                       activeTab === tab.id ? 'text-white' : 'text-white/40 group-hover:text-white'
                     }`}>
                       {tab.label}
