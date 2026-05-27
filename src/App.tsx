@@ -5005,9 +5005,16 @@ const DataClusterItem = ({ value, i, totalItems, scrollYProgress }: { value: any
     [i % 2 === 0 ? 15 : -15, 0, 0, i % 2 === 0 ? -15 : 15]
   );
 
-  // Responsive offsets
-  const xOffsetBase = [(i % 4 === 0 ? -120 : i % 4 === 1 ? 120 : -40), 0, (i % 4 === 2 ? 80 : i % 4 === 3 ? -120 : 60)];
-  const yOffsetBase = [(i % 3 === 0 ? -300 : i % 3 === 1 ? 300 : -200), 0, (i % 3 === 0 ? 200 : i % 3 === 1 ? -400 : 250)];
+  // Responsive offsets — y range reduced ~90% per Katia 2026-05-27:
+  // «тут зново забагато відстані між заголовком і наступними
+  // елементами, прибери 90 відсотків цього простору». Was [-300,
+  // 0, 300] which pushed cards 300px below their layout position at
+  // scroll start, creating a huge gap to the heading. Now [-30,
+  // 0, 30] — cards barely drift, sit right under the heading.
+  // X offsets slightly reduced too so cards don't fly off-screen
+  // sideways.
+  const xOffsetBase = [(i % 4 === 0 ? -60 : i % 4 === 1 ? 60 : -20), 0, (i % 4 === 2 ? 40 : i % 4 === 3 ? -60 : 30)];
+  const yOffsetBase = [(i % 3 === 0 ? -30 : i % 3 === 1 ? 30 : -20), 0, (i % 3 === 0 ? 20 : i % 3 === 1 ? -40 : 25)];
 
   const xOffset = useTransform(scrollYProgress, [0, 0.5, 1], xOffsetBase);
   const yOffset = useTransform(scrollYProgress, [0, 0.5, 1], yOffsetBase);
