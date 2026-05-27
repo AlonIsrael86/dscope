@@ -9161,7 +9161,7 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
         { name: "Insurance", icon: Shield, color: "#3b82f6", model: ShieldModel },
         { name: "Global Delivery", icon: Globe, color: "#10b981", model: GlobeModel },
         { name: "Strategic Mgmt", icon: Target, color: "#f59e0b", model: TargetModel },
-        { name: "Financial Ops", icon: LineChart, color: "#8b5cf6", model: ChartModel },
+        { name: "Financial Ops", icon: TrendingUp, color: "#8b5cf6", model: ChartModel },
         { name: "Learning", icon: GraduationCap, color: "#ef4444", model: LearningModel },
         { name: "Factory Processes", icon: Factory, color: "#06b6d4", model: FactoryModel },
         { name: "Food & Beverage", icon: Coffee, color: "#f97316", model: CoffeeModel },
