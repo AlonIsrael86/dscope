@@ -5162,7 +5162,14 @@ const DataClusterGallery = () => {
   // has overflow-x: hidden globally so no horizontal scroll bar
   // appears.
   return (
-    <section ref={containerRef} className="py-16 md:py-24 relative min-h-[320vh] flex flex-col justify-start border-t border-white/5">
+    {/* Section height was min-h-[320vh] (3.2 viewports) — most of that
+        was empty scroll room AFTER cards finished animating. Cut to
+        min-h-[140vh] per Katia 2026-05-27: «після цих елементів
+        також багато вільного місця, прибере 80 відсотків цього
+        вільного місця». 140vh still leaves comfortable scroll room
+        for the heading pop-in and cards staggered fade-in / parallax,
+        but kills the huge empty band underneath. */}
+    <section ref={containerRef} className="py-16 md:py-24 relative min-h-[140vh] flex flex-col justify-start border-t border-white/5">
       
       {/* FIXED HEADER - More fluid transitions */}
       <div className="sticky top-0 h-[100dvh] w-full flex flex-col items-center justify-center z-30 pointer-events-none">
