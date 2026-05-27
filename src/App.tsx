@@ -6466,10 +6466,22 @@ const FloatingClientLogo = ({
   // Mirror hover into the OUTER via inline style so the CSS animation
   // pauses cleanly. (React state alone would force a re-render of the
   // CSS-animated outer div, which CAN reset transform momentarily.)
+  // Also bump z-index while hovered so the tooltip sits ABOVE every
+  // other client logo flying past — per Katia: «це пояснення має бути
+  // на першому плані, так щоб інші назви не перекривали його».
   React.useEffect(() => {
     const el = outerRef.current;
-    if (el) el.style.animationPlayState = isHovered ? 'paused' : 'running';
+    if (el) {
+      el.style.animationPlayState = isHovered ? 'paused' : 'running';
+      el.style.zIndex = isHovered ? '100' : '1';
+    }
   }, [isHovered]);
+
+  // Flip tooltip to ABOVE the logo when the client is in the bottom
+  // half of the band — otherwise the tooltip extends past the bottom
+  // edge and gets clipped (per Katia, screenshot: REGBA tooltip cut
+  // off at the bottom).
+  const tooltipAbove = lane > 50;
 
   React.useEffect(() => {
     let raf = 0;
@@ -6536,11 +6548,13 @@ const FloatingClientLogo = ({
           {isHovered && (
             <motion.div
               key="tooltip"
-              initial={{ opacity: 0, y: 8, scale: 0.95 }}
+              initial={{ opacity: 0, y: tooltipAbove ? -8 : 8, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 8, scale: 0.95 }}
+              exit={{ opacity: 0, y: tooltipAbove ? -8 : 8, scale: 0.95 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="absolute left-1/2 top-full -translate-x-1/2 mt-3 w-72 md:w-80 z-50 pointer-events-none whitespace-normal"
+              className={`absolute left-1/2 -translate-x-1/2 w-72 md:w-80 z-50 pointer-events-none whitespace-normal ${
+                tooltipAbove ? 'bottom-full mb-3' : 'top-full mt-3'
+              }`}
             >
               <div
                 className="rounded-2xl border bg-black/90 backdrop-blur-xl px-5 py-4 text-left shadow-[0_10px_40px_rgba(0,0,0,0.6)]"
@@ -6600,7 +6614,10 @@ const ClientMarquee = () => {
           its brand colour + scales up as it crosses the viewport
           centre. Band is taller (560px) so each evenly-spread lane has
           room for the logo at full scale + tooltip below. */}
-      <div className="relative w-full overflow-hidden h-[520px] md:h-[600px]">
+      {/* overflow-x-hidden (NOT overflow-hidden) so off-screen marquee
+          is clipped horizontally but tooltips on the bottom lane can
+          extend a bit below the band without being cut. */}
+      <div className="relative w-full overflow-x-hidden h-[520px] md:h-[600px]">
         {items.map((it) => (
           <FloatingClientLogo
             key={it.name}

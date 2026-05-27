@@ -76,8 +76,13 @@ export const RealisticPlanet = ({
       {/* Subtle realistic grounding shadow beneath the planet */}
       <div className="absolute -bottom-[15%] left-[15%] right-[15%] h-[20%] rounded-[100%] bg-black/60 blur-[6px] md:blur-md pointer-events-none z-0 mix-blend-multiply" />
 
-      {/* Planet Body */}
-      <div className={`relative w-full h-full rounded-full overflow-hidden ${planet.baseBg} ${planet.id === 'uranus' ? 'blur-[1px]' : ''} shadow-[0_0_30px_rgba(255,255,255,0.1),inset_-10px_-10px_20px_rgba(0,0,0,0.9)] z-10`}>
+      {/* Planet Body — extra `0 0 0 1.5px rgba(255,255,255,0.22)` outline
+          in the box-shadow stack gives the planet a clean silhouette
+          even when the dark side blends into the black space backdrop
+          (per Katia: «контур планет не всюди видно тому картинки наче
+          обідрані»). Inset shadow softened from 0.9 → 0.7 so the lit
+          side doesn't crush against the rim. */}
+      <div className={`relative w-full h-full rounded-full overflow-hidden ${planet.baseBg} ${planet.id === 'uranus' ? 'blur-[1px]' : ''} shadow-[0_0_0_1.5px_rgba(255,255,255,0.22),0_0_30px_rgba(255,255,255,0.12),inset_-10px_-10px_20px_rgba(0,0,0,0.7)] z-10`}>
         {/* Rotating Texture Layer */}
         <motion.div 
           className="absolute inset-[-50%] w-[200%] h-[200%] rounded-full opacity-90 mix-blend-overlay"
