@@ -275,7 +275,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   if (index === 0) {
     return (
       <div className="relative w-32 h-32 mb-6 flex items-center justify-center overflow-visible select-none">
-        <svg viewBox="0 0 100 100" className="w-20 h-20">
+        <svg viewBox="-10 -10 120 120" className="w-24 h-24" style={{ overflow: 'visible' }}>
           <defs>
             <linearGradient id="cometGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#fef3c7" />
@@ -308,7 +308,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   if (index === 1) {
     return (
       <div className="relative w-32 h-32 mb-6 flex items-center justify-center overflow-visible select-none">
-        <svg viewBox="0 0 100 100" className="w-20 h-20">
+        <svg viewBox="-10 -10 120 120" className="w-24 h-24" style={{ overflow: 'visible' }}>
           <defs>
             <linearGradient id="satBody" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#67e8f9" />
@@ -349,7 +349,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   if (index === 2) {
     return (
       <div className="relative w-32 h-32 mb-6 flex items-center justify-center overflow-visible select-none">
-        <svg viewBox="0 0 100 100" className="w-20 h-20">
+        <svg viewBox="-10 -10 120 120" className="w-24 h-24" style={{ overflow: 'visible' }}>
           <defs>
             <linearGradient id="teleBody" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#6ee7b7" />
@@ -390,7 +390,7 @@ const CosmicTierIcon = ({ index }: { index: number, colors: string[] }) => {
   // Tier 3 — Black Hole with accretion disk
   return (
     <div className="relative w-32 h-32 mb-6 flex items-center justify-center overflow-visible select-none">
-      <svg viewBox="0 0 100 100" className="w-20 h-20">
+      <svg viewBox="-10 -10 120 120" className="w-24 h-24" style={{ overflow: 'visible' }}>
         <defs>
           <radialGradient id="bhCore" cx="50%" cy="50%" r="50%">
             <stop offset="0%" stopColor="#000" />
