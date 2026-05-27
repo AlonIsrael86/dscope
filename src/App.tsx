@@ -7315,7 +7315,15 @@ const DashboardHeader = ({ progress }: { progress?: any }) => {
         ))}
       </motion.h1>
       
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[600px] bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-emerald-600/20 blur-[100px] -z-10 pointer-events-none mix-blend-screen" />
+      {/* Background glow — was `w-full h-[600px]` rectangle whose
+          hard edges (even with blur-[100px]) showed as a visible
+          rectangular "frame" around the heading and clipped the
+          fly-in animation per Katia 2026-05-27: «видно рамку для
+          текста і коли вилітає текст він обрізається через цю
+          рамку». Switched to a circular blob — same colour palette,
+          no rectangular silhouette, text can fly in without any
+          visible bounding region. */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-emerald-600/20 blur-[120px] -z-10 pointer-events-none mix-blend-screen" />
     </motion.header>
   );
 };
