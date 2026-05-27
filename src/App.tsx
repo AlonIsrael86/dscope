@@ -6451,39 +6451,40 @@ const BRAND_PALETTE = ['#4facfe', '#34d399', '#a855f7', '#22d3ee', '#ec4899', '#
 const FloatingClientLogo = ({
   name, brandColor, lane, duration, delay,
 }: { name: string; brandColor: string; lane: number; duration: number; delay: number }) => {
-  // Each logo travels left → right across the viewport on its own y-lane,
-  // own duration, own start delay. While moving, a per-frame rAF computes
-  // its current distance from the viewport's horizontal centre and:
-  //   - colour:   white at the edges → brandColor at the centre
-  //   - opacity:  0.35 at the edges  → 1.0 at the centre
-  //   - scale:    0.75 at the edges  → 1.55 at the centre
-  // No React re-render per frame — direct style mutation on the ref.
-  const ref = React.useRef<HTMLDivElement>(null);
+  // Two-div structure: the OUTER motion.div owns the L→R translateX
+  // animation (Framer Motion mutates transform). The INNER div is the
+  // only one we touch with rAF — we read its bounding rect and write
+  // `scale` (via CSS `scale` property, NOT `transform`), `opacity` and
+  // `color`. Separating the two prevents the rAF write from clobbering
+  // Framer Motion's transform on every frame (which was the bug —
+  // logos appeared frozen because scale() overwrote translateX()).
+  const innerRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
     let raf = 0;
     const tick = () => {
-      const el = ref.current;
+      const el = innerRef.current;
       if (el) {
         const rect = el.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const vcx = window.innerWidth / 2;
         const d = Math.abs(cx - vcx);
         const md = window.innerWidth / 2;
-        const t = Math.min(d / md, 1);             // 0 at centre → 1 at the edges
-        const k = 1 - t;                            // closeness to centre
-        const scale = 0.75 + k * 0.8;               // 0.75 → 1.55
-        const opacity = 0.35 + k * 0.65;            // 0.35 → 1.0
-        // White at the edges, brand colour ONLY in the inner 30% zone.
+        const t = Math.min(d / md, 1);   // 0 at centre → 1 at edges
+        const k = 1 - t;                 // closeness to centre
+        const scale = 0.75 + k * 0.8;    // 0.75 → 1.55
+        const opacity = 0.35 + k * 0.65; // 0.35 → 1.0
         let color: string;
         if (k > 0.7) {
           color = brandColor;
+        } else if (k > 0.4) {
+          const pct = Math.round(((k - 0.4) / 0.3) * 100);
+          color = `color-mix(in srgb, ${brandColor} ${pct}%, white)`;
         } else {
-          // Smooth white → brand interpolation in the 30-70% window
-          color = k > 0.4
-            ? `color-mix(in srgb, ${brandColor} ${Math.round((k - 0.4) / 0.3 * 100)}%, white)`
-            : '#ffffff';
+          color = '#ffffff';
         }
-        el.style.transform = `scale(${scale})`;
+        // CSS `scale` property is independent of `transform` so it
+        // doesn't fight Framer Motion's translateX on the parent.
+        el.style.scale = String(scale);
         el.style.opacity = String(opacity);
         el.style.color = color;
       }
@@ -6495,14 +6496,19 @@ const FloatingClientLogo = ({
 
   return (
     <motion.div
-      ref={ref}
-      className="absolute whitespace-nowrap font-display font-bold uppercase tracking-tight text-xl md:text-3xl will-change-transform pointer-events-none"
-      style={{ top: `${lane}%`, color: '#ffffff' }}
+      className="absolute will-change-transform pointer-events-none"
+      style={{ top: `${lane}%` }}
       initial={{ x: '-40vw' }}
-      animate={{ x: ['-40vw', '110vw'] }}
-      transition={{ duration, delay, repeat: Infinity, ease: 'linear' }}
+      animate={{ x: '110vw' }}
+      transition={{ duration, delay, repeat: Infinity, ease: 'linear', repeatType: 'loop' }}
     >
-      {name}
+      <div
+        ref={innerRef}
+        className="whitespace-nowrap font-display font-bold uppercase tracking-tight text-xl md:text-3xl"
+        style={{ color: '#ffffff', transformOrigin: 'left center' }}
+      >
+        {name}
+      </div>
     </motion.div>
   );
 };
