@@ -5462,7 +5462,7 @@ const TeamSection = () => {
       ]
     },
     {
-      name: "Michael Pavlov",
+      name: "Mikhail Pautov",
       role: "Lead Platform Engineer",
       oldRole: "Software Engineer",
       img: "/team/michael.jpg",
