@@ -37,6 +37,7 @@ import { GalaxyBackground } from './components/GalaxyBackground';
 import { PLANETS_DATA } from './data/planetsConstants';
 import { DashboardCaseView } from './components/DashboardCaseView';
 import { CaseDashboardMockups } from './components/CaseDashboardMockups';
+import { useReducedEffects } from './hooks/useReducedEffects';
 import {
   SpaceObjectRenderer,
   RealisticPlanet,
@@ -1679,6 +1680,41 @@ const DeltaHover = ({ children, className = "" }: { children: React.ReactNode, c
         )}
       </AnimatePresence>
     </div>
+  );
+};
+
+/**
+ * Reduced-Effects toggle pill — used inside the fullscreen menu
+ * footer. Reads + writes the global setting via useReducedEffects.
+ * Visible style: a small pill with a switch dot that slides L↔R,
+ * label changes between "EFFECTS: FULL" and "EFFECTS: LITE".
+ * Persists via localStorage (handled by the provider).
+ */
+const ReducedEffectsToggle = () => {
+  const { reduced, toggle } = useReducedEffects();
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="flex items-center gap-3 px-4 py-2 rounded-full border border-white/15 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      aria-pressed={reduced}
+      aria-label={reduced ? 'Enable full visual effects' : 'Reduce visual effects for performance'}
+    >
+      <span className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.25em] text-white/70">
+        Effects: <span className={reduced ? 'text-amber-300' : 'text-emerald-300'}>{reduced ? 'Lite' : 'Full'}</span>
+      </span>
+      <span
+        className={`relative inline-block w-9 h-5 rounded-full transition-colors duration-300 ${
+          reduced ? 'bg-amber-400/30' : 'bg-emerald-400/30'
+        }`}
+      >
+        <span
+          className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full transition-transform duration-300 shadow-[0_0_8px_currentColor] ${
+            reduced ? 'translate-x-4 bg-amber-300 text-amber-300' : 'translate-x-0 bg-emerald-300 text-emerald-300'
+          }`}
+        />
+      </span>
+    </button>
   );
 };
 
@@ -5779,8 +5815,15 @@ const SatelliteNav = memo(({
               ))}
             </div>
 
-            <div className="mt-auto pt-6 flex flex-col items-center shrink-0">
-               <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent mb-4" />
+            <div className="mt-auto pt-6 flex flex-col items-center shrink-0 gap-5" onClick={(e) => e.stopPropagation()}>
+               <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+               {/* Reduced-effects toggle — per Katia 2026-05-28:
+                   bottom-centre on/off switch that disables heavy
+                   visual effects for the session, persists via
+                   localStorage across routes + reloads. */}
+               <ReducedEffectsToggle />
+
                <div className="flex items-center gap-8 opacity-20">
                   <div className="flex flex-col items-center">
                     <span className="text-[8px] font-mono uppercase tracking-widest text-white">Encryption</span>
