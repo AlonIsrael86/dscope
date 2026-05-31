@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo, memo, Component, ErrorInfo, ReactNode, Suspense, lazy } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContactPlaceholder } from './routes/Contact';
-import { CaseStudies } from './routes/CaseStudies';
+// Lazy-loaded — CaseStudies pulls in DashboardCaseView (1120 lines)
+// and Sankey diagram (d3). Loaded on first visit to /case-studies.
+const CaseStudies = lazy(() => import('./routes/CaseStudies').then((m) => ({ default: m.CaseStudies })));
 import { RealClientCases } from './routes/RealClientCases';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
@@ -29,7 +31,10 @@ import { OceanGallery } from './components/BrandOceanCreatures';
 import { BrandBookTypographyColors } from './components/BrandBookTypographyColors';
 import { BrandBookSymbols, SYMBOLS } from './components/BrandBookSymbols';
 import { BrandCharacters } from './components/BrandCharacters';
-import { Pricing } from './components/Pricing';
+// Lazy-loaded — Pricing is 1300+ lines and pulls in heavy recharts +
+// inline call-center illustration. Initial mobile bundle drops a lot
+// without it. Loaded on first visit to /pricing.
+const Pricing = lazy(() => import('./components/Pricing').then((m) => ({ default: m.Pricing })));
 import { TamCharts } from './components/TamCharts';
 import { SPACE_OBJECT_TYPES } from './data/spaceObjectConstants';
 import { MicroscopicGallery, RotatingAtom, FloatingVirus, DnaHelix, NeuralSynapse, WaterMolecule, ElectronCloud, ProbioticBacteria, RedBloodCell } from './components/BrandMicroscopicObjects';
@@ -5379,17 +5384,23 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
           object-position centred so faces stay framed even with the
           1.1× zoom + parallax. */}
       <div className="aspect-[4/3] md:aspect-[3/2] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] hover:border-blue-500/40">
-        {/* Realistic Portrait */}
-        <motion.img
-          style={{ y: yParallax, scale: 1.1, objectPosition: 'center 35%' }}
-          src={member.img}
-          alt={`${member.name}`}
-          loading="lazy"
-          decoding="async"
-          width={1400}
-          height={933}
-          className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.05] saturate-100"
-        />
+        {/* Realistic Portrait — wrapped in <picture> so modern browsers
+            (96%+ support) get the WebP (~110 KB) instead of the JPG
+            fallback (~370 KB). 3× smaller download, identical look.
+            motion.img stays as the JPG fallback inside <picture>. */}
+        <picture>
+          <source srcSet={member.img.replace(/\.jpg$/, '.webp')} type="image/webp" />
+          <motion.img
+            style={{ y: yParallax, scale: 1.1, objectPosition: 'center 35%' }}
+            src={member.img}
+            alt={`${member.name}`}
+            loading="lazy"
+            decoding="async"
+            width={1400}
+            height={933}
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.05] saturate-100"
+          />
+        </picture>
         
         {/* Overlay Darken on Hover - reduced so portraits remain visible */}
         <div className="absolute inset-0 bg-blue-900/5 group-hover/avatar:bg-blue-900/0 transition-colors duration-500" />
@@ -10683,12 +10694,16 @@ function AppContent() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
           >
-            <Pricing />
+            <Suspense fallback={<div className="min-h-screen bg-[#010610]" />}>
+              <Pricing />
+            </Suspense>
           </motion.main>
         )}
 
         {activeTab === 'case-studies' && featureFlags.isEnabled('CASE_STUDIES_ENABLED') && (
-          <CaseStudies />
+          <Suspense fallback={<div className="min-h-screen bg-[#010610]" />}>
+            <CaseStudies />
+          </Suspense>
         )}
 
         {activeTab === 'brand-book' && (
