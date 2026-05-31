@@ -7,7 +7,14 @@ const CaseStudies = lazy(() => import('./routes/CaseStudies').then((m) => ({ def
 import { RealClientCases } from './routes/RealClientCases';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
-import { VoiceWidget } from './components/VoiceWidget';
+// VoiceWidget is the heaviest single component on the page (2488 lines,
+// holds AudioContext, getUserMedia, 50fps typewriter setInterval, scroll
+// listener). Lazy-loaded so initial bundle drops by ~100 KB gzip and the
+// expensive widget code only runs when the user actually scrolls past
+// the bottom (or stays on the page long enough to need it). The
+// fallback is null — the corner widget simply doesn't exist for the
+// first ~few hundred ms.
+const VoiceWidget = lazy(() => import('./components/VoiceWidget').then((m) => ({ default: m.VoiceWidget })));
 import { NebulaBackground } from './components/NebulaBackground';
 import { GalaxyAboutBackground } from './components/GalaxyAboutBackground';
 import { CosmicIndustryIcon } from './components/CosmicIndustryIcon';
@@ -10765,7 +10772,9 @@ function AppContent() {
           </div>
         </div>
       </footer>
-      <VoiceWidget />
+      <Suspense fallback={null}>
+        <VoiceWidget />
+      </Suspense>
       </motion.div>
     </div>
   );
