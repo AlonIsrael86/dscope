@@ -319,8 +319,11 @@ const ConstellationLayer = React.memo(({ cn, index }: { cn: Constellation; index
 });
 ConstellationLayer.displayName = 'ConstellationLayer';
 
+import { useReducedEffects } from '../hooks/useReducedEffects';
+
 export const GalaxyAboutBackground = React.memo(() => {
   const { scrollYProgress } = useScroll();
+  const { reduced } = useReducedEffects();
 
   // Per Katia 2026-05-27: «на сторінці about фон змінює кольори,
   // прибери звідти зелений колір».
@@ -386,27 +389,37 @@ export const GalaxyAboutBackground = React.memo(() => {
         transition={{ duration: 40, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* Ambient sprinkle stars — stationary, just twinkle */}
-      {ambientRendered.map((s) => (
-        <div
-          key={`a-${s.i}`}
-          className="absolute rounded-full bg-white"
-          style={{
-            left: `${s.x}%`,
-            top: `${s.y}%`,
-            width: `${s.px}px`,
-            height: `${s.px}px`,
-            boxShadow: `0 0 ${s.px * 1.6}px rgba(255,255,255,0.4)`,
-            transform: 'translate(-50%, -50%)',
-            animation: `star-twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
-          }}
-        />
-      ))}
+      {/* Ambient sprinkle stars — stationary, just twinkle. In LITE
+          mode we render only every 3rd star (~67 instead of ~200)
+          and skip the per-star CSS twinkle animation. */}
+      {ambientRendered
+        .filter((s) => (reduced ? s.i % 3 === 0 : true))
+        .map((s) => (
+          <div
+            key={`a-${s.i}`}
+            className="absolute rounded-full bg-white"
+            style={{
+              left: `${s.x}%`,
+              top: `${s.y}%`,
+              width: `${s.px}px`,
+              height: `${s.px}px`,
+              boxShadow: `0 0 ${s.px * 1.6}px rgba(255,255,255,0.4)`,
+              transform: 'translate(-50%, -50%)',
+              animation: reduced
+                ? 'none'
+                : `star-twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
+            }}
+          />
+        ))}
 
-      {/* Each constellation: its own drifting layer (stars + lines together) */}
-      {CONSTELLATIONS.map((cn, ci) => (
-        <ConstellationLayer key={cn.name} cn={cn} index={ci} />
-      ))}
+      {/* Each constellation: its own drifting layer (stars + lines
+          together). In LITE mode we drop the drifting layer entirely
+          — constellations themselves are decorative noise compared to
+          the gradient + ambient stars. */}
+      {!reduced &&
+        CONSTELLATIONS.map((cn, ci) => (
+          <ConstellationLayer key={cn.name} cn={cn} index={ci} />
+        ))}
 
       <div
         className="absolute inset-0"

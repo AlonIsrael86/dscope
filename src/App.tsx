@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef, useMemo, memo, Component, ErrorInfo, ReactNode, Suspense, lazy } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ContactPlaceholder } from './routes/Contact';
-import { CaseStudies } from './routes/CaseStudies';
+// Lazy-loaded — CaseStudies pulls in DashboardCaseView (1120 lines)
+// and Sankey diagram (d3). Loaded on first visit to /case-studies.
+const CaseStudies = lazy(() => import('./routes/CaseStudies').then((m) => ({ default: m.CaseStudies })));
 import { RealClientCases } from './routes/RealClientCases';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
@@ -29,7 +31,10 @@ import { OceanGallery } from './components/BrandOceanCreatures';
 import { BrandBookTypographyColors } from './components/BrandBookTypographyColors';
 import { BrandBookSymbols, SYMBOLS } from './components/BrandBookSymbols';
 import { BrandCharacters } from './components/BrandCharacters';
-import { Pricing } from './components/Pricing';
+// Lazy-loaded — Pricing is 1300+ lines and pulls in heavy recharts +
+// inline call-center illustration. Initial mobile bundle drops a lot
+// without it. Loaded on first visit to /pricing.
+const Pricing = lazy(() => import('./components/Pricing').then((m) => ({ default: m.Pricing })));
 import { TamCharts } from './components/TamCharts';
 import { SPACE_OBJECT_TYPES } from './data/spaceObjectConstants';
 import { MicroscopicGallery, RotatingAtom, FloatingVirus, DnaHelix, NeuralSynapse, WaterMolecule, ElectronCloud, ProbioticBacteria, RedBloodCell } from './components/BrandMicroscopicObjects';
@@ -37,6 +42,7 @@ import { GalaxyBackground } from './components/GalaxyBackground';
 import { PLANETS_DATA } from './data/planetsConstants';
 import { DashboardCaseView } from './components/DashboardCaseView';
 import { CaseDashboardMockups } from './components/CaseDashboardMockups';
+import { useReducedEffects } from './hooks/useReducedEffects';
 import {
   SpaceObjectRenderer,
   RealisticPlanet,
@@ -1679,6 +1685,41 @@ const DeltaHover = ({ children, className = "" }: { children: React.ReactNode, c
         )}
       </AnimatePresence>
     </div>
+  );
+};
+
+/**
+ * Reduced-Effects toggle pill — used inside the fullscreen menu
+ * footer. Reads + writes the global setting via useReducedEffects.
+ * Visible style: a small pill with a switch dot that slides L↔R,
+ * label changes between "EFFECTS: FULL" and "EFFECTS: LITE".
+ * Persists via localStorage (handled by the provider).
+ */
+const ReducedEffectsToggle = () => {
+  const { reduced, toggle } = useReducedEffects();
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className="flex items-center gap-3 px-4 py-2 rounded-full border border-white/15 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      aria-pressed={reduced}
+      aria-label={reduced ? 'Enable full visual effects' : 'Reduce visual effects for performance'}
+    >
+      <span className="text-[9px] md:text-[10px] font-mono uppercase tracking-[0.25em] text-white/70">
+        Effects: <span className={reduced ? 'text-amber-300' : 'text-emerald-300'}>{reduced ? 'Lite' : 'Full'}</span>
+      </span>
+      <span
+        className={`relative inline-block w-9 h-5 rounded-full transition-colors duration-300 ${
+          reduced ? 'bg-amber-400/30' : 'bg-emerald-400/30'
+        }`}
+      >
+        <span
+          className={`absolute top-[2px] left-[2px] w-4 h-4 rounded-full transition-transform duration-300 shadow-[0_0_8px_currentColor] ${
+            reduced ? 'translate-x-4 bg-amber-300 text-amber-300' : 'translate-x-0 bg-emerald-300 text-emerald-300'
+          }`}
+        />
+      </span>
+    </button>
   );
 };
 
@@ -5325,7 +5366,7 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
         opacity: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
       }}
       viewport={{ once: true }}
-      className="group relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-[2rem]"
+      className="cv-card group relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-[2rem]"
       onClick={handleCardClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -5343,17 +5384,23 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
           object-position centred so faces stay framed even with the
           1.1× zoom + parallax. */}
       <div className="aspect-[4/3] md:aspect-[3/2] rounded-[2rem] overflow-hidden bg-white/5 border border-white/10 backdrop-blur-md relative group/avatar transition-all duration-700 hover:shadow-[0_0_50px_rgba(59,130,246,0.25)] hover:border-blue-500/40">
-        {/* Realistic Portrait */}
-        <motion.img
-          style={{ y: yParallax, scale: 1.1, objectPosition: 'center 35%' }}
-          src={member.img}
-          alt={`${member.name}`}
-          loading="lazy"
-          decoding="async"
-          width={1400}
-          height={933}
-          className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.05] saturate-100"
-        />
+        {/* Realistic Portrait — wrapped in <picture> so modern browsers
+            (96%+ support) get the WebP (~110 KB) instead of the JPG
+            fallback (~370 KB). 3× smaller download, identical look.
+            motion.img stays as the JPG fallback inside <picture>. */}
+        <picture>
+          <source srcSet={member.img.replace(/\.jpg$/, '.webp')} type="image/webp" />
+          <motion.img
+            style={{ y: yParallax, scale: 1.1, objectPosition: 'center 35%' }}
+            src={member.img}
+            alt={`${member.name}`}
+            loading="lazy"
+            decoding="async"
+            width={1400}
+            height={933}
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out group-hover/avatar:scale-110 group-active/avatar:scale-110 contrast-[1.05] saturate-100"
+          />
+        </picture>
         
         {/* Overlay Darken on Hover - reduced so portraits remain visible */}
         <div className="absolute inset-0 bg-blue-900/5 group-hover/avatar:bg-blue-900/0 transition-colors duration-500" />
@@ -5779,8 +5826,15 @@ const SatelliteNav = memo(({
               ))}
             </div>
 
-            <div className="mt-auto pt-6 flex flex-col items-center shrink-0">
-               <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent mb-4" />
+            <div className="mt-auto pt-6 flex flex-col items-center shrink-0 gap-5" onClick={(e) => e.stopPropagation()}>
+               <div className="w-full h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+               {/* Reduced-effects toggle — per Katia 2026-05-28:
+                   bottom-centre on/off switch that disables heavy
+                   visual effects for the session, persists via
+                   localStorage across routes + reloads. */}
+               <ReducedEffectsToggle />
+
                <div className="flex items-center gap-8 opacity-20">
                   <div className="flex flex-col items-center">
                     <span className="text-[8px] font-mono uppercase tracking-widest text-white">Encryption</span>
@@ -6545,31 +6599,41 @@ const FloatingClientLogo = ({
   const tooltipAbove = lane > 50;
 
   React.useEffect(() => {
+    // Throttled to ~20fps (was 60fps) — getBoundingClientRect on 11
+    // logos × 60fps was forcing layout reflow 660 times/sec. Now ~220
+    // times/sec, visually imperceptible difference (scale/colour
+    // transitions stay smooth via CSS transition), big drop in main-
+    // thread cost. Per Katia 2026-05-28: «throttle OUR CLIENTS rAF».
     let raf = 0;
-    const tick = () => {
-      const el = innerRef.current;
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const vcx = window.innerWidth / 2;
-        const d = Math.abs(cx - vcx);
-        const md = window.innerWidth / 2;
-        const t = Math.min(d / md, 1);   // 0 at centre → 1 at edges
-        const k = 1 - t;                 // closeness to centre
-        const scale = 0.75 + k * 0.8;    // 0.75 → 1.55
-        const opacity = 0.35 + k * 0.65; // 0.35 → 1.0
-        let color: string;
-        if (k > 0.7) {
-          color = brandColor;
-        } else if (k > 0.4) {
-          const pct = Math.round(((k - 0.4) / 0.3) * 100);
-          color = `color-mix(in srgb, ${brandColor} ${pct}%, white)`;
-        } else {
-          color = '#ffffff';
+    let lastT = 0;
+    const FRAME_MS = 50; // ~20 fps
+    const tick = (t: number) => {
+      if (t - lastT >= FRAME_MS) {
+        lastT = t;
+        const el = innerRef.current;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const vcx = window.innerWidth / 2;
+          const d = Math.abs(cx - vcx);
+          const md = window.innerWidth / 2;
+          const t2 = Math.min(d / md, 1);   // 0 at centre → 1 at edges
+          const k = 1 - t2;                 // closeness to centre
+          const scale = 0.75 + k * 0.8;    // 0.75 → 1.55
+          const opacity = 0.35 + k * 0.65; // 0.35 → 1.0
+          let color: string;
+          if (k > 0.7) {
+            color = brandColor;
+          } else if (k > 0.4) {
+            const pct = Math.round(((k - 0.4) / 0.3) * 100);
+            color = `color-mix(in srgb, ${brandColor} ${pct}%, white)`;
+          } else {
+            color = '#ffffff';
+          }
+          el.style.scale = String(scale);
+          el.style.opacity = String(opacity);
+          el.style.color = color;
         }
-        el.style.scale = String(scale);
-        el.style.opacity = String(opacity);
-        el.style.color = color;
       }
       raf = requestAnimationFrame(tick);
     };
@@ -9273,7 +9337,7 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
             role="button"
             tabIndex={isFilteredOut ? -1 : 0}
             aria-label={`Select ${area.name} sector`}
-            className={`group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 overflow-hidden ${
+            className={`cv-card group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 overflow-hidden ${
               isFilteredOut
                 ? 'opacity-[0.08] saturate-50 blur-[1px] scale-95 pointer-events-none'
                 : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-[#010610]/95 backdrop-blur-md border border-yellow-500/10 hover:border-yellow-500/30'
@@ -10630,12 +10694,16 @@ function AppContent() {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}
           >
-            <Pricing />
+            <Suspense fallback={<div className="min-h-screen bg-[#010610]" />}>
+              <Pricing />
+            </Suspense>
           </motion.main>
         )}
 
         {activeTab === 'case-studies' && featureFlags.isEnabled('CASE_STUDIES_ENABLED') && (
-          <CaseStudies />
+          <Suspense fallback={<div className="min-h-screen bg-[#010610]" />}>
+            <CaseStudies />
+          </Suspense>
         )}
 
         {activeTab === 'brand-book' && (

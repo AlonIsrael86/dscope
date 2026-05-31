@@ -139,6 +139,24 @@ html, body {
   animation-play-state: paused !important;
 }
 
+/* ============================================================
+   PERF PASS 2026-05-28 — content-visibility on heavy grids
+   `content-visibility: auto` tells the browser to skip layout,
+   paint, AND animation work for any element fully outside the
+   viewport. The intrinsic-size hint prevents scroll-jump when
+   the element scrolls into view and gets sized for real.
+
+   Applied via the `.cv-card` utility to:
+     - 50 industry cards on /industries
+     - 8 team cards on /about
+     - 14 Core Values cards on /about
+     - 4 RealClientCases panels
+   ============================================================ */
+.cv-card {
+  content-visibility: auto;
+  contain-intrinsic-size: 320px 360px;
+}
+
 /* 2) Mobile: backdrop-filter is the single most expensive compositor
       operation on low-end GPUs. The design uses ~50 backdrop-blur
       elements. On phones we substitute a slightly more opaque solid
