@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useSpring, useMotionValue, animate } f
 
 import { PLANETS_DATA } from '../data/planetsConstants';
 import { Suspense, lazy } from 'react';
+import { useReducedEffects } from '../hooks/useReducedEffects';
 const RealisticPlanet = lazy(() => import('./Planets').then(m => ({ default: m.RealisticPlanet })));
 
 const OrbitingPlanet = ({ planet, progress }: any) => {
@@ -57,6 +58,7 @@ const OrbitingPlanet = ({ planet, progress }: any) => {
 
 export const GalaxyBackground = memo(() => {
   const { scrollYProgress } = useScroll();
+  const { reduced } = useReducedEffects();
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -180,47 +182,70 @@ export const GalaxyBackground = memo(() => {
         }}
       />
 
-      {/* Realistic Planets */}
-      <motion.div style={{ x: layer1MouseX }} className="absolute inset-0 pointer-events-none z-10">
-        <motion.div style={{ y: layer1MouseY }} className="absolute inset-0">
-          {PLANETS_DATA.map((planet) => (
-            <OrbitingPlanet 
-              key={planet.id} 
-              planet={planet} 
-              progress={smoothProgress} 
-            />
-          ))}
+      {/* Realistic Planets — DROPPED ENTIRELY in LITE mode per Katia
+          2026-05-28: «на головному екрані коли вимикаються ефекти,
+          прибери планети які літають взагалі». Each planet runs a
+          continuous Framer Motion `animate()` loop + lazy-loads
+          Planets.tsx; not rendering them at all skips all of that
+          plus saves ~6 chunk downloads. */}
+      {!reduced && (
+        <motion.div style={{ x: layer1MouseX }} className="absolute inset-0 pointer-events-none z-10">
+          <motion.div style={{ y: layer1MouseY }} className="absolute inset-0">
+            {PLANETS_DATA.map((planet) => (
+              <OrbitingPlanet
+                key={planet.id}
+                planet={planet}
+                progress={smoothProgress}
+              />
+            ))}
+          </motion.div>
         </motion.div>
-      </motion.div>
+      )}
 
-      {/* Stars Layer 2 (Slower) */}
+      {/* Stars Layer 2 (Slower) — in LITE we render only every 4th
+          star (no animation, just static dots) so the field still
+          looks like space but costs almost nothing. */}
       <motion.div style={{ y: layer2Y, x: layer2MouseX }} className="absolute inset-0 h-[120%]">
         <motion.div style={{ y: layer2MouseY }} className="absolute inset-0">
-          {stars2.map((s, i) => (
-            <motion.div key={i} className="absolute rounded-full bg-white" 
-              style={{ top: s.top, left: s.left, width: s.size, height: s.size }} 
-              animate={{ opacity: [s.opacity * 0.3, s.opacity, s.opacity * 0.3] }}
-              transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
-            />
-          ))}
+          {stars2
+            .filter((_, i) => (reduced ? i % 4 === 0 : true))
+            .map((s, i) => (
+              reduced ? (
+                <div key={i} className="absolute rounded-full bg-white"
+                  style={{ top: s.top, left: s.left, width: s.size, height: s.size, opacity: s.opacity * 0.6 }} />
+              ) : (
+                <motion.div key={i} className="absolute rounded-full bg-white"
+                  style={{ top: s.top, left: s.left, width: s.size, height: s.size }}
+                  animate={{ opacity: [s.opacity * 0.3, s.opacity, s.opacity * 0.3] }}
+                  transition={{ duration: 2 + Math.random() * 3, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
+                />
+              )
+            ))}
         </motion.div>
       </motion.div>
 
-      {/* Stars Layer 1 (Faster) */}
+      {/* Stars Layer 1 (Faster) — same treatment as layer 2 in LITE. */}
       <motion.div style={{ y: layer1Y, x: layer1MouseX }} className="absolute inset-0 h-[140%]">
         <motion.div style={{ y: layer1MouseY }} className="absolute inset-0">
-          {stars1.map((s, i) => (
-            <motion.div key={i} className="absolute rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" 
-              style={{ top: s.top, left: s.left, width: s.size, height: s.size }} 
-              animate={{ opacity: [s.opacity * 0.1, s.opacity, s.opacity * 0.1], scale: [0.7, 1.3, 0.7] }}
-              transition={{ duration: 1 + Math.random() * 2, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
-            />
-          ))}
+          {stars1
+            .filter((_, i) => (reduced ? i % 4 === 0 : true))
+            .map((s, i) => (
+              reduced ? (
+                <div key={i} className="absolute rounded-full bg-white"
+                  style={{ top: s.top, left: s.left, width: s.size, height: s.size, opacity: s.opacity * 0.6 }} />
+              ) : (
+                <motion.div key={i} className="absolute rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]"
+                  style={{ top: s.top, left: s.left, width: s.size, height: s.size }}
+                  animate={{ opacity: [s.opacity * 0.1, s.opacity, s.opacity * 0.1], scale: [0.7, 1.3, 0.7] }}
+                  transition={{ duration: 1 + Math.random() * 2, repeat: Infinity, ease: "easeInOut", delay: Math.random() * 2 }}
+                />
+              )
+            ))}
         </motion.div>
       </motion.div>
 
-      {/* Flying Comets */}
-      {comets.map((c, i) => (
+      {/* Flying Comets — dropped entirely in LITE. */}
+      {!reduced && comets.map((c, i) => (
         <motion.div
           key={`comet-${i}`}
           className="absolute w-[2px]"

@@ -6727,7 +6727,10 @@ const ClientMarquee = () => {
   });
 
   return (
-    <div className="w-screen relative left-1/2 -translate-x-1/2 mt-24 z-20">
+    /* `keep-anim` opt-out — per Katia 2026-05-28: even in LITE mode
+       the OUR CLIENTS marquee continues to flow. CSS rule in
+       index.css resumes animations inside any .keep-anim subtree. */
+    <div className="keep-anim w-screen relative left-1/2 -translate-x-1/2 mt-24 z-20">
       <div className="flex flex-row items-center justify-center mb-10 px-6 relative z-30">
         <h3 className="text-white text-2xl md:text-3xl lg:text-4xl font-display font-bold tracking-[0.05em] uppercase text-center drop-shadow-[0_2px_15px_rgba(0,0,0,0.5)]">
           Our Clients
