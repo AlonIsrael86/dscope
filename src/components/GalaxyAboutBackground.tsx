@@ -365,6 +365,25 @@ export const GalaxyAboutBackground = React.memo(() => {
     []
   );
 
+  // LITE mode: render ONLY the scroll-driven gradient. Skip the
+  // 200-star sprinkle field, the 18 drifting constellations, the
+  // breathing/drifting blob — all of it. Result: <50ms of background
+  // work per scroll tick instead of ~5-10ms × ~220 elements.
+  if (reduced) {
+    return (
+      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
+        <motion.div className="absolute inset-0" style={{ background: gradient }} />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.65) 100%)',
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none select-none">
       <style>{STAR_KEYFRAMES}</style>

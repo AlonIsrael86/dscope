@@ -140,6 +140,35 @@ html, body {
 }
 
 /* ============================================================
+   REDUCED EFFECTS — global kill switch (2026-05-28 v2)
+   When user flips the toggle in the menu, <html> gets
+   data-reduced-effects="true". This rule pauses EVERY CSS
+   @keyframes animation in the document (spin orbits in industry
+   icons, OUR CLIENTS marquee, comet trail rotations, twinkle stars,
+   etc.). Backdrop blurs also stripped — they're the single most
+   expensive composite operation. JS-driven Framer Motion animations
+   still run; those are gated per-component on useReducedEffects().
+   ============================================================ */
+html[data-reduced-effects="true"] *,
+html[data-reduced-effects="true"] *::before,
+html[data-reduced-effects="true"] *::after {
+  animation-play-state: paused !important;
+  /* drop animation entirely if it hasn't started; pause if it has */
+  animation: none !important;
+  transition-duration: 0.001s !important;
+}
+html[data-reduced-effects="true"] .backdrop-blur-sm,
+html[data-reduced-effects="true"] .backdrop-blur,
+html[data-reduced-effects="true"] .backdrop-blur-md,
+html[data-reduced-effects="true"] .backdrop-blur-lg,
+html[data-reduced-effects="true"] .backdrop-blur-xl,
+html[data-reduced-effects="true"] .backdrop-blur-2xl,
+html[data-reduced-effects="true"] .backdrop-blur-3xl {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ============================================================
    PERF PASS 2026-05-28 — content-visibility on heavy grids
    `content-visibility: auto` tells the browser to skip layout,
    paint, AND animation work for any element fully outside the
