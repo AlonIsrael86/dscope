@@ -5361,7 +5361,7 @@ const TeamMemberCard = ({ member, index }: { member: any, index: number }) => {
         opacity: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
       }}
       viewport={{ once: true }}
-      className="group relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-[2rem]"
+      className="cv-card group relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-[2rem]"
       onClick={handleCardClick}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -6588,31 +6588,41 @@ const FloatingClientLogo = ({
   const tooltipAbove = lane > 50;
 
   React.useEffect(() => {
+    // Throttled to ~20fps (was 60fps) — getBoundingClientRect on 11
+    // logos × 60fps was forcing layout reflow 660 times/sec. Now ~220
+    // times/sec, visually imperceptible difference (scale/colour
+    // transitions stay smooth via CSS transition), big drop in main-
+    // thread cost. Per Katia 2026-05-28: «throttle OUR CLIENTS rAF».
     let raf = 0;
-    const tick = () => {
-      const el = innerRef.current;
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const vcx = window.innerWidth / 2;
-        const d = Math.abs(cx - vcx);
-        const md = window.innerWidth / 2;
-        const t = Math.min(d / md, 1);   // 0 at centre → 1 at edges
-        const k = 1 - t;                 // closeness to centre
-        const scale = 0.75 + k * 0.8;    // 0.75 → 1.55
-        const opacity = 0.35 + k * 0.65; // 0.35 → 1.0
-        let color: string;
-        if (k > 0.7) {
-          color = brandColor;
-        } else if (k > 0.4) {
-          const pct = Math.round(((k - 0.4) / 0.3) * 100);
-          color = `color-mix(in srgb, ${brandColor} ${pct}%, white)`;
-        } else {
-          color = '#ffffff';
+    let lastT = 0;
+    const FRAME_MS = 50; // ~20 fps
+    const tick = (t: number) => {
+      if (t - lastT >= FRAME_MS) {
+        lastT = t;
+        const el = innerRef.current;
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const vcx = window.innerWidth / 2;
+          const d = Math.abs(cx - vcx);
+          const md = window.innerWidth / 2;
+          const t2 = Math.min(d / md, 1);   // 0 at centre → 1 at edges
+          const k = 1 - t2;                 // closeness to centre
+          const scale = 0.75 + k * 0.8;    // 0.75 → 1.55
+          const opacity = 0.35 + k * 0.65; // 0.35 → 1.0
+          let color: string;
+          if (k > 0.7) {
+            color = brandColor;
+          } else if (k > 0.4) {
+            const pct = Math.round(((k - 0.4) / 0.3) * 100);
+            color = `color-mix(in srgb, ${brandColor} ${pct}%, white)`;
+          } else {
+            color = '#ffffff';
+          }
+          el.style.scale = String(scale);
+          el.style.opacity = String(opacity);
+          el.style.color = color;
         }
-        el.style.scale = String(scale);
-        el.style.opacity = String(opacity);
-        el.style.color = color;
       }
       raf = requestAnimationFrame(tick);
     };
@@ -9316,7 +9326,7 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
             role="button"
             tabIndex={isFilteredOut ? -1 : 0}
             aria-label={`Select ${area.name} sector`}
-            className={`group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 overflow-hidden ${
+            className={`cv-card group relative h-64 sm:h-80 flex flex-col justify-end p-6 md:p-8 rounded-3xl transition-all duration-500 overflow-hidden ${
               isFilteredOut
                 ? 'opacity-[0.08] saturate-50 blur-[1px] scale-95 pointer-events-none'
                 : 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-[#010610]/95 backdrop-blur-md border border-yellow-500/10 hover:border-yellow-500/30'
