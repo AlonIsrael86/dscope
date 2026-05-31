@@ -152,10 +152,20 @@ html, body {
 html[data-reduced-effects="true"] *,
 html[data-reduced-effects="true"] *::before,
 html[data-reduced-effects="true"] *::after {
+  /* Pause (not delete) so .keep-anim opt-outs below can resume. */
   animation-play-state: paused !important;
-  /* drop animation entirely if it hasn't started; pause if it has */
-  animation: none !important;
   transition-duration: 0.001s !important;
+}
+
+/* Opt-out per Katia 2026-05-28: «там де our clients хай ефект не
+   прибирається». Mark a container with `keep-anim` and animations
+   inside it stay running even when LITE is on. */
+html[data-reduced-effects="true"] .keep-anim,
+html[data-reduced-effects="true"] .keep-anim *,
+html[data-reduced-effects="true"] .keep-anim *::before,
+html[data-reduced-effects="true"] .keep-anim *::after {
+  animation-play-state: running !important;
+  transition-duration: revert !important;
 }
 html[data-reduced-effects="true"] .backdrop-blur-sm,
 html[data-reduced-effects="true"] .backdrop-blur,
