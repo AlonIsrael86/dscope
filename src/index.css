@@ -108,6 +108,13 @@ html, body {
   to   { transform: translateX(110vw); }
 }
 
+/* Menu items shimmer — bright highlight sweeps diagonally through the
+   text fill via bg-clip-text + animated backgroundPosition. */
+@keyframes menuShimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -100% 0; }
+}
+
 @keyframes lightningGlow {
   0%, 100% { text-shadow: 0 0 10px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.2); }
   90% { text-shadow: 0 0 10px rgba(59,130,246,0.3), 0 0 20px rgba(59,130,246,0.2); }
