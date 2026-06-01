@@ -1820,17 +1820,18 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
             className="inline-flex items-center overflow-hidden leading-none py-[0.05em]"
           >
             <AnimatePresence mode="wait">
-              {/* Slide animation (y: -100% → 0% → 100%) replaced with a
-                  pure opacity crossfade — the vertical slide combined
-                  with the outer `layout` animation caused the symbol
-                  to look jumpy (per Katia: «дуже каряво міняється»).
-                  Now a calm opacity fade synced loosely with layout. */}
+              {/* Slot-machine slide per Katia 2026-05-28: «символ має
+                  змінюватися типу листанням вниз — один символ типу
+                  падає і інший зверху виходить». Outgoing symbol slides
+                  DOWN out of view, new one drops in FROM ABOVE. Parent
+                  span has overflow-hidden so the slide reads cleanly.
+                  Cubic ease + 0.5s duration for a smooth feel. */}
               <motion.span
                 key={logoState}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                initial={{ y: '-100%', opacity: 0 }}
+                animate={{ y: '0%', opacity: 1 }}
+                exit={{ y: '100%', opacity: 0 }}
+                transition={{ duration: 0.5, ease: [0.32, 0.72, 0.32, 1] }}
                 className={`${currentLogoColor} inline-block leading-none transition-colors duration-700`}
               >
                 {getAnimatedPart()}
@@ -5810,9 +5811,13 @@ const SatelliteNav = memo(({
                   onMouseLeave={() => setHoveredTab(null)}
                   onFocus={() => setFocusedTabId(tab.id)}
                   onBlur={() => setFocusedTabId(null)}
-                  initial={{ opacity: 0, y: 20 }}
+                  // Stagger removed — 10 items appearing at delay
+                  // 0.1, 0.15, 0.20, … 0.55s read as a sequential
+                  // "wave" / flicker per Katia. Now all menu items
+                  // fade in together over 0.3s.
+                  initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 + (i * 0.05) }}
+                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   className="flex flex-col sm:flex-row items-center sm:items-start sm:gap-4 md:gap-6 lg:gap-8 group text-center sm:text-left outline-none py-1 sm:py-2 md:py-4"
                 >
                   <div className="relative shrink-0 mb-2 sm:mb-0 flex items-center justify-center">
@@ -9337,22 +9342,21 @@ const IndustriesSection = ({ scrollYProgress }: { scrollYProgress?: any }) => {
         const isFilteredOut = activePhase && getPhaseForIndustry(area.name) !== activePhase;
 
         return (
-          <motion.div 
-            key={i} 
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            whileHover={isFilteredOut ? {} : { 
+          <motion.div
+            key={i}
+            // Entrance animation simplified per Katia 2026-05-28: «іконки
+            // індустрій нормально з'являються а потім все блимає по
+            // черзі». The previous staggered fade-up (delay = (i%4)*0.05
+            // across 50 cards) cascaded as user scrolled past the grid —
+            // looked like a wave of blinking. Now `initial={false}` —
+            // cards just appear instantly at final state.
+            initial={false}
+            whileHover={isFilteredOut ? {} : {
               scale: 1.05,
               backgroundColor: "rgba(255, 255, 255, 0.08)",
               borderColor: "#fbbf2490",
               boxShadow: "0 0 32px rgba(251,191,36,0.18)",
               transition: { duration: 0.3 }
-            }}
-            viewport={{ once: true, amount: 0.1 }}
-            transition={{ 
-              duration: 0.8, 
-              delay: (i % 4) * 0.05, 
-              ease: [0.16, 1, 0.3, 1] 
             }}
             onTap={isFilteredOut ? undefined : () => handleSelectSector(area)}
             onKeyDown={(e) => {
