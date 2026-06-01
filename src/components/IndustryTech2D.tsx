@@ -338,7 +338,7 @@ export const IndustryTech2D = ({ typeIndex, type, color = "#3b82f6" }: { typeInd
             <motion.path 
               d="M 10 90 L 30 70 L 40 70" 
               fill="none" stroke={color} strokeWidth="0.5" opacity="0.6" strokeDasharray="2,2" 
-              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5 }}
+              initial={false}
             />
             <motion.circle cx="10" cy="90" r="1.5" fill={color} />
             <motion.circle cx="30" cy="70" r="1" fill="none" stroke={color} strokeWidth="0.5" />
@@ -346,7 +346,7 @@ export const IndustryTech2D = ({ typeIndex, type, color = "#3b82f6" }: { typeInd
             <motion.path 
               d="M 90 10 L 70 30 L 60 30" 
               fill="none" stroke={color} strokeWidth="0.5" opacity="0.6" strokeDasharray="2,2" 
-              initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.5, delay: 0.1 }}
+              initial={false}
             />
             <motion.circle cx="90" cy="10" r="1.5" fill={color} />
             <motion.circle cx="70" cy="30" r="1" fill="none" stroke={color} strokeWidth="0.5" />

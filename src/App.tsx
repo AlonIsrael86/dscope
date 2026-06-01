@@ -286,9 +286,9 @@ const DiscoveryTooltip = ({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: position === "top" ? 10 : position === "bottom" ? -10 : 0, x: position === "left" ? 10 : position === "right" ? -10 : 0, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, scale: 1, y: 0, x: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, scale: 0.8, y: position === "top" ? 10 : position === "bottom" ? -10 : 0, x: position === "left" ? 10 : position === "right" ? -10 : 0, filter: 'blur(10px)' }}
+          initial={{ opacity: 0, scale: 0.8, y: position === "top" ? 10 : position === "bottom" ? -10 : 0, x: position === "left" ? 10 : position === "right" ? -10 : 0 }}
+          animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: position === "top" ? 10 : position === "bottom" ? -10 : 0, x: position === "left" ? 10 : position === "right" ? -10 : 0 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
           className={`absolute ${positions[position]} z-[2000] pointer-events-none ${className}`}
         >
@@ -1853,9 +1853,9 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, x: -10, filter: 'blur(4px)' }}
-            animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, x: -10, filter: 'blur(4px)' }}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.2 }}
             className="absolute left-full top-1/2 -translate-y-1/2 ml-4 whitespace-nowrap pointer-events-none hidden md:block"
           >
@@ -5297,7 +5297,7 @@ const DataClusterGallery = () => {
             <motion.h3
               initial={{ scale: 0.6, opacity: 0 }}
               whileInView={{ scale: [0.6, 1.25, 1], opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], times: [0, 0.55, 1] }}
               className="text-[9vw] sm:text-[7vw] md:text-[5.5rem] lg:text-[6.5rem] leading-[1] font-display font-black tracking-tight uppercase drop-shadow-[0_0_40px_rgba(79,172,254,0.25)]"
             >
@@ -5582,9 +5582,9 @@ const ScrollingIcon = ({ iconIndex, isOpen, activeColor }: { iconIndex: number, 
     <AnimatePresence mode="wait">
       <motion.div
         key={isOpen ? "close" : `icon-${iconIndex}`}
-        initial={{ opacity: 0, scale: 0.5, rotate: isOpen ? -90 : 90, filter: 'blur(4px)' }}
-        animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}
-        exit={{ opacity: 0, scale: 0.5, rotate: isOpen ? 90 : -90, filter: 'blur(4px)' }}
+        initial={{ opacity: 0, scale: 0.5, rotate: isOpen ? -90 : 90 }}
+        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+        exit={{ opacity: 0, scale: 0.5, rotate: isOpen ? 90 : -90 }}
         transition={{ 
           duration: 0.4, 
           type: "spring", 
