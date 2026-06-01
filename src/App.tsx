@@ -5862,7 +5862,11 @@ const SatelliteNav = memo(({
                         affects only the letter fills. Active tab
                         stays plain white (no shimmer). */}
                     <h4
-                      className={`text-sm sm:text-xl md:text-3xl lg:text-4xl font-display font-black tracking-tighter uppercase transition-all duration-300 leading-none ${
+                      // Smaller per Katia 2026-05-28: «назви сторінок
+                      // завеликі - треба трохи зменшити». Previous
+                      // lg:text-4xl → now lg:text-3xl, md:text-3xl →
+                      // md:text-2xl, sm:text-xl → sm:text-lg.
+                      className={`text-sm sm:text-lg md:text-2xl lg:text-3xl font-display font-black tracking-tighter uppercase transition-all duration-300 leading-none ${
                         activeTab === tab.id ? 'text-white' : 'text-white/60 group-hover:text-white'
                       }`}
                       style={activeTab !== tab.id ? {
