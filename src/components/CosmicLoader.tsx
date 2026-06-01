@@ -79,7 +79,10 @@ export const CosmicLoader = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 1.06 }}
                 transition={{ duration: 0.55, ease: [0.4, 0, 0.2, 1] }}
-                className={`${getAnimatedColor()} flex items-center justify-center drop-shadow-[0_0_15px_currentColor]`}
+                // Glow `drop-shadow-[0_0_15px_currentColor]` removed
+                // per Katia 2026-05-28: «прибери в лого з символу який
+                // змінюється ефект glowing». Plain coloured symbol now.
+                className={`${getAnimatedColor()} flex items-center justify-center`}
               >
                 {getAnimatedPart()}
               </motion.span>
