@@ -81,15 +81,10 @@ export const CosmicLoader = () => {
 
           <span className="uppercase tracking-[-0.05em]">Scope</span>
 
-          {/* Alon's Glimmer sweep — runs once across the wordmark on load
-              and fades out (opacity:[1,1,0]) so it doesn't sit parked to
-              the right of the logo. Original fix from CHANGELOG `#1`. */}
-          <motion.div
-            initial={{ x: '-100%', skewX: -45, opacity: 1 }}
-            animate={{ x: '200%', opacity: [1, 1, 0] }}
-            transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: 'linear' }}
-            className="absolute top-0 bottom-0 w-32 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none"
-          />
+          {/* Glimmer sweep removed per Katia 2026-05-28: «біля лого є
+              наче якась дивна лінія від ефекту - прибери». The diagonal
+              sweep crossing the wordmark looked like a stray line at
+              certain frames. Cleaner loader without it. */}
         </div>
       </div>
     </motion.div>

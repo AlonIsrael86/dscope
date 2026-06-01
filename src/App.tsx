@@ -5848,9 +5848,28 @@ const SatelliteNav = memo(({
                   <div className="flex flex-col items-center sm:items-start mt-1 sm:mt-0">
                     {/* Bumped per Katia 2026-05-27: «в меню треба збільшити
                         розмір сторінок». Was sm/xl/2xl/3xl → now base/2xl/4xl/5xl. */}
-                    <h4 className={`text-base sm:text-2xl md:text-4xl lg:text-5xl font-display font-black tracking-tighter uppercase transition-all duration-300 leading-none ${
-                      activeTab === tab.id ? 'text-white' : 'text-white/40 group-hover:text-white'
-                    }`}>
+                    {/* Smaller font + shimmer per Katia 2026-05-28:
+                        «назви сторінок в меню трохи зменши і додай
+                        ефект переливання блискуче на тексті». Font
+                        bumped down (lg:text-5xl → lg:text-4xl, md
+                        text-4xl → text-3xl). Shimmer is an animated
+                        diagonal gradient that sweeps once per ~3s
+                        through the text — uses bg-clip-text so it
+                        affects only the letter fills. Active tab
+                        stays plain white (no shimmer). */}
+                    <h4
+                      className={`text-sm sm:text-xl md:text-3xl lg:text-4xl font-display font-black tracking-tighter uppercase transition-all duration-300 leading-none ${
+                        activeTab === tab.id ? 'text-white' : 'text-white/60 group-hover:text-white'
+                      }`}
+                      style={activeTab !== tab.id ? {
+                        backgroundImage: 'linear-gradient(115deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.55) 35%, #ffffff 50%, rgba(255,255,255,0.55) 65%, rgba(255,255,255,0.55) 100%)',
+                        backgroundSize: '250% 100%',
+                        WebkitBackgroundClip: 'text',
+                        backgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        animation: 'menuShimmer 3.5s ease-in-out infinite',
+                      } : undefined}
+                    >
                       {tab.label}
                     </h4>
                   </div>
@@ -6118,11 +6137,17 @@ const PageScrollRevealTitle = ({ text, className, lightning = false, progress }:
   );
 };
 
-const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = "" }: { children: React.ReactNode, height?: string, innerClassName?: string }) => {
+const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = "", scrollOffset }: { children: React.ReactNode, height?: string, innerClassName?: string, scrollOffset?: any }) => {
   const containerRef = useRef(null);
   const { scrollYProgress: rawProgress } = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"]
+    // Default: progress starts at 0 when section top hits viewport top
+    // (section is pinned). For sections that should animate as they
+    // ENTER the viewport from below (per Katia 2026-05-28: «треба як
+    // тільки починає заходити на екран при скролі»), callers pass
+    // `scrollOffset={["start end", "end end"]}` so progress starts
+    // climbing as soon as the section peeks in from the bottom.
+    offset: scrollOffset || ["start start", "end end"]
   });
 
   const scrollYProgress = useSpring(rawProgress, {
@@ -6154,7 +6179,14 @@ const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = 
 
 const IndustryAutomation = () => {
   return (
-    <PinnedScrollSection height="h-[250vh]" innerClassName="flex flex-col justify-center max-w-7xl mx-auto px-6">
+    // scrollOffset starts progress as the section enters the viewport
+    // (per Katia: «фраза починає рухатись тільки коли повністю видно
+    // напис на екрані, а треба як тільки починає заходити»).
+    <PinnedScrollSection
+      height="h-[250vh]"
+      innerClassName="flex flex-col justify-center max-w-7xl mx-auto px-6"
+      scrollOffset={["start end", "end start"]}
+    >
       <IndustryAutomationContent />
     </PinnedScrollSection>
   );
