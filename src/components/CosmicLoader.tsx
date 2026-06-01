@@ -61,12 +61,17 @@ export const CosmicLoader = () => {
               smooths the width swap. */}
           <div className="flex items-center justify-center">
             <AnimatePresence mode="wait">
+              {/* Smooth cycle — removed the `filter: blur(10px)` from
+                  the transition (GPU-expensive filter swap caused jank
+                  per Katia: «дуже каряво міняється перший символ»).
+                  Now a clean opacity + tiny scale fade with longer
+                  duration for a calmer transition. */}
               <motion.span
                 key={logoState}
-                initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
-                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.06 }}
+                transition={{ duration: 0.55, ease: [0.4, 0, 0.2, 1] }}
                 className={`${getAnimatedColor()} flex items-center justify-center drop-shadow-[0_0_15px_currentColor]`}
               >
                 {getAnimatedPart()}

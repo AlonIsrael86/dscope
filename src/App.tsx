@@ -286,9 +286,9 @@ const DiscoveryTooltip = ({
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: position === "top" ? 10 : position === "bottom" ? -10 : 0, x: position === "left" ? 10 : position === "right" ? -10 : 0, filter: 'blur(10px)' }}
-          animate={{ opacity: 1, scale: 1, y: 0, x: 0, filter: 'blur(0px)' }}
-          exit={{ opacity: 0, scale: 0.8, y: position === "top" ? 10 : position === "bottom" ? -10 : 0, x: position === "left" ? 10 : position === "right" ? -10 : 0, filter: 'blur(10px)' }}
+          initial={{ opacity: 0, scale: 0.8, y: position === "top" ? 10 : position === "bottom" ? -10 : 0, x: position === "left" ? 10 : position === "right" ? -10 : 0 }}
+          animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: position === "top" ? 10 : position === "bottom" ? -10 : 0, x: position === "left" ? 10 : position === "right" ? -10 : 0 }}
           transition={{ type: "spring", stiffness: 400, damping: 28 }}
           className={`absolute ${positions[position]} z-[2000] pointer-events-none ${className}`}
         >
@@ -1312,13 +1312,18 @@ const SymbolIcon = ({ symbolId, color, size = 24, className = "" }: { symbolId: 
       className={`fill-none stroke-2 ${className}`} 
       style={{ stroke: color || symbol.color }}
     >
-      <motion.path 
-        d={symbol.path} 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        initial={{ pathLength: 0 }}
+      {/* initial={false} — Symbol icon path no longer re-draws on every
+          mount. Was: pathLength 0 → 1 over 1s, which caused all 10 menu
+          icons to "redraw" each time the menu opened/closed (looked
+          like flickering per Katia). Now appears instantly at final
+          state. */}
+      <motion.path
+        d={symbol.path}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={false}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 0 }}
       />
     </svg>
   );
@@ -1815,12 +1820,17 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
             className="inline-flex items-center overflow-hidden leading-none py-[0.05em]"
           >
             <AnimatePresence mode="wait">
+              {/* Slide animation (y: -100% → 0% → 100%) replaced with a
+                  pure opacity crossfade — the vertical slide combined
+                  with the outer `layout` animation caused the symbol
+                  to look jumpy (per Katia: «дуже каряво міняється»).
+                  Now a calm opacity fade synced loosely with layout. */}
               <motion.span
                 key={logoState}
-                initial={{ opacity: 0, y: '-100%' }}
-                animate={{ opacity: 1, y: '0%' }}
-                exit={{ opacity: 0, y: '100%' }}
-                transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                 className={`${currentLogoColor} inline-block leading-none transition-colors duration-700`}
               >
                 {getAnimatedPart()}
@@ -1843,9 +1853,9 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
       <AnimatePresence>
         {isHovered && (
           <motion.div
-            initial={{ opacity: 0, x: -10, filter: 'blur(4px)' }}
-            animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, x: -10, filter: 'blur(4px)' }}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
             transition={{ duration: 0.2 }}
             className="absolute left-full top-1/2 -translate-y-1/2 ml-4 whitespace-nowrap pointer-events-none hidden md:block"
           >
@@ -5287,7 +5297,7 @@ const DataClusterGallery = () => {
             <motion.h3
               initial={{ scale: 0.6, opacity: 0 }}
               whileInView={{ scale: [0.6, 1.25, 1], opacity: 1 }}
-              viewport={{ once: false, amount: 0.3 }}
+              viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], times: [0, 0.55, 1] }}
               className="text-[9vw] sm:text-[7vw] md:text-[5.5rem] lg:text-[6.5rem] leading-[1] font-display font-black tracking-tight uppercase drop-shadow-[0_0_40px_rgba(79,172,254,0.25)]"
             >
@@ -5572,9 +5582,9 @@ const ScrollingIcon = ({ iconIndex, isOpen, activeColor }: { iconIndex: number, 
     <AnimatePresence mode="wait">
       <motion.div
         key={isOpen ? "close" : `icon-${iconIndex}`}
-        initial={{ opacity: 0, scale: 0.5, rotate: isOpen ? -90 : 90, filter: 'blur(4px)' }}
-        animate={{ opacity: 1, scale: 1, rotate: 0, filter: 'blur(0px)' }}
-        exit={{ opacity: 0, scale: 0.5, rotate: isOpen ? 90 : -90, filter: 'blur(4px)' }}
+        initial={{ opacity: 0, scale: 0.5, rotate: isOpen ? -90 : 90 }}
+        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+        exit={{ opacity: 0, scale: 0.5, rotate: isOpen ? 90 : -90 }}
         transition={{ 
           duration: 0.4, 
           type: "spring", 
