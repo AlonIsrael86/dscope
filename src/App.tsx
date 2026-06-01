@@ -5811,13 +5811,15 @@ const SatelliteNav = memo(({
                   onMouseLeave={() => setHoveredTab(null)}
                   onFocus={() => setFocusedTabId(tab.id)}
                   onBlur={() => setFocusedTabId(null)}
-                  // Stagger removed — 10 items appearing at delay
-                  // 0.1, 0.15, 0.20, … 0.55s read as a sequential
-                  // "wave" / flicker per Katia. Now all menu items
-                  // fade in together over 0.3s.
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  // Entrance animation removed entirely per Katia
+                  // 2026-05-28: «в меню досі відкривається меню і
+                  // потім всі сторінки одночасно блимкають один раз».
+                  // The `opacity: 0 → 1` fade-in itself read as a
+                  // single synchronous blink right after the overlay
+                  // appeared. Items now sit at their final state from
+                  // the moment the menu mounts — only the parent
+                  // overlay (motion.div with opacity 0 → 1) animates.
+                  initial={false}
                   className="flex flex-col sm:flex-row items-center sm:items-start sm:gap-4 md:gap-6 lg:gap-8 group text-center sm:text-left outline-none py-1 sm:py-2 md:py-4"
                 >
                   <div className="relative shrink-0 mb-2 sm:mb-0 flex items-center justify-center">
