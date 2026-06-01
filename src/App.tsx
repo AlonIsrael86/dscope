@@ -5816,11 +5816,19 @@ const SatelliteNav = memo(({
                   className="flex flex-col sm:flex-row items-center sm:items-start sm:gap-4 md:gap-6 lg:gap-8 group text-center sm:text-left outline-none py-1 sm:py-2 md:py-4"
                 >
                   <div className="relative shrink-0 mb-2 sm:mb-0 flex items-center justify-center">
-                    <div className={`absolute -inset-4 md:-inset-8 rounded-full blur-2xl transition-all duration-500 ${
-                      activeTab === tab.id 
-                        ? 'bg-blue-500/20 scale-100 opacity-100' 
-                        : 'bg-blue-500/10 scale-0 opacity-0 group-hover:scale-100 group-hover:opacity-100'
-                    }`} />
+                    {/* Was `absolute -inset-4 md:-inset-8 rounded-full
+                        blur-2xl transition-all duration-500` — the 40px
+                        blur combined with transition-all (which animates
+                        the blur radius itself frame-by-frame) caused
+                        visible GPU stutter on every hover of every menu
+                        item (per Katia: «меню блимає»). Replaced with a
+                        non-blurred radial glow + opacity-only transition.
+                        Same visual idea, no flicker. */}
+                    <div className={`absolute -inset-4 md:-inset-8 rounded-full transition-opacity duration-300 pointer-events-none ${
+                      activeTab === tab.id
+                        ? 'opacity-100'
+                        : 'opacity-0 group-hover:opacity-100'
+                    }`} style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.22), rgba(59,130,246,0) 70%)' }} />
                     <SymbolIcon
                       symbolId={(tab as any).symbolId}
                       size={isMobile ? 32 : 72}
