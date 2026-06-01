@@ -73,16 +73,12 @@ export const CosmicIndustryIcon = React.memo(({ icon: Icon, color, variant = 0 }
           </linearGradient>
         </defs>
 
-        {/* Soft halo behind everything (all variants). In LITE mode
-            the pulse animation is dropped — static halo only. */}
-        <circle cx="50" cy="50" r="42" fill={`url(#${uid}-core)`}>
-          {!reduced && (
-            <>
-              <animate attributeName="r"       values="40;46;40" dur="4s" repeatCount="indefinite" />
-              <animate attributeName="opacity" values="0.7;1;0.7" dur="4s" repeatCount="indefinite" />
-            </>
-          )}
-        </circle>
+        {/* Soft halo behind everything (all variants). Pulse animation
+            removed even in FULL mode — with 50 industry cards × pulse
+            running at 4s indefinitely, the steady-state radial-size
+            recomputation was visibly "blinking" the whole grid (per
+            Katia: «іконки індустрій блимають»). Static halo only. */}
+        <circle cx="50" cy="50" r="42" fill={`url(#${uid}-core)`} />
 
         {/* ─── v=0  Ringed Planet ─── */}
         {v === 0 && (
@@ -247,24 +243,18 @@ export const CosmicIndustryIcon = React.memo(({ icon: Icon, color, variant = 0 }
           </g>
         )}
 
-        {/* Sparkle particles around the icon — dropped entirely in
-            LITE mode (50 icons × 4 sparkles × <animate> tag = 200
-            concurrent SVG animations was the heaviest cost on
-            /industries). */}
+        {/* Sparkle particles around the icon — static now in all
+            modes. The opacity-pulse <animate> tags (50 icons × 4
+            sparkles = 200 simultaneous opacity loops at 2s cadence)
+            were the main visible "blinking" Katia reported on
+            /industries. Now they're plain decorative dots at fixed
+            opacity. */}
         {!reduced && (
           <>
-            <circle cx="6" cy="14" r="0.9" fill="currentColor" stroke="none">
-              <animate attributeName="opacity" values="0.2;1;0.2" dur="2.2s" begin="0s"   repeatCount="indefinite" />
-            </circle>
-            <circle cx="94" cy="16" r="0.7" fill="#ffffff" stroke="none">
-              <animate attributeName="opacity" values="0.2;1;0.2" dur="2.6s" begin="0.6s" repeatCount="indefinite" />
-            </circle>
-            <circle cx="92" cy="92" r="0.9" fill="currentColor" stroke="none">
-              <animate attributeName="opacity" values="0.2;1;0.2" dur="2.0s" begin="1.0s" repeatCount="indefinite" />
-            </circle>
-            <circle cx="8" cy="88" r="0.7" fill="#ffffff" stroke="none">
-              <animate attributeName="opacity" values="0.2;1;0.2" dur="2.4s" begin="1.4s" repeatCount="indefinite" />
-            </circle>
+            <circle cx="6" cy="14" r="0.9" fill="currentColor" opacity="0.7" stroke="none" />
+            <circle cx="94" cy="16" r="0.7" fill="#ffffff" opacity="0.7" stroke="none" />
+            <circle cx="92" cy="92" r="0.9" fill="currentColor" opacity="0.7" stroke="none" />
+            <circle cx="8" cy="88" r="0.7" fill="#ffffff" opacity="0.7" stroke="none" />
           </>
         )}
       </svg>
