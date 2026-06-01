@@ -1312,13 +1312,18 @@ const SymbolIcon = ({ symbolId, color, size = 24, className = "" }: { symbolId: 
       className={`fill-none stroke-2 ${className}`} 
       style={{ stroke: color || symbol.color }}
     >
-      <motion.path 
-        d={symbol.path} 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        initial={{ pathLength: 0 }}
+      {/* initial={false} — Symbol icon path no longer re-draws on every
+          mount. Was: pathLength 0 → 1 over 1s, which caused all 10 menu
+          icons to "redraw" each time the menu opened/closed (looked
+          like flickering per Katia). Now appears instantly at final
+          state. */}
+      <motion.path
+        d={symbol.path}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={false}
         animate={{ pathLength: 1 }}
-        transition={{ duration: 1 }}
+        transition={{ duration: 0 }}
       />
     </svg>
   );
@@ -1815,12 +1820,17 @@ const Logo = ({ className = "", cycling = false, ['aria-label']: ariaLabel = "De
             className="inline-flex items-center overflow-hidden leading-none py-[0.05em]"
           >
             <AnimatePresence mode="wait">
+              {/* Slide animation (y: -100% → 0% → 100%) replaced with a
+                  pure opacity crossfade — the vertical slide combined
+                  with the outer `layout` animation caused the symbol
+                  to look jumpy (per Katia: «дуже каряво міняється»).
+                  Now a calm opacity fade synced loosely with layout. */}
               <motion.span
                 key={logoState}
-                initial={{ opacity: 0, y: '-100%' }}
-                animate={{ opacity: 1, y: '0%' }}
-                exit={{ opacity: 0, y: '100%' }}
-                transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
                 className={`${currentLogoColor} inline-block leading-none transition-colors duration-700`}
               >
                 {getAnimatedPart()}
