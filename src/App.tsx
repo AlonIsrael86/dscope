@@ -2914,10 +2914,14 @@ const PlatformIntroSection = () => {
             return (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: (idx % 4) * 0.1 }}
+                // Entrance fade-up cascade removed per Katia 2026-05-28:
+                // «там де сторінка платформи, багато карток, вони
+                // зявляються нормально а потім всі блимають». The
+                // 0.1s × (idx % 4) stagger across 12 cards across rows
+                // produced a wave of blinking when the grid scrolled
+                // into view. Now `initial={false}` — cards sit at
+                // their final state immediately.
+                initial={false}
                 className={`p-6 md:p-8 rounded-3xl ${c.bg} border ${c.border} hover:bg-[#000010] transition-all duration-500 group relative overflow-hidden flex flex-col`}
               >
                 <div className="absolute inset-0 bg-[#000010] opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
