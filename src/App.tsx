@@ -5803,8 +5803,17 @@ const SatelliteNav = memo(({
               </button>
             </div>
 
-            <div 
-              className="grid grid-cols-2 gap-x-2 sm:gap-x-8 md:gap-x-16 lg:gap-x-32 gap-y-3 sm:gap-y-4 md:gap-y-5 lg:gap-y-6 w-full max-w-5xl mx-auto h-full place-content-center px-2 sm:px-4 py-4 sm:py-6"
+            <div
+              // Per Katia 2026-05-28: «зроби стовпчики ближче один до
+              // одного і обидва трохи посунь вправо» + «трохи зовсім
+              // зменш відстань в стовпчиках між назвами сторінок».
+              // Column gap lg:gap-x-32 → lg:gap-x-8 (128px → 32px),
+              // md:gap-x-16 → md:gap-x-4. Vertical row gap lg:gap-y-6
+              // → lg:gap-y-2. Container narrowed max-w-5xl → max-w-3xl
+              // and pulled right via pl-* offset so the menu reads as
+              // a tight central cluster rather than a wide-spread
+              // grid sitting in the left half of the viewport.
+              className="grid grid-cols-2 gap-x-2 sm:gap-x-4 md:gap-x-4 lg:gap-x-8 gap-y-1 sm:gap-y-2 md:gap-y-2 lg:gap-y-2 w-full max-w-3xl mx-auto h-full place-content-center pl-8 sm:pl-16 md:pl-24 lg:pl-32 pr-2 sm:pr-4 py-4 sm:py-6"
               onClick={(e) => e.stopPropagation()}
             >
               {tabs.map((tab, i) => (
@@ -5824,7 +5833,7 @@ const SatelliteNav = memo(({
                   // the moment the menu mounts — only the parent
                   // overlay (motion.div with opacity 0 → 1) animates.
                   initial={false}
-                  className="flex flex-col sm:flex-row items-center sm:items-start sm:gap-4 md:gap-6 lg:gap-8 group text-center sm:text-left outline-none py-1 sm:py-2 md:py-4"
+                  className="flex flex-col sm:flex-row items-center sm:items-start sm:gap-4 md:gap-6 lg:gap-8 group text-center sm:text-left outline-none py-0 sm:py-1 md:py-1"
                 >
                   <div className="relative shrink-0 mb-2 sm:mb-0 flex items-center justify-center">
                     {/* Was `absolute -inset-4 md:-inset-8 rounded-full
