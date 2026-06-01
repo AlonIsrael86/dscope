@@ -50,9 +50,16 @@ export const CosmicLoader = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-600/10 blur-[180px] rounded-full" />
       </div>
 
-      {/* Logo (the only foreground element) */}
+      {/* Logo (the only foreground element).
+          Removed `drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]` and
+          `p-2 -m-2` per Katia 2026-05-28: «бачиш там наче є рамка для
+          лого коли сайт завантажується — треба ось цю рамку прибрати».
+          The white drop-shadow rendered as a faintly-glowing rectangle
+          around the wordmark on the near-black backdrop; the p-2/-m-2
+          combo added an 8px padded box whose bounds were visible
+          during the slot-machine transition gap. Clean text on bg now. */}
       <div className="relative z-20">
-        <div className="relative flex items-center font-display font-black tracking-tighter text-6xl md:text-8xl text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.1)] group p-2 -m-2 overflow-visible">
+        <div className="relative flex items-center font-display font-black tracking-tighter text-6xl md:text-8xl text-white group overflow-visible">
           {/* Cycling first symbol — D / Δ / Delta, every 1.5 s.
               No min-width: the wrapper auto-sizes to the current glyph so
               "Scope" sits flush right next to D/Δ (no extra padding) and
