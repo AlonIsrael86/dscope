@@ -51,6 +51,14 @@ yuv420p** MP4 (HEVC won't play in browsers), replace those two files (keep the n
 3. Put the new client's `intro-dscope.mp4` + `intro-dscope-poster.jpg` in `public/<newclient>/assets/`.
 4. Update `aria-label` / any visible copy to the new client. Push → verify on the live page.
 
+## CRITICAL: use ABSOLUTE asset paths (the trailing-slash trap)
+The popup's `<source src>` and `poster` MUST be **absolute from the site root** — `/<client>/assets/intro-dscope.mp4`,
+NOT relative `assets/intro-dscope.mp4`. Reason: Vercel serves `features.dscope.ai/<client>` (no trailing slash) with
+a 200 and NO redirect, so a *relative* `assets/...` resolves against the parent (`features.dscope.ai/assets/...`) and
+**404s → black video box on every browser**. It only "works" if you happen to visit the URL with a trailing slash.
+The SolidCAM page already uses `/solidcam/assets/...`. For a new client, use `/<client>/assets/...`. (This bit us once;
+the page rendered fine but the video 404'd for everyone who opened the no-slash link.)
+
 ## Don't ship a broken popup
 If you wire the popup but the `intro-dscope.mp4` / poster are missing, visitors see a black box. Either ship
 the video assets **with** the popup in the same push, or keep `SHOW_INTRO_POPUP = false` until the film is in
