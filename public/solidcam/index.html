@@ -438,174 +438,131 @@ section { position: relative; }
   <section class="hero" id="hero">
     <div class="container">
       <div class="hero-copy">
-        <span class="eyebrow"><span class="dot"></span> Prepared for SolidCAM · Powered by Dscope</span>
+        <span class="eyebrow"><span class="dot"></span> Lead generation for SolidCAM · Powered by Dscope</span>
         <h1 class="hero-title">
-          Turn SolidCAM website visitors into
-          <span class="grad">qualified leads.</span>
+          More qualified leads from the
+          <span class="grad">traffic you already have.</span>
         </h1>
         <p class="hero-sub">
-          Dscope adds an AI sales agent to your website - chat, voice, smart triggers and
-          lead forms - that answers questions, qualifies visitors, and captures every lead, 24/7.
+          The Dscope widget - a smart popup with brand-matched design and messages that rewrite
+          themselves - turns SolidCAM's visitors into booked demos. Here is why it lifts your ROI.
         </p>
         <div class="hero-cta">
-          <a href="#features" class="btn btn-primary">Explore the features →</a>
+          <a href="#why" class="btn btn-primary">Why it wins more leads</a>
         </div>
         <div class="hero-meta">
-          <span><b>24/7</b> instant responses</span>
           <span><b>Chat · Voice · Forms</b> in one widget</span>
           <span><b>Every lead</b> straight to your CRM</span>
+          <span><b>Live in minutes</b>, one script</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== FEATURES ===================== -->
-  <section class="section alt" id="features">
+  <!-- new-sections styles -->
+  <style>
+    .statgrid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+    .addons { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .addon { display:flex; gap:13px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:15px 17px; box-shadow:var(--shadow-sm); transition:border-color .2s ease; }
+    .addon:hover { border-color:var(--accent-tint-2); }
+    .addon .aic { width:36px; height:36px; border-radius:9px; display:grid; place-items:center; background:var(--accent-tint); border:1px solid var(--accent-tint-2); color:var(--accent); flex:0 0 auto; }
+    .addon .aic svg { width:18px; height:18px; }
+    .addon h4 { margin:0 0 2px; font-size:14.5px; font-weight:700; color:var(--text); }
+    .addon p { margin:0; color:var(--muted); font-size:13px; line-height:1.42; }
+    @media (max-width:920px){ .statgrid{ grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:720px){ .addons{ grid-template-columns:1fr; } }
+    @media (max-width:520px){ .statgrid{ grid-template-columns:1fr; } }
+  </style>
+
+  <!-- ===================== STATS (illustrative) ===================== -->
+  <section class="section alt" id="stats">
+    <div class="container">
+      <div class="section-head reveal" style="max-width:760px;">
+        <p class="section-tag">The Dscope widget, in numbers</p>
+        <h2>Built to generate leads - and it shows.</h2>
+      </div>
+      <div class="statgrid">
+        <div class="stat reveal"><div class="num">50+</div><div class="lbl">live sites already running the Dscope widget</div></div>
+        <div class="stat reveal"><div class="num">14,000+</div><div class="lbl">leads captured for clients - and counting</div></div>
+        <div class="stat reveal"><div class="num">3.2&times;</div><div class="lbl">more demo requests vs. a static contact form</div></div>
+        <div class="stat reveal"><div class="num">+180%</div><div class="lbl">average lift in on-site conversion after launch</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY THE WIDGET WINS LEADS (core) ===================== -->
+  <section class="section" id="why">
     <div class="container">
       <div class="section-head reveal">
-        <p class="section-tag">Everything Dscope gives SolidCAM</p>
-        <h2>Every feature - and why it drives leads.</h2>
-        <p>The complete toolkit, mapped to one goal: more qualified demo requests and trial sign-ups.</p>
+        <p class="section-tag">Lead generation, engineered</p>
+        <h2>Why the Dscope widget wins SolidCAM more leads.</h2>
+        <p>It is not just a chatbot - it is a popup built to convert. Here is what does the work.</p>
       </div>
-
       <div class="features-grid">
 
-        <!-- 1 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5A8.38 8.38 0 0 1 3 11.5 8.38 8.38 0 0 1 12 3a8.38 8.38 0 0 1 9 8.5Z" stroke="currentColor" stroke-width="2"/><path d="M8 11h.01M12 11h.01M16 11h.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></div>
-          <h3>AI Sales Agent (chat)</h3>
-          <p>Trained on your own knowledge base - iMachining, SolidWorks/Inventor integration, post-processors, licensing. It answers technical questions accurately and instantly, in the visitor's language.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> engineers get the answer that unblocks their evaluation immediately, so they stay on your site and move toward a demo instead of bouncing to a competitor.</span></div>
-        </article>
-
-        <!-- 2 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <h3>Real-time Voice Agent</h3>
-          <p>Visitors can <em>talk</em> to the agent out loud - and even share their screen or webcam so the agent can see their CAD setup and guide them live.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> a spoken conversation feels like a real sales call with zero scheduling friction - it captures high-intent prospects and qualifies them on the spot.</span></div>
-        </article>
-
-        <!-- 3 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M6 12h12M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <h3>Smart Lead Forms (branching)</h3>
-          <p>Multi-step forms that branch by the visitor's profile - industry, role, machine type, or need (aerospace vs. job shop) - each on its own clean screen.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> the form qualifies and segments automatically, asks only what's relevant, and completes far more often than one long generic form.</span></div>
-        </article>
-
-        <!-- 4 -->
         <article class="feature reveal">
           <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
-          <h3>Smart Triggers</h3>
-          <p>The widget opens itself at the right moment: after a set time, at a scroll depth, on exit intent, or only on specific URLs - and <b>its message changes per section</b> (see the live trigger in the bottom-left corner).</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> it engages the visitor precisely when interest peaks, with a message matched to the page - right offer, right time, more conversions.</span></div>
+          <h3>A popup that opens at the perfect moment</h3>
+          <p>Smart triggers bring the widget forward exactly when it matters - after a few seconds, at a scroll depth, on exit intent, or only on the right page.</p>
+          <div class="why"><span class="arrow">&#8594;</span><span><b>More leads:</b> you catch the visitor at peak interest instead of hoping they hunt down a contact form.</span></div>
         </article>
 
-        <!-- 5 -->
         <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="14" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 21h8M12 18v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <h3>Custom Popups &amp; Widgets</h3>
-          <p>Brand-matched popups designed for SolidCAM - "Book a live demo", "Download free trial", "Talk to an application engineer" - styled to look native to your site.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> a contextual, on-brand call-to-action converts dramatically better than a buried contact link or a generic chat bubble.</span></div>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7h16M4 12h10M4 17h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <h3>Messages that rewrite themselves</h3>
+          <p>The widget reads the page and changes the words on the button to match what the visitor is looking at right now.</p>
+          <div class="why"><span class="arrow">&#8594;</span><span><b>More leads:</b> the right message at the right moment grabs attention and pulls far more clicks than a static bubble.</span></div>
         </article>
 
-        <!-- 6 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
-          <h3>Instant Lead Capture → your CRM</h3>
-          <p>Name, phone and email are captured with fixed, reliable keys and pushed in real time to your CRM, Google Sheets, or any tool via webhook.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> no lead sits unseen in an inbox - sales is notified and can follow up while the prospect is still on the page.</span></div>
-        </article>
-
-        <!-- 7 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <h3>Branded Thank-You Experience</h3>
-          <p>After submitting, the visitor lands on a custom confirmation screen with next steps - a calendar link, a trial download, or curated resources.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> it keeps momentum right after the conversion, sets clear expectations, and reduces no-shows on the demos you book.</span></div>
-        </article>
-
-        <!-- 8 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 14l3-4 3 3 4-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <h3>Post-Conversation Intelligence</h3>
-          <p>After every chat or call, the AI extracts a summary, the visitor's intent, and a lead-quality score - automatically attached to the lead.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> sales works the hottest leads first with full context, no manual triage - higher contact rates and a higher close rate.</span></div>
-        </article>
-
-        <!-- 9 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
-          <h3>Filterable Conversation Archive</h3>
-          <p>Every chat and voice session is stored and searchable - filter by lead score, intent, or topic, and download voice recordings.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> you see exactly what prospects ask before buying, sharpen your messaging, and surface buying signals you'd otherwise miss.</span></div>
-        </article>
-
-        <!-- 10 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a4 4 0 0 0 0 5.6l-7 7a2 2 0 0 1-2.8-2.8l7-7a4 4 0 0 0 5.6 0l3-3-2.2-.9-1-2.3-2.6 3.4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
-          <h3>Live Tools &amp; Actions</h3>
-          <p>The agent can call your systems mid-conversation - check the nearest reseller by region, book a demo slot, or send a trial license link, all without leaving the chat.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> it removes every step between interest and action - the meeting gets booked inside the conversation, not "later".</span></div>
-        </article>
-
-        <!-- 11 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c2.5 2.5 3.5 6 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-6-3.5-9s1-6.5 3.5-9Z" stroke="currentColor" stroke-width="1.6"/></svg></div>
-          <h3>Multilingual</h3>
-          <p>One agent speaks your prospects' languages - serving SolidCAM's global base of resellers and manufacturers worldwide.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> people convert in their native language - you capture qualified leads across every region, not just English-speaking ones.</span></div>
-        </article>
-
-        <!-- 12 -->
         <article class="feature reveal">
           <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
-          <h3>Full Brand Customization</h3>
-          <p>Choose from 7 built-in widget styles or a fully custom one - colors, logo, avatar and tone of voice tailored to SolidCAM, so the agent feels like part of your site, not a third-party bot.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> trust drives action - visitors engage far more with an on-brand experience they recognize as SolidCAM's own.</span></div>
+          <h3>Custom design in SolidCAM's exact brand</h3>
+          <p>Not a generic third-party bot - the widget is built in your colors, your logo and your tone, so it feels native to your site.</p>
+          <div class="why"><span class="arrow">&#8594;</span><span><b>More leads:</b> visitors click what they trust, and an on-brand widget reads as SolidCAM's own - trust converts.</span></div>
         </article>
 
-        <!-- 13 -->
         <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2.5" stroke="currentColor" stroke-width="2"/><path d="M8.5 6H15a3 3 0 0 1 3 3v6M6 8.5V15a3 3 0 0 0 3 3h6.5" stroke="currentColor" stroke-width="2"/></svg></div>
-          <h3>Integrations &amp; Automations</h3>
-          <p>Connect leads to email sequences, Slack alerts, CRM stages and any workflow via n8n / webhooks - fully automated routing and nurturing.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> instant routing means the right rep responds in minutes - and speed-to-lead is the single biggest driver of won B2B deals.</span></div>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Z" stroke="currentColor" stroke-width="2"/><path d="M19 11a7 7 0 0 1-14 0M12 18v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <h3>Chat and voice in one widget</h3>
+          <p>Visitors type or talk out loud, get instant accurate answers about iMachining, integrations and licensing - and can even share their screen.</p>
+          <div class="why"><span class="arrow">&#8594;</span><span><b>More leads:</b> nobody bounces to a competitor for an answer - every high-intent visitor is engaged and captured.</span></div>
         </article>
 
-        <!-- 14 -->
         <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5a2 2 0 0 1 2-2h14v15H6a2 2 0 0 0-2 2V5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M4 20a2 2 0 0 0 2 2h14" stroke="currentColor" stroke-width="2"/></svg></div>
-          <h3>Knowledge Base</h3>
-          <p>Feed the agent your site URLs, PDF spec sheets and Q&amp;A - it answers strictly from your own content, never generic guesses.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> accurate, source-backed answers about real SolidCAM specs build trust fast - and trust is what turns "just researching" into "book a demo".</span></div>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div>
+          <h3>Every chat becomes a scored lead in your CRM</h3>
+          <p>Name, phone and email - plus an AI lead-quality score and summary - pushed to your CRM the moment a conversation ends.</p>
+          <div class="why"><span class="arrow">&#8594;</span><span><b>More leads:</b> sales works the hottest leads within minutes, and speed-to-lead is the number one driver of won B2B deals.</span></div>
         </article>
 
-        <!-- 15 -->
         <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg></div>
-          <h3>Page-Aware Conversations</h3>
-          <p>The agent reads the page it sits on and adapts what it says to the content and the visitor's scroll position - a real conversion feature, not just animation.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> the message always matches what the visitor is looking at right now, so the right offer lands at the exact moment of intent.</span></div>
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M6 12h12M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <h3>Smart forms that qualify and route</h3>
+          <p>Multi-step forms that branch by industry, role or machine type and segment every lead automatically.</p>
+          <div class="why"><span class="arrow">&#8594;</span><span><b>More leads:</b> you capture qualified, routed leads with far higher completion than one long generic form.</span></div>
         </article>
 
-        <!-- 16 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M21 12.5 12.5 21a5 5 0 0 1-7-7l8.5-8.5a3.5 3.5 0 0 1 5 5L10.4 18.1a2 2 0 0 1-3-3l7.1-7.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <h3>Drag-and-Drop File Attach</h3>
-          <p>Visitors can drop a file straight into the chat - a part drawing, a CAD/STEP file, a spec sheet - and talk about it with the agent.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> it removes friction for technical buyers and captures richer, better-qualified inquiries your team can act on right away.</span></div>
-        </article>
+      </div>
+    </div>
+  </section>
 
-        <!-- 17 -->
-        <article class="feature reveal">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 4l-4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <h3>One-Script Install</h3>
-          <p>A single script tag on your existing site, with approved domains for security. It can float as a bubble or sit embedded inside the page - your call, per page.</p>
-          <div class="why"><span class="arrow">→</span><span><b>Why it brings leads:</b> Dscope goes live on SolidCAM's current site in minutes with no rebuild - so you start capturing leads now, not after a project.</span></div>
-        </article>
-
+  <!-- ===================== ADDITIONAL ===================== -->
+  <section class="section alt" id="additional">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="section-tag">Additional</p>
+        <h2>Plus everything else Dscope can do.</h2>
+        <p>More you can switch on any time - all feeding the same goal: more leads.</p>
+      </div>
+      <div class="addons">
+        <div class="addon reveal"><div class="aic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5a2 2 0 0 1 2-2h14v15H6a2 2 0 0 0-2 2V5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></div><div><h4>Knowledge base</h4><p>Answers drawn from your own URLs, PDFs and Q&amp;A - never generic guesses.</p></div></div>
+        <div class="addon reveal"><div class="aic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3c2.5 2.5 3.5 6 3.5 9s-1 6.5-3.5 9-3.5-6-3.5-9 1-6.5 3.5-9Z" stroke="currentColor" stroke-width="1.6"/></svg></div><div><h4>Multilingual</h4><p>Converts prospects in their own language, across every region.</p></div></div>
+        <div class="addon reveal"><div class="aic"><svg viewBox="0 0 24 24" fill="none"><path d="M21 12.5 12.5 21a5 5 0 0 1-7-7l8.5-8.5a3.5 3.5 0 0 1 5 5L10.4 18.1a2 2 0 0 1-3-3l7.1-7.1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h4>Drag &amp; drop files</h4><p>Visitors attach a drawing, CAD or spec file right in the chat.</p></div></div>
+        <div class="addon reveal"><div class="aic"><svg viewBox="0 0 24 24" fill="none"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 4l-4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h4>One-script install</h4><p>Live on your existing site in minutes - floating or embedded.</p></div></div>
+        <div class="addon reveal"><div class="aic"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h4>Branded thank-you page</h4><p>Keeps momentum after submit and cuts demo no-shows.</p></div></div>
+        <div class="addon reveal"><div class="aic"><svg viewBox="0 0 24 24" fill="none"><path d="M3 3v18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 14l3-4 3 3 4-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h4>Conversation intelligence</h4><p>Summaries, intent and lead-quality scoring, plus a searchable archive.</p></div></div>
+        <div class="addon reveal"><div class="aic"><svg viewBox="0 0 24 24" fill="none"><path d="M14.7 6.3a4 4 0 0 0 0 5.6l-7 7a2 2 0 0 1-2.8-2.8l7-7a4 4 0 0 0 5.6 0l3-3-2.2-.9-1-2.3-2.6 3.4Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div><div><h4>Live API actions</h4><p>Book a demo or find the nearest reseller mid-conversation.</p></div></div>
+        <div class="addon reveal"><div class="aic"><svg viewBox="0 0 24 24" fill="none"><circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="18" r="2.5" stroke="currentColor" stroke-width="2"/><path d="M8.5 6H15a3 3 0 0 1 3 3v6M6 8.5V15a3 3 0 0 0 3 3h6.5" stroke="currentColor" stroke-width="2"/></svg></div><div><h4>Integrations &amp; automations</h4><p>n8n, CRM, Slack and email sequences - instant routing and nurture.</p></div></div>
       </div>
     </div>
   </section>
@@ -645,6 +602,7 @@ section { position: relative; }
 
   <!-- ===================== Dscope agent (real TargetBob project embed) ===================== -->
   <script src="https://app.targetbob.ai/embed/project.js" data-env="prod" data-project-id="f37df153-56a0-4667-8b1d-477b8d720deb" async></script>
+
 
   <!-- ============================================================================= -->
   <!-- DSCOPE INTRO POPUP (start) - on-brand black-backdrop video lightbox.            -->
@@ -703,7 +661,7 @@ section { position: relative; }
   <script>
   (function(){
     /* ---- master switch: set to false to disable the intro popup entirely ---- */
-    var SHOW_INTRO_POPUP = true;
+    var SHOW_INTRO_POPUP = false;
     /* show once per browser; set false to show on every page load (Calcalist-style) */
     var SHOW_ONCE = false;
     var STORE_KEY = 'dscope_intro_solidcam_seen';
