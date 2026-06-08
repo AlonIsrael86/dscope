@@ -1,5 +1,20 @@
 # DESIGN.md — Dscope Marketing Site
 
+> **This contract governs EVERYTHING in this repo - every page we build and every thing we add.**
+> Dscope ships on **two surfaces**, each with its own visual system but ONE shared standard of quality
+> (premium, restrained, on-brand - never generic SaaS):
+>
+> 1. **Surface 1 - the main cosmic SPA** (`index.html` + `src/`, React/Vite): the dark "planetary
+>    enterprise infrastructure" brand. **Sections "Objective" through "What I Did NOT Touch" below describe
+>    this surface.**
+> 2. **Surface 2 - client showcase / demo pages** (`public/<client>/index.html`, static HTML, e.g.
+>    `public/solidcam/`): a **light** proposal/showcase system (Inter, white, per-client accent) used to
+>    pitch a specific client and explain the Dscope/TargetBob widget. **See "Surface 2" near the bottom.**
+>
+> The **video/motion** contract for both surfaces is the sibling file **`frame.md`** (read it before any
+> intro popup, showcase film, ad, or motion graphic). The intro-popup convention is documented under
+> "Intro popup convention" near the bottom and lives in `docs/katya-claude-guide/`.
+
 ## Objective
 Build the public Dscope marketing site that preserves Alexei Kogan's
 Google AI Studio design 1:1, polishes it into a production-quality build,
@@ -160,3 +175,94 @@ meets enterprise control room** — confident, technical, slightly mythic.
 - Color tokens (the blue/cyan gradient is Alexei's signature)
 - The 11-tab navigation pattern
 - Any of Katia's recent fixes (Glimmer fade, card outlines, nav scroll)
+
+---
+
+# Surface 2 — Client Showcase / Demo Pages (`public/<client>/`)
+
+> A separate, **light** design system from the cosmic SPA above. Used for per-client showcase/proposal
+> pages (e.g. `public/solidcam/index.html`, served at `features.dscope.ai/<client>`) that pitch one client
+> and explain the Dscope/TargetBob widget — a CEO forwards the link to their team. **Every new client demo
+> page MUST follow this system** so all of them feel like one product, only re-accented per client.
+
+## Objective & audience (Surface 2)
+- Make a single client (e.g. **SolidCAM** — industrial CAM/CNC machining software) feel the page was built
+  for them, and make the value obvious: *the Dscope/TargetBob widget turns their website visitors into
+  qualified leads.* The agent on the page only explains features (no pricing — pricing is being finalized).
+- Audience: the client's decision-maker + the employees they forward it to. **English.**
+
+## Visual theme (Surface 2)
+- **Light, premium, editorial-product** — white canvas, crisp hairlines, soft oversized shadows, one
+  rounded radius family. Confident and clean, never a generic SaaS template, never cosmic/dark (that's the
+  popup film's job). The dark Dscope film appears only inside the black-backdrop intro popup.
+
+## Color system (Surface 2) — tokens live in each page's `:root`
+| Token | Value | Role |
+|---|---|---|
+| `--bg` / `--bg-2` | `#FFFFFF` / `#F4F6F9` | Page / light section bands |
+| `--surface` / `--surface-2` | `#FFFFFF` / `#F7F9FC` | Cards / hovered cards |
+| `--text` / `--muted` / `--faint` | `#161A22` / `#545C6B` / `#8A93A3` | Text primary / secondary / tertiary |
+| `--border` / `--border-2` | `rgba(17,24,39,.10)` / `.16` | Hairlines |
+| `--dscope-blue` / `--dscope-violet` | `#4F7CFF` / `#7A5CFF` | The Dscope mark stays blue/violet on every page |
+| `--accent` / `--accent-2` / `--accent-3` | **per client** | Primary / deep / secondary accent (CTAs, glints) |
+| `--accent-tint` / `--accent-tint-2` | per client | Soft accent washes (hero glow, chips) |
+
+**Per-client accent override (the core reusability pattern).** The shared stylesheet defaults `--accent` to
+Dscope blue; a `body.client-<name>` class overrides it. SolidCAM example already in the page:
+```css
+body.client-solidcam{
+  --accent:#D81E2C; --accent-2:#A8141C; --accent-3:#C9A24B; /* SolidCAM red + bronze/gold */
+  --accent-ink:#fff; --accent-tint:rgba(216,30,44,.07); --accent-tint-2:rgba(216,30,44,.16);
+}
+```
+To add a new client: add `body.client-<name>{…}` with their brand colors, set `<body class="client-<name>">`,
+swap the logo + copy. Nothing else in the system changes. Pull the client's real brand colors from their
+site/logo — never invent.
+
+## Typography (Surface 2)
+- **Inter** (400–800), loaded via Google Fonts. Body line-height 1.6. Headlines tight, bold. No ALL CAPS on
+  long lines; mono-style eyebrow tags may use small caps + letter-spacing. (The cosmic SPA's italic display
+  is Surface-1 only — do not mix it onto the light pages.)
+
+## Layout & components (Surface 2)
+- `--maxw:1140px`, `.container` padding-inline 24px, **logical properties only** (`margin-inline`,
+  `inset-inline-*`) — no `left`/`right`.
+- Radius family: `--radius:18px` / `--radius-sm:12px`; soft shadows `--shadow` / `--shadow-sm`.
+- Buttons: pill (`border-radius:999px`); `.btn-primary` = accent gradient fill, `.btn-ghost` = white + hairline.
+- Sticky blurred nav with a **co-brand lockup** (`Dscope` wordmark · separator · client logo + "Prepared for…").
+- Section rhythm: eyebrow chip → `<h2>` → supporting line → grid/cards. Reveal-on-scroll via IntersectionObserver
+  (`.reveal` → `.in`). Feature pages use a **feature grid** where each card = one feature + **why it drives leads**.
+- The live agent is the real TargetBob embed (`app.targetbob.ai/embed/project.js`, the page's `data-project-id`).
+
+## Content rules (Surface 2)
+- Lead with the **outcome** (leads / pipeline / qualified demo requests), then the feature. Every feature card
+  must answer "why does this drive leads." No pricing, no fake metrics, no emojis, no Lorem Ipsum.
+
+## Accessibility & SEO (Surface 2)
+- `noindex` while these are private showcases. Real Hebrew/English `aria-label`s, `:focus-visible` rings,
+  semantic landmarks, AA contrast. Zero horizontal overflow at 360/390/768/1440.
+
+---
+
+# Intro popup convention (applies to Surface 2 pages)
+
+A black-backdrop **video lightbox** that auto-plays a ~30s Dscope feature-showcase **film** on entry (the
+motion contract is **`frame.md`**). It mirrors the Calcalist 2026 concept popup: fixed near-black backdrop
+(`rgba(2,6,23,.94)` + blur), a 16:9 rounded stage, a muted autoplay `<video>`, a corner close button, Esc /
+click-outside / tap-to-play fallback, and **auto-close on end**. Default: **show once per browser** (a
+`localStorage` flag); a single `SHOW_INTRO_POPUP` switch turns it off, `SHOW_ONCE=false` makes it show every load.
+
+- Markup/script: a self-contained block before `</body>` (see `public/solidcam/index.html`, fenced
+  `DSCOPE INTRO POPUP (start)…(end)`). Classes are `dsi*` to avoid collisions.
+- Video assets live in `public/<client>/assets/` (`intro-dscope.mp4` H.264/SDR for the browser popup +
+  `intro-dscope-poster.jpg`). The popup references them with a **relative** path — no external links.
+- Build the film per **`frame.md`** + the `jit-hyperframes-video` skill. Full how-to + removal steps for a
+  non-engineer: **`docs/katya-claude-guide/intro-popup-howto.md`**.
+
+## Visual QA (every Surface-2 page, before "done")
+- [ ] Desktop 1440 + mobile 390/360 + tablet 768 screenshots; **zero horizontal overflow** at all widths.
+- [ ] Per-client accent applied via `body.client-<name>`; Dscope mark stays blue/violet.
+- [ ] No orphan word alone on a headline's last line.
+- [ ] If the intro popup is on: it opens, plays, closes on end + on Esc/click-outside/✕; the dark film reads
+      well over the page; the H.264 mp4 plays in Chrome + Safari; no broken/missing-poster black box.
+- [ ] No cookie/consent/overlay in any proof screenshot.
