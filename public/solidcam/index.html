@@ -691,7 +691,7 @@ section { position: relative; }
   <div id="dsiPop" class="dsi" role="dialog" aria-modal="true" aria-label="Dscope for SolidCAM - intro video" hidden>
     <button class="dsi__x" id="dsiClose" aria-label="Close video">&times;</button>
     <div class="dsi__stage" tabindex="-1">
-      <video id="dsiVid" class="dsi__vid" playsinline muted autoplay preload="metadata" controls
+      <video id="dsiVid" class="dsi__vid" playsinline muted autoplay preload="auto" controls
              poster="assets/intro-dscope-poster.jpg">
         <source src="assets/intro-dscope.mp4" type="video/mp4" />
       </video>
@@ -705,7 +705,7 @@ section { position: relative; }
     /* ---- master switch: set to false to disable the intro popup entirely ---- */
     var SHOW_INTRO_POPUP = true;
     /* show once per browser; set false to show on every page load (Calcalist-style) */
-    var SHOW_ONCE = true;
+    var SHOW_ONCE = false;
     var STORE_KEY = 'dscope_intro_solidcam_seen';
     var pop=document.getElementById('dsiPop'),vid=document.getElementById('dsiVid'),
         closeB=document.getElementById('dsiClose'),playB=document.getElementById('dsiPlay');
@@ -713,14 +713,20 @@ section { position: relative; }
     if(SHOW_ONCE){try{if(localStorage.getItem(STORE_KEY))return;}catch(e){}}
     function close(){pop.hidden=true;document.body.style.overflow='';try{vid.pause();}catch(e){}
       if(SHOW_ONCE){try{localStorage.setItem(STORE_KEY,'1');}catch(e){}}}
-    function startPlay(){playB.hidden=true;try{vid.muted=true;}catch(e){}var q=vid.play&&vid.play();if(q&&q.catch)q.catch(function(){});}
+    function tryPlay(){try{vid.muted=true;}catch(e){}var q=vid.play&&vid.play();if(q&&q.catch){q.catch(function(){if(vid.paused)playB.hidden=false;});}return q;}
+    function startPlay(){playB.hidden=true;tryPlay();}
+    var gestures=['pointerdown','keydown','touchstart','mousemove','scroll'];
+    function onGesture(){if(!pop.hidden&&vid.paused)tryPlay();gestures.forEach(function(g){document.removeEventListener(g,onGesture);});}
     function open(){
       pop.hidden=false;document.body.style.overflow='hidden';
-      try{vid.currentTime=0;vid.muted=true;}catch(e){}
-      var p=vid.play&&vid.play();
-      if(p&&p.catch){p.catch(function(){playB.hidden=false;});}
-      /* fallback: if autoplay is blocked (paused without a rejected promise), surface the play button over the poster */
-      setTimeout(function(){if(vid.paused){playB.hidden=false;}},500);
+      try{vid.currentTime=0;}catch(e){}
+      tryPlay();
+      /* retry once the media is actually ready (covers play() called before data is buffered) */
+      vid.addEventListener('canplay',function(){if(!pop.hidden&&vid.paused)tryPlay();});
+      /* if the browser blocks initial autoplay, start on the visitor's FIRST interaction anywhere on the page */
+      gestures.forEach(function(g){document.addEventListener(g,onGesture,{passive:true});});
+      /* last-resort visible affordance if it is still paused */
+      setTimeout(function(){if(!pop.hidden&&vid.paused)playB.hidden=false;},900);
       try{pop.querySelector('.dsi__stage').focus();}catch(e){}
     }
     closeB.addEventListener('click',close);
