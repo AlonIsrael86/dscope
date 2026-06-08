@@ -600,6 +600,78 @@ section { position: relative; }
 
   </script>
 
+  <!-- ===================== interactivity: hover, animations, count-up ===================== -->
+  <style>
+    .feature, .addon, .stat { transition: transform .3s cubic-bezier(.22,.61,.36,1), box-shadow .3s ease, border-color .3s ease; }
+    .feature:hover { transform: translateY(-7px); box-shadow: 0 28px 54px -18px rgba(216,30,44,.30); border-color: rgba(216,30,44,.38); }
+    .feature .ic { transition: background .3s ease, color .3s ease, transform .3s cubic-bezier(.22,.61,.36,1); }
+    .feature:hover .ic { background: linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; transform: rotate(-7deg) scale(1.08); }
+    .feature h3 { transition: color .25s ease; }
+    .feature:hover h3 { color: var(--accent); }
+    .addon:hover { transform: translateY(-4px); box-shadow: 0 18px 38px -14px rgba(216,30,44,.26); border-color: rgba(216,30,44,.34); }
+    .addon .aic { transition: background .25s ease, color .25s ease; }
+    .addon:hover .aic { background: linear-gradient(135deg,var(--accent),var(--accent-2)); color:#fff; }
+    .stat:hover { transform: translateY(-5px); box-shadow: 0 24px 46px -16px rgba(216,30,44,.26); }
+    .stat .num { display:inline-block; }
+    .hero-title .grad { background-size: 220% auto; animation: gradShift 6s ease-in-out infinite; }
+    @keyframes gradShift { 0%,100%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } }
+    .hero::before { animation: blobFloat 16s ease-in-out infinite; }
+    @keyframes blobFloat { 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(2.5%,2%) scale(1.04); } }
+    .eyebrow .dot { animation: dotPulse 1.9s ease-in-out infinite; }
+    @keyframes dotPulse { 0%,100%{ box-shadow:0 0 0 0 rgba(216,30,44,.55); } 60%{ box-shadow:0 0 0 7px rgba(216,30,44,0); } }
+    .features-grid > .reveal { transition-delay: calc(var(--i,0) * 75ms); }
+    .addons > .reveal { transition-delay: calc(var(--i,0) * 55ms); }
+    .statgrid > .reveal { transition-delay: calc(var(--i,0) * 90ms); }
+    .btn-primary { position:relative; overflow:hidden; }
+    .btn-primary::after { content:""; position:absolute; top:0; left:-75%; width:50%; height:100%; transform:skewX(-22deg); background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent); pointer-events:none; }
+    .btn-primary:hover::after { animation: shine .85s ease; }
+    @keyframes shine { from{ left:-75%; } to{ left:135%; } }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-title .grad, .hero::before, .eyebrow .dot, .btn-primary:hover::after { animation:none; }
+      .feature:hover, .addon:hover, .stat:hover, .feature:hover .ic { transform:none; }
+      .features-grid > .reveal, .addons > .reveal, .statgrid > .reveal { transition-delay:0ms; }
+    }
+  </style>
+  <script>
+    (function () {
+      ['.features-grid', '.addons', '.statgrid'].forEach(function (sel) {
+        var g = document.querySelector(sel); if (!g) return;
+        [].forEach.call(g.children, function (c, i) { c.style.setProperty('--i', i % 6); });
+      });
+      var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (RM || !('IntersectionObserver' in window)) return;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
+      }, { threshold: 0.6 });
+      function run(n) {
+        var pre = n.getAttribute('data-pre') || '', suf = n.getAttribute('data-suf') || '';
+        var comma = n.getAttribute('data-comma') === '1';
+        var dec = parseInt(n.getAttribute('data-dec') || '0', 10);
+        var target = parseFloat(n.getAttribute('data-target') || '0');
+        function fmt(v) { return pre + (comma ? Math.round(v).toLocaleString('en-US') : (dec ? v.toFixed(dec) : Math.round(v))) + suf; }
+        var dur = 1200, start = null;
+        function step(ts) {
+          if (!start) start = ts;
+          var p = Math.min((ts - start) / dur, 1), e = 1 - Math.pow(1 - p, 3);
+          n.textContent = fmt(target * e);
+          if (p < 1) requestAnimationFrame(step); else n.textContent = fmt(target);
+        }
+        requestAnimationFrame(step);
+        setTimeout(function () { n.textContent = fmt(target); }, dur + 500); // safety net if rAF is throttled
+      }
+      document.querySelectorAll('.stat .num').forEach(function (n) {
+        var m = n.textContent.trim().match(/^([^\d]*)([\d.,]+)(.*)$/);
+        if (!m) return;
+        n.setAttribute('data-pre', m[1]); n.setAttribute('data-suf', m[3]);
+        n.setAttribute('data-comma', m[2].indexOf(',') > -1 ? '1' : '0');
+        n.setAttribute('data-dec', String((m[2].split('.')[1] || '').length));
+        n.setAttribute('data-target', String(parseFloat(m[2].replace(/,/g, ''))));
+        n.textContent = m[1] + '0' + m[3];
+        io.observe(n);
+      });
+    })();
+  </script>
+
   <!-- ===================== Dscope agent (real TargetBob project embed) ===================== -->
   <script src="https://app.targetbob.ai/embed/project.js" data-env="prod" data-project-id="f37df153-56a0-4667-8b1d-477b8d720deb" async></script>
 
