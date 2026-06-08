@@ -691,7 +691,7 @@ section { position: relative; }
   <div id="dsiPop" class="dsi" role="dialog" aria-modal="true" aria-label="Dscope for SolidCAM - intro video" hidden>
     <button class="dsi__x" id="dsiClose" aria-label="Close video">&times;</button>
     <div class="dsi__stage" tabindex="-1">
-      <video id="dsiVid" class="dsi__vid" playsinline muted autoplay preload="auto" controls
+      <video id="dsiVid" class="dsi__vid" playsinline muted autoplay preload="metadata" controls
              poster="assets/intro-dscope-poster.jpg">
         <source src="assets/intro-dscope.mp4" type="video/mp4" />
       </video>
@@ -713,15 +713,20 @@ section { position: relative; }
     if(SHOW_ONCE){try{if(localStorage.getItem(STORE_KEY))return;}catch(e){}}
     function close(){pop.hidden=true;document.body.style.overflow='';try{vid.pause();}catch(e){}
       if(SHOW_ONCE){try{localStorage.setItem(STORE_KEY,'1');}catch(e){}}}
+    function startPlay(){playB.hidden=true;try{vid.muted=true;}catch(e){}var q=vid.play&&vid.play();if(q&&q.catch)q.catch(function(){});}
     function open(){
       pop.hidden=false;document.body.style.overflow='hidden';
-      try{vid.currentTime=0;}catch(e){}
+      try{vid.currentTime=0;vid.muted=true;}catch(e){}
       var p=vid.play&&vid.play();
       if(p&&p.catch){p.catch(function(){playB.hidden=false;});}
+      /* fallback: if autoplay is blocked (paused without a rejected promise), surface the play button over the poster */
+      setTimeout(function(){if(vid.paused){playB.hidden=false;}},500);
       try{pop.querySelector('.dsi__stage').focus();}catch(e){}
     }
     closeB.addEventListener('click',close);
-    playB.addEventListener('click',function(){playB.hidden=true;var q=vid.play();if(q&&q.catch)q.catch(function(){});});
+    playB.addEventListener('click',startPlay);
+    /* clicking the poster/stage also starts it (when paused) */
+    vid.addEventListener('click',function(){if(vid.paused)startPlay();});
     pop.addEventListener('click',function(e){if(e.target===pop)close();});
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!pop.hidden)close();});
     vid.addEventListener('ended',close);
