@@ -105,6 +105,17 @@ meets enterprise control room** — confident, technical, slightly mythic.
   Katia's machine. 94 `repeat:Infinity` animations + 49 backdrop-blurs
   on the home route. Documented in `PERF_HANDOFF.md`. P2 work paused;
   not blocking launch. Track for post-launch.
+- **`/home-v2` (2026-06-10)**: the P2 plan EXECUTED on a hidden duplicate
+  route — same visuals, re-engineered cheap (canvas star field, CSS
+  comets/sun-pulse/node-pulse, radial gradients instead of giant filter
+  blurs, hero + IndustryAutomation gated). `/` untouched. Validated on a
+  **production build** (dev-server numbers are not trustworthy): on a
+  strong desktop both pin near the refresh cap (no felt difference); under
+  4× CPU throttle (≈ the 22-FPS weak machine) the original scrolls at 4–8
+  FPS with up to ~1s freezes, `/home-v2` at 32–35 FPS, worst frame 97ms —
+  a ~6–8× win that only shows on weak hardware. Once Katia verifies on her
+  machine, promoting to `/` is a one-line change (render HomeV2 for the
+  'home' tab). Details: CHANGELOG 2026-06-10 + `src/routes/HomeV2.tsx`.
 - **Reduced motion**: respected on cosmic backgrounds (existing).
 
 ## Content Rules

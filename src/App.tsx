@@ -4,6 +4,11 @@ import { ContactPlaceholder } from './routes/Contact';
 // Lazy-loaded — CaseStudies pulls in DashboardCaseView (1120 lines)
 // and Sankey diagram (d3). Loaded on first visit to /case-studies.
 const CaseStudies = lazy(() => import('./routes/CaseStudies').then((m) => ({ default: m.CaseStudies })));
+// home-v2: perf-overhauled duplicate of the home route (hidden URL, not in
+// nav). Lazy so the main bundle is unchanged AND to avoid TDZ issues - the
+// HomeV2 module imports section components back from this file, so it must
+// only evaluate after App.tsx finishes module init.
+const HomeV2 = lazy(() => import('./routes/HomeV2').then((m) => ({ default: m.HomeV2 })));
 import { RealClientCases } from './routes/RealClientCases';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
@@ -316,7 +321,7 @@ const DiscoveryTooltip = ({
   );
 };
 
-const WritingTitle = ({ 
+export const WritingTitle = ({
   text, 
   className = "", 
   progress,
@@ -2990,7 +2995,7 @@ const PlatformIntroSection = () => {
   );
 };
 
-const LunarCommandHub = () => {
+export const LunarCommandHub = () => {
   return (
     <PinnedScrollSection height="h-[250vh]">
       <LunarCommandHubContent />
@@ -4314,7 +4319,7 @@ const AutomationDashboard = () => {
   );
 };
 
-const SecretarialBlueprint = () => {
+export const SecretarialBlueprint = () => {
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [nodePriorities, setNodePriorities] = useState<Record<string, 'Low' | 'Medium' | 'High'>>({});
@@ -6154,7 +6159,7 @@ const PageScrollRevealTitle = ({ text, className, lightning = false, progress }:
   );
 };
 
-const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = "", scrollOffset }: { children: React.ReactNode, height?: string, innerClassName?: string, scrollOffset?: any }) => {
+export const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = "", scrollOffset }: { children: React.ReactNode, height?: string, innerClassName?: string, scrollOffset?: any }) => {
   const containerRef = useRef(null);
   const { scrollYProgress: rawProgress } = useScroll({
     target: containerRef,
@@ -6194,7 +6199,7 @@ const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = 
   );
 };
 
-const IndustryAutomation = () => {
+export const IndustryAutomation = () => {
   return (
     // scrollOffset starts progress as the section enters the viewport
     // (per Katia: «фраза починає рухатись тільки коли повністю видно
@@ -6784,7 +6789,7 @@ const FloatingClientLogo = ({
   );
 };
 
-const ClientMarquee = () => {
+export const ClientMarquee = () => {
   // Pre-compute deterministic lane / duration / delay per client.
   //
   // LANES: evenly spread across the band so two clients are NEVER on
@@ -8647,7 +8652,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
-const FeatureObjectCard = ({ feature, index }: any) => {
+export const FeatureObjectCard = ({ feature, index }: any) => {
   const [isHovered, setIsHovered] = useState(false);
   const brandColors = ["#3b82f6", "#10b981", "#8b5cf6", "#f59e0b"]; // Blue, emerald, purple, amber
   const color = brandColors[index % brandColors.length];
@@ -8695,9 +8700,9 @@ export default function App() {
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <ErrorBoundary>
-        {/* FpsMeter intentionally disabled for client-facing build.
-            Toggle on for performance investigation in dev. */}
-        {/* <FpsMeter /> */}
+        {/* FpsMeter removed for production. It's a self-gated dev overlay
+            (src/components/FpsMeter.tsx) — add <FpsMeter/> here + ?fps=1 to
+            measure any route on demand. Not rendered in the shipped build. */}
         <AppContent />
       </ErrorBoundary>
     </ThemeContext.Provider>
@@ -10502,15 +10507,16 @@ function AppContent() {
           Skip to main content
         </a>
 
-        {/* Global Background */}
-        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <GalaxyBackground />}
-        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <OceanHorizonBackground />}
+        {/* Global Background. 'home' is excluded everywhere: it now renders
+            HomeV2, which brings its own GalaxyBackgroundV2 (perf copy). */}
+        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <GalaxyBackground />}
+        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <OceanHorizonBackground />}
         {activeTab === 'about' && <GalaxyAboutBackground />}
-        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <MarsBackground />}
-        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <DeepOceanBackground />}
+        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <MarsBackground />}
+        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <DeepOceanBackground />}
         {activeTab === 'dashboard' && <NebulaBackground />}
-        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
-        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
+        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
+        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
 
         {/* Background Decorative Element */}
         <SatelliteNav 
@@ -10536,105 +10542,16 @@ function AppContent() {
         </header>
 
         <AnimatePresence mode="wait">
+          {/* PROMOTED 2026-06-10: the home route now renders HomeV2 — the
+              perf-overhauled, pixel-identical version (canvas star field,
+              CSS comets/sun, gated sections). The old inline home block +
+              the temporary /home-v2 staging route were removed; HomeV2 is
+              the single source of truth for home. Visuals unchanged. */}
           {activeTab === 'home' && (
-          <motion.main
-            key="home"
-            role="main"
-            id="main-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="pt-24 md:pt-32 pb-10 md:pb-20 relative"
-          >
-            <PinnedScrollSection height="h-[150vh]" innerClassName="flex flex-col justify-center">
-              <HeroContent />
-            </PinnedScrollSection>
-
-            <IndustryAutomation />
-            
-            {/* Seamless Gradient Transition to Schematic */}
-            <div className="relative h-64 w-full bg-gradient-to-b from-transparent via-blue-500/5 to-transparent pointer-events-none" />
-            
-            <InViewGate minHeight="100vh">
-              <SecretarialBlueprint />
-            </InViewGate>
-
-            <InViewGate minHeight="150vh">
-              <div className="relative" id="orbital-dispatch">
-                 {/* Translucent separator with gradient glow */}
-                 <div className="h-40 w-full bg-gradient-to-b from-transparent via-purple-500/10 to-transparent pointer-events-none" />
-
-                 {/* Background Glow for Contrast */}
-                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-96 bg-blue-600/5 blur-[120px] pointer-events-none" aria-hidden="true" />
-                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-64 bg-purple-600/5 blur-[100px] pointer-events-none" aria-hidden="true" />
-
-                 <div className="relative z-10">
-                   <WritingTitle
-                       text="Neural Integration Node"
-                       className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-blue-400 uppercase tracking-tighter mb-16 justify-center"
-                       lightning={true}
-                       pulse={true}
-                   />
-                   {/* Clicking the satellite hub scrolls to the Verified Signal
-                       block below — same target as the floating astronaut. */}
-                   <div
-                     role="button"
-                     tabIndex={0}
-                     className="cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 rounded-2xl"
-                     onClick={() => {
-                       const el = document.getElementById('home-testimonials');
-                       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                     }}
-                     onKeyDown={(e) => {
-                       if (e.key === 'Enter' || e.key === ' ') {
-                         e.preventDefault();
-                         const el = document.getElementById('home-testimonials');
-                         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                       }
-                     }}
-                     aria-label="Scroll to Verified Signal client results"
-                   >
-                     <LunarCommandHub />
-                   </div>
-                 </div>
-              </div>
-            </InViewGate>
-            {/* Verified Signal — the same 4-card real-client block used on
-                /case-studies (per Katia). The scroll-to anchor lives on the
-                OUTER wrapper so it's always in the DOM, even before
-                InViewGate has lazily mounted the cards. */}
-            <div id="home-testimonials">
-              <InViewGate minHeight="80vh">
-                <RealClientCases />
-              </InViewGate>
-            </div>
-            <InViewGate minHeight="80vh">
-              <motion.section
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.2
-                    }
-                  }
-                }}
-                className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-12"
-              >
-                {[
-                  { title: 'Precision Target', desc: 'Identify operational inefficiencies with sub-millimeter data accuracy using our proprietary neural kernels.', type: 'robot' },
-                  { title: 'Galactic Reach', desc: 'Seamlessly deploy automation clusters across multi-region cloud infrastructures without latency penalties.', type: 'spaceship' },
-                  { title: 'Quantum Logic', desc: 'Our decision engines process multi-variate corporate structures in real-time, anticipating markets before they shift.', type: 'ufo' },
-                ].map((feature, i) => (
-                  <FeatureObjectCard key={i} index={i} feature={feature} />
-                ))}
-              </motion.section>
-            </InViewGate>
-          </motion.main>
-        )}
+            <Suspense fallback={null} key="home-suspense">
+              <HomeV2 />
+            </Suspense>
+          )}
 
         {activeTab === 'vision' && (
           <VisionSection smoothProgress={smoothProgress} scrollYProgress={scrollYProgress} />

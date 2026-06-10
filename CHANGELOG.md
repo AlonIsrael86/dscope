@@ -6,6 +6,35 @@ All notable changes to the Dscope marketing site, in reverse chronological order
 
 ---
 
+## 2026-06-10
+
+### [15:30 IST] Alon (Claude Code) — branch `home-v2-smooth` — CORRECTED measurement
+**`/home-v2` — perf-overhauled duplicate of the home route (P2 executed). `/` untouched.**
+- New hidden route `/home-v2` (not in NAV_TABS): same composition, sections, copy and design language as `/`, re-engineered for smoothness. The `PERF_HANDOFF.md` P2 plan, finally executed.
+- **MEASUREMENT CORRECTION (read this).** An earlier draft of this entry claimed "41 → 143 FPS". Those numbers were INVALID — measured on the dev server while Vite was re-optimizing dependencies, which tanked the original's baseline. Discarded. The valid test is a **production build** (`vite build` + `vite preview`), and the difference only appears under load:
+  - **Unthrottled (a strong desktop):** both `/` and `/home-v2` pin near the display refresh cap. **No felt difference** — correct and expected; the original isn't slow on strong hardware.
+  - **Production build + 4× CPU throttle (emulates a low-end laptop / the 22-FPS machine in `PERF_HANDOFF.md`), scripted 1500px/s scroll, p97 min:**
+
+    | Metric | `/` original | `/home-v2` |
+    |---|---|---|
+    | Avg FPS (scroll) | 4–8 | **32–35** |
+    | Min FPS (p97) | 1–5 | **16–18** |
+    | Worst single frame | 208–1035 ms (up to a ~1s freeze) | **97 ms** |
+    | Janky frames (>50 ms) | 25–51 | **8–10** |
+
+  - Net: ~6–8× on weak hardware, and the worst-case freeze drops from ~1s to <100ms. The win is for visitors on cheap laptops/phones — not for anyone on a strong machine.
+- What changed (visual parity verified by side-by-side screenshots at 4 scroll positions, desktop + mobile, plus a section-inventory sweep — `/home-v2` headings are a superset of `/`):
+  - `GalaxyBackgroundV2`: 450 individually-animated star divs (450 infinite Motion tickers) → 2 `StarFieldCanvas` layers, one 30fps draw loop, same density/twinkle/glow; 8 Motion comets → CSS keyframes; sun "breathing" via infinite `filter` animation (full repaint of a 72vw element per frame) → compositor-only transform pulse + opacity crossfade. Planets kept 1:1.
+  - `HeroV2`: 35 per-node Motion loops + 70 mouse-drift transforms → CSS dot pulse + one container-level parallax spring (v1 moved all nodes in unison anyway, so visually identical); `blur-[150px]` ambient glow → equivalent radial-gradient (no Gaussian pass); marquee untouched (already CSS).
+  - Hero gated: marquee rAF + grid unmount once scrolled well past (kept alive forever in v1). `IndustryAutomation` gated with `InViewGate` (was ungated). Lower-section gates kept as-is. `CollaborationDiorama` block extended to render on home-v2 too.
+  - Glow blocks in the Neural Integration Node section: `blur-[120px]`/`blur-[100px]` filter divs → radial gradients.
+- SEO (crawl-ready for when the site-wide noindex lifts — noindex stack untouched per the indexing rule): per-route title/description targeting automation / AI / CRM-integration keywords (Salesforce, HubSpot, Zoho) per Alexei's May 25+28 SEO directives; route-scoped JSON-LD (Organization + WebSite + WebPage + SoftwareApplication) injected on mount; OG/canonical handled by the existing per-route meta sync.
+- App.tsx changes are additive-only for the `/` path: `export` keywords on 7 section components, routing-table entries, a lazy `HomeV2` render branch, `'home-v2'` added to background exclusion lists (original `GalaxyBackground` never double-renders), `CollaborationDiorama` condition extended.
+- New files: `src/routes/HomeV2.tsx`, `src/components/v2/GalaxyBackgroundV2.tsx`, `src/components/v2/HeroV2.tsx`, `src/components/v2/StarFieldCanvas.tsx`; `index.css` gained three `homeV2*` keyframe blocks (scoped class names, unused by `/`).
+- **Verified**: `npm run lint` (tsc) clean, `npm run build` clean, console output identical to `/` (no new errors/warnings), zero horizontal overflow at mobile width, QA screenshots in `clients/targetbob/screenshots/home-v2-qa/`. Perf re-validated on the production build under CPU throttle (above), NOT the dev server.
+
+---
+
 ## 2026-05-20
 
 ### [13:58 IST] Katia — retrospective note (no code change)
