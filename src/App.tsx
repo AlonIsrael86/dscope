@@ -1351,9 +1351,6 @@ const NAV_TABS = [
 
 const URL_TO_TAB: Record<string, string> = {
   '/': 'home',
-  // home-v2: perf-overhauled duplicate of home (hidden from nav, used for
-  // the smoothness work - see src/routes/HomeV2.tsx). NOT in NAV_TABS.
-  '/home-v2': 'home-v2',
   '/vision': 'vision',
   '/platform': 'command-hub',
   '/dashboard': 'dashboard',
@@ -1371,7 +1368,6 @@ const TAB_TO_URL: Record<string, string> = Object.fromEntries(
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dscope - Enterprise AI Automation Platform',
-  '/home-v2': 'AI Automation Platform for Enterprise - Support, Sales & CRM Integration | Dscope',
   '/vision': 'Vision - Dscope',
   '/platform': 'Platform - Multi-Tasking AI Automation - Dscope',
   '/dashboard': 'Dashboards - Dscope',
@@ -1386,7 +1382,6 @@ const PAGE_TITLES: Record<string, string> = {
 
 const PAGE_DESCRIPTIONS: Record<string, string> = {
   '/': 'Dscope. Multi-tasking AI automation platform. Planetary-scale AI infrastructure architected for modern enterprises. Precision Target. Galactic Reach. Quantum Logic.',
-  '/home-v2': 'Multi-tasking AI automation platform for enterprise: AI agents that automate customer support, service, sales and marketing - with CRM integrations for Salesforce, HubSpot and Zoho, voice and chat agents, and industry-specific automation flows.',
   '/vision': 'The Dscope vision - an AI automation platform that unifies support, service, sales, and marketing into one orchestrated decagon of intelligence.',
   '/platform': 'The Dscope platform - a multi-tasking AI automation engine built on decagon architecture. Real-time agents, orbital relays, and a neural integration node.',
   '/dashboard': 'Live Dscope dashboards. Operational intelligence and analytics surfaces for enterprise AI deployments.',
@@ -8705,9 +8700,9 @@ export default function App() {
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <ErrorBoundary>
-        {/* FpsMeter intentionally disabled for client-facing build.
-            Toggle on for performance investigation in dev. */}
-        {/* <FpsMeter /> */}
+        {/* FpsMeter removed for production. It's a self-gated dev overlay
+            (src/components/FpsMeter.tsx) — add <FpsMeter/> here + ?fps=1 to
+            measure any route on demand. Not rendered in the shipped build. */}
         <AppContent />
       </ErrorBoundary>
     </ThemeContext.Provider>
@@ -10512,16 +10507,16 @@ function AppContent() {
           Skip to main content
         </a>
 
-        {/* Global Background. 'home-v2' is excluded everywhere: it renders
-            its own GalaxyBackgroundV2 internally (perf-overhauled copy). */}
-        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) && <GalaxyBackground />}
-        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) && <OceanHorizonBackground />}
+        {/* Global Background. 'home' is excluded everywhere: it now renders
+            HomeV2, which brings its own GalaxyBackgroundV2 (perf copy). */}
+        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <GalaxyBackground />}
+        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <OceanHorizonBackground />}
         {activeTab === 'about' && <GalaxyAboutBackground />}
-        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) && <MarsBackground />}
-        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) && <DeepOceanBackground />}
+        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <MarsBackground />}
+        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <DeepOceanBackground />}
         {activeTab === 'dashboard' && <NebulaBackground />}
-        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
-        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
+        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
+        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
 
         {/* Background Decorative Element */}
         <SatelliteNav 
@@ -10547,113 +10542,16 @@ function AppContent() {
         </header>
 
         <AnimatePresence mode="wait">
+          {/* PROMOTED 2026-06-10: the home route now renders HomeV2 — the
+              perf-overhauled, pixel-identical version (canvas star field,
+              CSS comets/sun, gated sections). The old inline home block +
+              the temporary /home-v2 staging route were removed; HomeV2 is
+              the single source of truth for home. Visuals unchanged. */}
           {activeTab === 'home' && (
-          <motion.main
-            key="home"
-            role="main"
-            id="main-content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="pt-24 md:pt-32 pb-10 md:pb-20 relative"
-          >
-            <PinnedScrollSection height="h-[150vh]" innerClassName="flex flex-col justify-center">
-              <HeroContent />
-            </PinnedScrollSection>
-
-            <IndustryAutomation />
-            
-            {/* Seamless Gradient Transition to Schematic */}
-            <div className="relative h-64 w-full bg-gradient-to-b from-transparent via-blue-500/5 to-transparent pointer-events-none" />
-            
-            <InViewGate minHeight="100vh">
-              <SecretarialBlueprint />
-            </InViewGate>
-
-            <InViewGate minHeight="150vh">
-              <div className="relative" id="orbital-dispatch">
-                 {/* Translucent separator with gradient glow */}
-                 <div className="h-40 w-full bg-gradient-to-b from-transparent via-purple-500/10 to-transparent pointer-events-none" />
-
-                 {/* Background Glow for Contrast */}
-                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-96 bg-blue-600/5 blur-[120px] pointer-events-none" aria-hidden="true" />
-                 <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-64 bg-purple-600/5 blur-[100px] pointer-events-none" aria-hidden="true" />
-
-                 <div className="relative z-10">
-                   <WritingTitle
-                       text="Neural Integration Node"
-                       className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-blue-400 uppercase tracking-tighter mb-16 justify-center"
-                       lightning={true}
-                       pulse={true}
-                   />
-                   {/* Clicking the satellite hub scrolls to the Verified Signal
-                       block below — same target as the floating astronaut. */}
-                   <div
-                     role="button"
-                     tabIndex={0}
-                     className="cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 rounded-2xl"
-                     onClick={() => {
-                       const el = document.getElementById('home-testimonials');
-                       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                     }}
-                     onKeyDown={(e) => {
-                       if (e.key === 'Enter' || e.key === ' ') {
-                         e.preventDefault();
-                         const el = document.getElementById('home-testimonials');
-                         if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                       }
-                     }}
-                     aria-label="Scroll to Verified Signal client results"
-                   >
-                     <LunarCommandHub />
-                   </div>
-                 </div>
-              </div>
-            </InViewGate>
-            {/* Verified Signal — the same 4-card real-client block used on
-                /case-studies (per Katia). The scroll-to anchor lives on the
-                OUTER wrapper so it's always in the DOM, even before
-                InViewGate has lazily mounted the cards. */}
-            <div id="home-testimonials">
-              <InViewGate minHeight="80vh">
-                <RealClientCases />
-              </InViewGate>
-            </div>
-            <InViewGate minHeight="80vh">
-              <motion.section
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.1 }}
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.2
-                    }
-                  }
-                }}
-                className="max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 md:grid-cols-3 gap-12"
-              >
-                {[
-                  { title: 'Precision Target', desc: 'Identify operational inefficiencies with sub-millimeter data accuracy using our proprietary neural kernels.', type: 'robot' },
-                  { title: 'Galactic Reach', desc: 'Seamlessly deploy automation clusters across multi-region cloud infrastructures without latency penalties.', type: 'spaceship' },
-                  { title: 'Quantum Logic', desc: 'Our decision engines process multi-variate corporate structures in real-time, anticipating markets before they shift.', type: 'ufo' },
-                ].map((feature, i) => (
-                  <FeatureObjectCard key={i} index={i} feature={feature} />
-                ))}
-              </motion.section>
-            </InViewGate>
-          </motion.main>
-        )}
-
-        {/* home-v2: perf-overhauled duplicate of home (hidden URL). The
-            original home block above is untouched. */}
-        {activeTab === 'home-v2' && (
-          <Suspense fallback={null} key="home-v2-suspense">
-            <HomeV2 />
-          </Suspense>
-        )}
+            <Suspense fallback={null} key="home-suspense">
+              <HomeV2 />
+            </Suspense>
+          )}
 
         {activeTab === 'vision' && (
           <VisionSection smoothProgress={smoothProgress} scrollYProgress={scrollYProgress} />
@@ -10833,7 +10731,7 @@ function AppContent() {
         )}
       </AnimatePresence>
 
-      {(activeTab === 'home' || activeTab === 'home-v2') && (
+      {activeTab === 'home' && (
         <InViewGate minHeight="80vh" rootMargin="600px 0px">
           <CollaborationDiorama />
         </InViewGate>

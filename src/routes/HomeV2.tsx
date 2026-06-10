@@ -1,7 +1,9 @@
-// HOME-V2 - the smoothness-overhauled duplicate of the home route.
-// Reachable at /home-v2 (NOT linked from the nav; the / route is untouched).
+// HOME-V2 - the smoothness-overhauled home route. PROMOTED 2026-06-10 to
+// BE the home page: App.tsx renders this for the 'home' tab (the old inline
+// home block + the temporary /home-v2 route were removed). Pixel-identical
+// to the previous home; only the rendering machinery is cheaper.
 //
-// Same composition as the home block in App.tsx, with these perf changes:
+// Same composition as the old home block, with these perf changes:
 //   - GalaxyBackgroundV2 (canvas stars, CSS comets, compositor sun pulse)
 //   - HeroV2 (CSS node grid, gradient glow instead of blur-[150px])
 //   - hero internals gated: once you scroll well past the pinned hero,
@@ -52,9 +54,9 @@ const HOME_V2_JSONLD = {
     },
     {
       '@type': 'WebPage',
-      '@id': 'https://dscope.targetbob.ai/home-v2#webpage',
-      url: 'https://dscope.targetbob.ai/home-v2',
-      name: 'AI Automation Platform for Enterprise - Support, Sales & CRM Integration | Dscope',
+      '@id': 'https://dscope.targetbob.ai/#webpage',
+      url: 'https://dscope.targetbob.ai/',
+      name: 'Dscope - Enterprise AI Automation Platform',
       isPartOf: { '@id': 'https://dscope.targetbob.ai/#website' },
       about: { '@id': 'https://dscope.targetbob.ai/#organization' },
       description:
