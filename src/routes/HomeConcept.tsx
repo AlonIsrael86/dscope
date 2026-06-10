@@ -95,8 +95,8 @@ const SignalCanvas = () => {
 
     const N = 110;
     const parts = Array.from({ length: N }, (_, i) => ({
-      hx: 0.06 + rnd() * 0.88, // chaos home (fraction of w/h)
-      hy: 0.12 + rnd() * 0.76,
+      hx: 0.22 + rnd() * 0.74, // chaos home, biased right of the copy column
+      hy: 0.18 + rnd() * 0.72,
       ph: rnd() * Math.PI * 2,
       sp: 2 + rnd() * 6,
       amp: 0.006 + rnd() * 0.02,
@@ -104,10 +104,12 @@ const SignalCanvas = () => {
       t: i / (N - 1), // slot along the resolved line
     }));
 
-    // resolved line: gentle ascending arc, left-low -> right-high
+    // resolved line: ascending arc through the lower-right quadrant only -
+    // it must never pass behind the hero copy, CTAs, or the client band
+    // (left column, x < ~0.55). Verified against 1440x900 and 375x812.
     const lineAt = (t: number, w: number, h: number) => ({
-      x: w * (0.06 + t * 0.88),
-      y: h * (0.74 - t * 0.42) + Math.sin(t * Math.PI) * h * -0.05,
+      x: w * (0.55 + t * 0.42),
+      y: h * (0.97 - t * 0.69) + Math.sin(t * Math.PI) * h * -0.02,
     });
 
     const DPR = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -291,6 +293,59 @@ const Constellation = () => {
 };
 
 /* ------------------------------------------------------------------ */
+/* clients: real logos already shipped on this site (/public/clients). */
+/* Most are dark marks, so they sit on the site's light-glass tile     */
+/* pattern (same treatment as the case-studies carousel).              */
+/* ------------------------------------------------------------------ */
+const CLIENTS = [
+  {
+    id: 'yeda',
+    logo: '/clients/yeda.png',
+    company: 'Yeda',
+    category: 'EdTech platform',
+    line: 'LMS + LXP with AI in every layer - serving academic, enterprise, and tech organizations.',
+  },
+  {
+    id: 'ipc',
+    logo: '/clients/ipc.png',
+    company: 'IPC',
+    category: 'Training & placement',
+    line: "Israel's career-acceleration college - 25+ tracks, licensed placement, 100+ hiring partners.",
+  },
+  {
+    id: 'techom',
+    logo: '/clients/techom.png',
+    company: 'Techom',
+    category: 'Smart security hardware',
+    line: 'Israeli-engineered biometric smart locks - fingerprint, facial recognition, remote access.',
+  },
+  {
+    id: 'orin',
+    logo: '/clients/orin.png',
+    company: 'Orin Shpalter',
+    category: 'Financial education',
+    line: "Israel's leading financial education college - 19 years training finance professionals.",
+  },
+];
+
+// Logos are forced to monochrome white (brightness-0 invert) - the source
+// marks are mixed dark/light (Yeda navy, IPC/Orin dark, Techom white) and
+// dark marks vanish on the dark tiles. All four PNGs have transparent
+// backgrounds, so the filter is safe. Identity is carried by name/category.
+const LogoTile = ({ src, company, className = '' }: { src: string; company: string; className?: string }) => (
+  <div className={`relative rounded-2xl overflow-hidden ring-1 ring-white/15 backdrop-blur-xl flex items-center justify-center ${className}`}>
+    <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-[#4FACFE]/[0.06] to-[#00F2FE]/[0.04]" />
+    <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/[0.07] to-transparent" />
+    <img
+      src={src}
+      alt={`${company} logo`}
+      loading="lazy"
+      className="relative max-h-[68%] max-w-[80%] w-auto h-auto object-contain brightness-0 invert opacity-90"
+    />
+  </div>
+);
+
+/* ------------------------------------------------------------------ */
 /* emerald lead-lock dot (the "captured" gesture)                      */
 /* ------------------------------------------------------------------ */
 const LeadLock = () => {
@@ -380,7 +435,7 @@ export const HomeConcept = () => {
         <div className="absolute inset-x-0 bottom-0 top-[18%] opacity-35 md:opacity-100">
           <SignalCanvas />
         </div>
-        <div className="relative max-w-6xl mx-auto w-full pt-28 pb-24">
+        <div className="relative z-10 max-w-6xl mx-auto w-full pt-28 pb-24">
           <Eyebrow>
             Dscope <span className="text-[#4FACFE]">·</span> Enterprise AI Automation
           </Eyebrow>
@@ -413,15 +468,57 @@ export const HomeConcept = () => {
             </div>
           </Reveal>
           <Reveal delay={560}>
-            <div className="mt-20 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.3em] text-white/35">
-              In production <span className="text-[#4FACFE]">·</span> Travel <span className="text-white/20">·</span> Education{' '}
-              <span className="text-white/20">·</span> Finance <span className="text-white/20">·</span> Real estate
+            <div className="mt-20">
+              <div className="font-mono text-[10px] md:text-[11px] uppercase tracking-[0.34em] text-white/40 mb-5">
+                Trusted in production
+              </div>
+              <div className="flex flex-wrap items-center gap-3 md:gap-4">
+                {CLIENTS.map((c) => (
+                  <LogoTile key={c.id} src={c.logo} company={c.company} className="h-14 w-32 md:h-16 md:w-40" />
+                ))}
+              </div>
             </div>
           </Reveal>
         </div>
       </section>
 
-      {/* ---------------- S2 · THE PROBLEM ---------------- */}
+      {/* ---------------- S2 · CLIENTS (early proof) ---------------- */}
+      <section className="relative px-6 md:px-12 py-24 md:py-32 border-t border-white/[0.06]">
+        <div className="max-w-6xl mx-auto">
+          <Eyebrow>
+            Early proof <span className="text-[#4FACFE]">·</span> Our clients
+          </Eyebrow>
+          <Reveal delay={120}>
+            <h2 className="font-display italic font-black tracking-tight leading-[1.08] text-4xl md:text-[3.2rem] mt-7" style={{ textWrap: 'balance' as any }}>
+              Real companies.{' '}
+              <span className="bg-gradient-to-r from-[#4FACFE] to-[#00F2FE] bg-clip-text text-transparent">Real conversations.</span>
+            </h2>
+          </Reveal>
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+            {CLIENTS.map((c, i) => (
+              <Reveal key={c.id} delay={i * 90}>
+                <article className="h-full rounded-[1.6rem] border border-white/10 bg-white/[0.04] backdrop-blur-md p-6 flex flex-col gap-5 hover:border-white/25 transition-colors duration-300">
+                  <LogoTile src={c.logo} company={c.company} className="h-24 w-full" />
+                  <div>
+                    <div className="text-white font-semibold text-lg tracking-tight">{c.company}</div>
+                    <div className="font-mono text-[10px] uppercase tracking-[0.26em] text-[#4FACFE] mt-1.5">{c.category}</div>
+                  </div>
+                  <p className="text-white/55 text-sm leading-relaxed">{c.line}</p>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={200}>
+            <div className="mt-10 font-mono text-[10px] md:text-[11px] uppercase tracking-[0.3em] text-white/35">
+              Live across <span className="text-white/20">·</span> Travel <span className="text-white/20">·</span> Education{' '}
+              <span className="text-white/20">·</span> Finance <span className="text-white/20">·</span> Security{' '}
+              <span className="text-white/20">·</span> Real estate
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---------------- S3 · THE PROBLEM ---------------- */}
       <section className="relative px-6 md:px-12 py-28 md:py-40">
         <div className="max-w-5xl mx-auto">
           <Eyebrow>The old way</Eyebrow>
