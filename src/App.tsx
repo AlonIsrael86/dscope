@@ -4,6 +4,11 @@ import { ContactPlaceholder } from './routes/Contact';
 // Lazy-loaded — CaseStudies pulls in DashboardCaseView (1120 lines)
 // and Sankey diagram (d3). Loaded on first visit to /case-studies.
 const CaseStudies = lazy(() => import('./routes/CaseStudies').then((m) => ({ default: m.CaseStudies })));
+// home-v2: perf-overhauled duplicate of the home route (hidden URL, not in
+// nav). Lazy so the main bundle is unchanged AND to avoid TDZ issues - the
+// HomeV2 module imports section components back from this file, so it must
+// only evaluate after App.tsx finishes module init.
+const HomeV2 = lazy(() => import('./routes/HomeV2').then((m) => ({ default: m.HomeV2 })));
 import { RealClientCases } from './routes/RealClientCases';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
@@ -316,7 +321,7 @@ const DiscoveryTooltip = ({
   );
 };
 
-const WritingTitle = ({ 
+export const WritingTitle = ({
   text, 
   className = "", 
   progress,
@@ -1346,6 +1351,9 @@ const NAV_TABS = [
 
 const URL_TO_TAB: Record<string, string> = {
   '/': 'home',
+  // home-v2: perf-overhauled duplicate of home (hidden from nav, used for
+  // the smoothness work - see src/routes/HomeV2.tsx). NOT in NAV_TABS.
+  '/home-v2': 'home-v2',
   '/vision': 'vision',
   '/platform': 'command-hub',
   '/dashboard': 'dashboard',
@@ -1363,6 +1371,7 @@ const TAB_TO_URL: Record<string, string> = Object.fromEntries(
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dscope - Enterprise AI Automation Platform',
+  '/home-v2': 'AI Automation Platform for Enterprise - Support, Sales & CRM Integration | Dscope',
   '/vision': 'Vision - Dscope',
   '/platform': 'Platform - Multi-Tasking AI Automation - Dscope',
   '/dashboard': 'Dashboards - Dscope',
@@ -1377,6 +1386,7 @@ const PAGE_TITLES: Record<string, string> = {
 
 const PAGE_DESCRIPTIONS: Record<string, string> = {
   '/': 'Dscope. Multi-tasking AI automation platform. Planetary-scale AI infrastructure architected for modern enterprises. Precision Target. Galactic Reach. Quantum Logic.',
+  '/home-v2': 'Multi-tasking AI automation platform for enterprise: AI agents that automate customer support, service, sales and marketing - with CRM integrations for Salesforce, HubSpot and Zoho, voice and chat agents, and industry-specific automation flows.',
   '/vision': 'The Dscope vision - an AI automation platform that unifies support, service, sales, and marketing into one orchestrated decagon of intelligence.',
   '/platform': 'The Dscope platform - a multi-tasking AI automation engine built on decagon architecture. Real-time agents, orbital relays, and a neural integration node.',
   '/dashboard': 'Live Dscope dashboards. Operational intelligence and analytics surfaces for enterprise AI deployments.',
@@ -2990,7 +3000,7 @@ const PlatformIntroSection = () => {
   );
 };
 
-const LunarCommandHub = () => {
+export const LunarCommandHub = () => {
   return (
     <PinnedScrollSection height="h-[250vh]">
       <LunarCommandHubContent />
@@ -4314,7 +4324,7 @@ const AutomationDashboard = () => {
   );
 };
 
-const SecretarialBlueprint = () => {
+export const SecretarialBlueprint = () => {
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [nodePriorities, setNodePriorities] = useState<Record<string, 'Low' | 'Medium' | 'High'>>({});
@@ -6154,7 +6164,7 @@ const PageScrollRevealTitle = ({ text, className, lightning = false, progress }:
   );
 };
 
-const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = "", scrollOffset }: { children: React.ReactNode, height?: string, innerClassName?: string, scrollOffset?: any }) => {
+export const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = "", scrollOffset }: { children: React.ReactNode, height?: string, innerClassName?: string, scrollOffset?: any }) => {
   const containerRef = useRef(null);
   const { scrollYProgress: rawProgress } = useScroll({
     target: containerRef,
@@ -6194,7 +6204,7 @@ const PinnedScrollSection = ({ children, height = "h-[300vh]", innerClassName = 
   );
 };
 
-const IndustryAutomation = () => {
+export const IndustryAutomation = () => {
   return (
     // scrollOffset starts progress as the section enters the viewport
     // (per Katia: «фраза починає рухатись тільки коли повністю видно
@@ -6784,7 +6794,7 @@ const FloatingClientLogo = ({
   );
 };
 
-const ClientMarquee = () => {
+export const ClientMarquee = () => {
   // Pre-compute deterministic lane / duration / delay per client.
   //
   // LANES: evenly spread across the band so two clients are NEVER on
@@ -8647,7 +8657,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
-const FeatureObjectCard = ({ feature, index }: any) => {
+export const FeatureObjectCard = ({ feature, index }: any) => {
   const [isHovered, setIsHovered] = useState(false);
   const brandColors = ["#3b82f6", "#10b981", "#8b5cf6", "#f59e0b"]; // Blue, emerald, purple, amber
   const color = brandColors[index % brandColors.length];
@@ -10502,15 +10512,16 @@ function AppContent() {
           Skip to main content
         </a>
 
-        {/* Global Background */}
-        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <GalaxyBackground />}
-        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <OceanHorizonBackground />}
+        {/* Global Background. 'home-v2' is excluded everywhere: it renders
+            its own GalaxyBackgroundV2 internally (perf-overhauled copy). */}
+        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) && <GalaxyBackground />}
+        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) && <OceanHorizonBackground />}
         {activeTab === 'about' && <GalaxyAboutBackground />}
-        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <MarsBackground />}
-        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) && <DeepOceanBackground />}
+        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) && <MarsBackground />}
+        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) && <DeepOceanBackground />}
         {activeTab === 'dashboard' && <NebulaBackground />}
-        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
-        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
+        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
+        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home-v2'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
 
         {/* Background Decorative Element */}
         <SatelliteNav 
@@ -10634,6 +10645,14 @@ function AppContent() {
               </motion.section>
             </InViewGate>
           </motion.main>
+        )}
+
+        {/* home-v2: perf-overhauled duplicate of home (hidden URL). The
+            original home block above is untouched. */}
+        {activeTab === 'home-v2' && (
+          <Suspense fallback={null} key="home-v2-suspense">
+            <HomeV2 />
+          </Suspense>
         )}
 
         {activeTab === 'vision' && (
@@ -10814,7 +10833,7 @@ function AppContent() {
         )}
       </AnimatePresence>
 
-      {activeTab === 'home' && (
+      {(activeTab === 'home' || activeTab === 'home-v2') && (
         <InViewGate minHeight="80vh" rootMargin="600px 0px">
           <CollaborationDiorama />
         </InViewGate>

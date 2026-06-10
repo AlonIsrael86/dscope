@@ -6,6 +6,24 @@ All notable changes to the Dscope marketing site, in reverse chronological order
 
 ---
 
+## 2026-06-10
+
+### [14:49 IST] Alon (Claude Code) — branch `home-v2-smooth`
+**`/home-v2` — perf-overhauled duplicate of the home route (P2 executed). `/` untouched.**
+- New hidden route `/home-v2` (not in NAV_TABS): same composition, sections, copy and design language as `/`, re-engineered for smoothness. The `PERF_HANDOFF.md` P2 plan, finally executed — measured on a desktop dev machine:
+  - scroll avg FPS **41 → 143** (full refresh rate), p95 frame **35ms → 7ms**, worst frame **63ms → 14ms**, frames >50ms **3 → 0**, settled-at-bottom **17 → 60 FPS**.
+- What changed (visual parity verified by side-by-side screenshots at 4 scroll positions, desktop + mobile, plus a section-inventory sweep — `/home-v2` headings are a superset of `/`):
+  - `GalaxyBackgroundV2`: 450 individually-animated star divs (450 infinite Motion tickers) → 2 `StarFieldCanvas` layers, one 30fps draw loop, same density/twinkle/glow; 8 Motion comets → CSS keyframes; sun "breathing" via infinite `filter` animation (full repaint of a 72vw element per frame) → compositor-only transform pulse + opacity crossfade. Planets kept 1:1.
+  - `HeroV2`: 35 per-node Motion loops + 70 mouse-drift transforms → CSS dot pulse + one container-level parallax spring (v1 moved all nodes in unison anyway, so visually identical); `blur-[150px]` ambient glow → equivalent radial-gradient (no Gaussian pass); marquee untouched (already CSS).
+  - Hero gated: marquee rAF + grid unmount once scrolled well past (kept alive forever in v1). `IndustryAutomation` gated with `InViewGate` (was ungated). Lower-section gates kept as-is. `CollaborationDiorama` block extended to render on home-v2 too.
+  - Glow blocks in the Neural Integration Node section: `blur-[120px]`/`blur-[100px]` filter divs → radial gradients.
+- SEO (crawl-ready for when the site-wide noindex lifts — noindex stack untouched per the indexing rule): per-route title/description targeting automation / AI / CRM-integration keywords (Salesforce, HubSpot, Zoho) per Alexei's May 25+28 SEO directives; route-scoped JSON-LD (Organization + WebSite + WebPage + SoftwareApplication) injected on mount; OG/canonical handled by the existing per-route meta sync.
+- App.tsx changes are additive-only for the `/` path: `export` keywords on 7 section components, routing-table entries, a lazy `HomeV2` render branch, `'home-v2'` added to background exclusion lists (original `GalaxyBackground` never double-renders), `CollaborationDiorama` condition extended.
+- New files: `src/routes/HomeV2.tsx`, `src/components/v2/GalaxyBackgroundV2.tsx`, `src/components/v2/HeroV2.tsx`, `src/components/v2/StarFieldCanvas.tsx`; `index.css` gained three `homeV2*` keyframe blocks (scoped class names, unused by `/`).
+- **Verified**: `npm run lint` (tsc) clean, `npm run build` clean, console output identical to `/` (no new errors/warnings), zero horizontal overflow at mobile width, QA screenshots in `clients/targetbob/screenshots/home-v2-qa/`.
+
+---
+
 ## 2026-05-20
 
 ### [13:58 IST] Katia — retrospective note (no code change)

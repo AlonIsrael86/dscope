@@ -268,3 +268,59 @@ body.is-hidden {
     background-color: transparent !important;
   }
 }
+
+/* ============================================================
+   HOME-V2 (2026-06-10) - CSS keyframes for the perf-overhauled
+   /home-v2 route. These replace per-element Framer Motion infinite
+   loops with compositor-driven CSS (transform + opacity only).
+   Scoped by unique class names; the / route never uses them.
+   ============================================================ */
+
+/* Comet streak: same path the v1 Motion comets flew
+   (x -50vw -> 120vw, y -50vh -> 120vh, fade in/out, linear). */
+@keyframes homeV2CometFly {
+  0%   { transform: translate(-50vw, -50vh) rotate(var(--comet-angle, -20deg)); opacity: 0; }
+  15%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translate(120vw, 120vh) rotate(var(--comet-angle, -20deg)); opacity: 0; }
+}
+.home-v2-comet {
+  animation-name: homeV2CometFly;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+}
+
+/* Sun breathing: v1 animated filter brightness/contrast on a 72vw
+   element (full repaint every frame). Here: scale pulse on the sun
+   container + an opacity crossfade on a brighter highlight layer.
+   Same 10s rhythm. Compositor-only. */
+@keyframes homeV2SunScale {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.05); }
+}
+.home-v2-sun-pulse {
+  animation: homeV2SunScale 10s ease-in-out infinite;
+  will-change: transform;
+}
+@keyframes homeV2SunGlow {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.5; }
+}
+.home-v2-sun-glow {
+  animation: homeV2SunGlow 10s ease-in-out infinite;
+  will-change: opacity;
+}
+
+/* Hero neural-grid dot pulse: v1 ran one Framer Motion loop per dot
+   (35 loops). Same opacity swing (base -> base*1.5 -> base). */
+@keyframes homeV2NodePulse {
+  0%, 100% { opacity: var(--node-base, 0.1); }
+  50%      { opacity: calc(var(--node-base, 0.1) * 1.5); }
+}
+.home-v2-node-pulse {
+  animation-name: homeV2NodePulse;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: opacity;
+}
