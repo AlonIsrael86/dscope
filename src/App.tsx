@@ -9,6 +9,10 @@ const CaseStudies = lazy(() => import('./routes/CaseStudies').then((m) => ({ def
 // HomeV2 module imports section components back from this file, so it must
 // only evaluate after App.tsx finishes module init.
 const HomeV2 = lazy(() => import('./routes/HomeV2').then((m) => ({ default: m.HomeV2 })));
+// home-concept: internal design-demo route (/home-concept) - a ground-up
+// redesign proposal for the home page. Hidden URL, not in nav, fully
+// self-contained (own background + sections). The live home is untouched.
+const HomeConcept = lazy(() => import('./routes/HomeConcept').then((m) => ({ default: m.HomeConcept })));
 import { RealClientCases } from './routes/RealClientCases';
 import { FpsMeter } from './components/FpsMeter';
 import { InViewGate } from './components/InViewGate';
@@ -1351,6 +1355,8 @@ const NAV_TABS = [
 
 const URL_TO_TAB: Record<string, string> = {
   '/': 'home',
+  // internal design-demo URL - not linked from nav, site is noindex anyway
+  '/home-concept': 'home-concept',
   '/vision': 'vision',
   '/platform': 'command-hub',
   '/dashboard': 'dashboard',
@@ -1368,6 +1374,7 @@ const TAB_TO_URL: Record<string, string> = Object.fromEntries(
 
 const PAGE_TITLES: Record<string, string> = {
   '/': 'Dscope - Enterprise AI Automation Platform',
+  '/home-concept': 'Home Concept Preview - Dscope',
   '/vision': 'Vision - Dscope',
   '/platform': 'Platform - Multi-Tasking AI Automation - Dscope',
   '/dashboard': 'Dashboards - Dscope',
@@ -1382,6 +1389,7 @@ const PAGE_TITLES: Record<string, string> = {
 
 const PAGE_DESCRIPTIONS: Record<string, string> = {
   '/': 'Dscope. Multi-tasking AI automation platform. Planetary-scale AI infrastructure architected for modern enterprises. Precision Target. Galactic Reach. Quantum Logic.',
+  '/home-concept': 'Internal design concept preview for the Dscope home page.',
   '/vision': 'The Dscope vision - an AI automation platform that unifies support, service, sales, and marketing into one orchestrated decagon of intelligence.',
   '/platform': 'The Dscope platform - a multi-tasking AI automation engine built on decagon architecture. Real-time agents, orbital relays, and a neural integration node.',
   '/dashboard': 'Live Dscope dashboards. Operational intelligence and analytics surfaces for enterprise AI deployments.',
@@ -10509,14 +10517,14 @@ function AppContent() {
 
         {/* Global Background. 'home' is excluded everywhere: it now renders
             HomeV2, which brings its own GalaxyBackgroundV2 (perf copy). */}
-        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <GalaxyBackground />}
-        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <OceanHorizonBackground />}
+        {(globalBg === 'galaxy' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home', 'home-concept'].includes(activeTab)) && <GalaxyBackground />}
+        {(globalBg === 'oceanHorizon' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home', 'home-concept'].includes(activeTab)) && <OceanHorizonBackground />}
         {activeTab === 'about' && <GalaxyAboutBackground />}
-        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <MarsBackground />}
-        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) && <DeepOceanBackground />}
+        {(globalBg === 'mars' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home', 'home-concept'].includes(activeTab)) && <MarsBackground />}
+        {(globalBg === 'deepOcean' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home', 'home-concept'].includes(activeTab)) && <DeepOceanBackground />}
         {activeTab === 'dashboard' && <NebulaBackground />}
-        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
-        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
+        {((globalBg === 'molecules' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home', 'home-concept'].includes(activeTab)) || activeTab === 'case-studies') && <MoleculesBackground />}
+        {((globalBg === 'microchips' && !['command-hub', 'about', 'case-studies', 'dashboard', 'vision', 'industries', 'home', 'home-concept'].includes(activeTab)) || activeTab === 'command-hub' || activeTab === 'industries') && <MicrochipsBackground />}
 
         {/* Background Decorative Element */}
         <SatelliteNav 
@@ -10550,6 +10558,14 @@ function AppContent() {
           {activeTab === 'home' && (
             <Suspense fallback={null} key="home-suspense">
               <HomeV2 />
+            </Suspense>
+          )}
+
+          {/* internal design-demo: ground-up home redesign proposal.
+              Reachable only by direct URL (/home-concept). */}
+          {activeTab === 'home-concept' && (
+            <Suspense fallback={<div className="min-h-screen bg-[#020617]" />} key="home-concept-suspense">
+              <HomeConcept />
             </Suspense>
           )}
 
