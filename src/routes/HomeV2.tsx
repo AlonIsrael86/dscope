@@ -31,70 +31,10 @@ import {
   PinnedScrollSection,
 } from '../App';
 
-const HOME_V2_JSONLD = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'Organization',
-      '@id': 'https://dscope.targetbob.ai/#organization',
-      name: 'Dscope',
-      url: 'https://dscope.targetbob.ai/',
-      logo: 'https://dscope.targetbob.ai/favicon.svg',
-      description:
-        'Dscope is an enterprise AI automation platform: AI agents for customer support, service, sales and marketing automation with CRM integrations.',
-      sameAs: ['https://app.targetbob.ai/'],
-    },
-    {
-      '@type': 'WebSite',
-      '@id': 'https://dscope.targetbob.ai/#website',
-      url: 'https://dscope.targetbob.ai/',
-      name: 'Dscope - Enterprise AI Automation Platform',
-      publisher: { '@id': 'https://dscope.targetbob.ai/#organization' },
-      inLanguage: 'en',
-    },
-    {
-      '@type': 'WebPage',
-      '@id': 'https://dscope.targetbob.ai/#webpage',
-      url: 'https://dscope.targetbob.ai/',
-      name: 'Dscope - Enterprise AI Automation Platform',
-      isPartOf: { '@id': 'https://dscope.targetbob.ai/#website' },
-      about: { '@id': 'https://dscope.targetbob.ai/#organization' },
-      description:
-        'Multi-tasking AI automation platform: AI agents that automate customer support, service, sales and marketing, with integrations for Salesforce, HubSpot, Zoho and other CRM systems.',
-      inLanguage: 'en',
-    },
-    {
-      '@type': 'SoftwareApplication',
-      name: 'Dscope',
-      applicationCategory: 'BusinessApplication',
-      operatingSystem: 'Web',
-      url: 'https://dscope.targetbob.ai/',
-      description:
-        'Enterprise AI automation platform - AI chat, voice and form agents that capture leads, answer customers and integrate with CRM systems such as Salesforce, HubSpot and Zoho.',
-      featureList: [
-        'AI customer support automation',
-        'AI sales and lead-capture agents',
-        'Voice, chat and form agents',
-        'CRM integration (Salesforce, HubSpot, Zoho)',
-        'Page-aware website widgets',
-        'Industry-specific automation flows',
-      ],
-    },
-  ],
-};
-
-const useHomeV2JsonLd = () => {
-  React.useEffect(() => {
-    const script = document.createElement('script');
-    script.type = 'application/ld+json';
-    script.id = 'home-v2-jsonld';
-    script.textContent = JSON.stringify(HOME_V2_JSONLD);
-    document.head.appendChild(script);
-    return () => {
-      document.getElementById('home-v2-jsonld')?.remove();
-    };
-  }, []);
-};
+// SEO: the home JSON-LD that used to live here moved to the centralized
+// per-route ROUTE_JSONLD map in App.tsx (2026-06-11 all-pages SEO pass),
+// so every route - not just home - injects Organization/WebSite/WebPage
+// schema from one source of truth.
 
 // PinnedScrollSection clones its direct child with a `progress` prop;
 // this gate forwards it to HeroV2 while adding the unmount-when-far
@@ -106,8 +46,6 @@ const HeroGate = ({ progress }: { progress?: any }) => (
 );
 
 export const HomeV2 = () => {
-  useHomeV2JsonLd();
-
   return (
     <>
       <GalaxyBackgroundV2 />

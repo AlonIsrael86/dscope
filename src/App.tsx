@@ -1372,34 +1372,129 @@ const TAB_TO_URL: Record<string, string> = Object.fromEntries(
   Object.entries(URL_TO_TAB).map(([url, tab]) => [tab, url])
 );
 
+// SEO (2026-06-11 all-pages pass, per Alexei's directives):
+// - Canonical domain is https://dscope.ai (dscope.targetbob.ai 301s to it).
+// - Titles carry automation / integration / AI / CRM-name keywords
+//   (Salesforce, HubSpot, Zoho) plus a Hebrew keyword phrase on the
+//   commercial pages - Hebrew longtail matters more than English.
+// - Site-wide noindex + robots Disallow stay ON until Alexei's copy
+//   review; everything below is launch-ready, not live-indexed.
+const CANONICAL_ORIGIN = 'https://dscope.ai';
+
 const PAGE_TITLES: Record<string, string> = {
-  '/': 'Dscope - Enterprise AI Automation Platform',
+  '/': 'Dscope - Enterprise AI Automation Platform | \u05e1\u05d5\u05db\u05e0\u05d9 AI \u05dc\u05e9\u05d9\u05e8\u05d5\u05ea, \u05de\u05db\u05d9\u05e8\u05d5\u05ea \u05d5\u05e9\u05d9\u05d5\u05d5\u05e7',
   '/home-concept': 'Home Concept Preview - Dscope',
-  '/vision': 'Vision - Dscope',
-  '/platform': 'Platform - Multi-Tasking AI Automation - Dscope',
-  '/dashboard': 'Dashboards - Dscope',
-  '/services': 'Services - Dscope',
-  '/industries': 'Industries - Dscope',
-  '/pricing': 'Pricing - Dscope',
-  '/about': 'About - Dscope',
-  '/case-studies': 'Case Studies - Dscope',
+  '/vision': 'Vision - One AI Platform, Every Department | Dscope',
+  '/platform': 'AI Automation Platform - Salesforce, HubSpot & Zoho Integrations | Dscope | \u05d0\u05d5\u05d8\u05d5\u05de\u05e6\u05d9\u05d4 \u05e2\u05e1\u05e7\u05d9\u05ea \u05e2\u05dd AI',
+  '/dashboard': 'Custom AI Dashboards - Business & CRM Metrics | Dscope | \u05d3\u05e9\u05d1\u05d5\u05e8\u05d3\u05d9\u05dd \u05e2\u05e1\u05e7\u05d9\u05d9\u05dd \u05d7\u05db\u05de\u05d9\u05dd',
+  '/services': 'AI Automation & CRM Integration Services | Dscope | \u05e9\u05d9\u05e8\u05d5\u05ea\u05d9 \u05d0\u05d5\u05d8\u05d5\u05de\u05e6\u05d9\u05d4 \u05d5\u05d0\u05d9\u05e0\u05d8\u05d2\u05e8\u05e6\u05d9\u05d5\u05ea',
+  '/industries': 'AI Automation by Industry - Travel, Finance, Education, Real Estate | Dscope | \u05d0\u05d5\u05d8\u05d5\u05de\u05e6\u05d9\u05d4 \u05dc\u05e4\u05d9 \u05e2\u05e0\u05e3',
+  '/pricing': 'Pricing - AI Automation Platform | Dscope | \u05de\u05d7\u05d9\u05e8\u05d5\u05df',
+  '/about': 'About Dscope - Mission, Team & Operating Philosophy',
+  '/case-studies': 'Case Studies - Real AI Automation Results | Dscope | \u05e1\u05d9\u05e4\u05d5\u05e8\u05d9 \u05dc\u05e7\u05d5\u05d7\u05d5\u05ea',
   '/brand-book': 'Brand Book - Dscope',
-  '/contact': 'Contact - Dscope',
+  '/contact': 'Contact Dscope - Book an AI Automation Walk-through | \u05e6\u05e8\u05d5 \u05e7\u05e9\u05e8',
 };
 
 const PAGE_DESCRIPTIONS: Record<string, string> = {
-  '/': 'Dscope. Multi-tasking AI automation platform. Planetary-scale AI infrastructure architected for modern enterprises. Precision Target. Galactic Reach. Quantum Logic.',
+  '/': 'Multi-tasking AI automation platform: voice, chat and form agents that answer customers, capture leads and sync to Salesforce, HubSpot and Zoho - around the clock.',
   '/home-concept': 'Internal design concept preview for the Dscope home page.',
-  '/vision': 'The Dscope vision - an AI automation platform that unifies support, service, sales, and marketing into one orchestrated decagon of intelligence.',
-  '/platform': 'The Dscope platform - a multi-tasking AI automation engine built on decagon architecture. Real-time agents, orbital relays, and a neural integration node.',
-  '/dashboard': 'Live Dscope dashboards. Operational intelligence and analytics surfaces for enterprise AI deployments.',
-  '/services': 'Dscope services - implementation, integration, and managed operations for enterprise AI automation.',
-  '/industries': 'Dscope in the wild - travel, finance, education, real estate, government, and beyond. Industry-specific deployments at planetary scale.',
-  '/pricing': 'Dscope decagon pricelist. Transparent enterprise pricing for the multi-tasking AI automation platform. Updating - final v2.1 pricing lands soon.',
-  '/about': 'About Dscope - mission, vision, team, and operating philosophy behind the AI automation platform.',
-  '/case-studies': 'Dscope case studies. How enterprise teams ship AI automation faster with the decagon platform.',
+  '/vision': 'The Dscope vision: one AI intelligence across support, service, sales and marketing - every customer conversation resolved, every lead captured.',
+  '/platform': 'The Dscope platform: AI agents with deep CRM integrations for Salesforce, HubSpot, Zoho and more. Real-time chat, voice and form automation for enterprise teams.',
+  '/dashboard': 'Custom AI dashboards for your business metrics: conversations handled, leads captured, CRM sync status and per-industry KPIs - live operational intelligence.',
+  '/services': 'Implementation, CRM integration and managed AI automation services - from your first agent to a full multi-department rollout, delivered by the Dscope team.',
+  '/industries': "Industry-specific AI automation: travel, finance, education, real estate, security and more - agents tuned to each sector's conversations and systems.",
+  '/pricing': 'Transparent pricing for the Dscope AI automation platform - by conversation volume, call time, and sales or support bundles. Final v2.1 pricing lands soon.',
+  '/about': 'Who builds Dscope: the mission, team and operating philosophy behind the enterprise AI automation platform.',
+  '/case-studies': 'How real companies use Dscope: AI agents in production for education, professional training, smart security and financial services - with measurable results.',
   '/brand-book': 'The Dscope brand book - typography, color, symbols, motion, and the cosmic visual language.',
-  '/contact': 'Talk to the Dscope team. Schedule a platform walk-through, request a pilot, or contact the founders directly.',
+  '/contact': 'Talk to the Dscope team: book a platform walk-through, request a pilot, or get a working AI agent demo on your own site.',
+};
+
+// ---- per-route JSON-LD (single source of truth for the whole site) ----
+// Organization + WebSite are shared via @id references; each route adds a
+// typed WebPage + BreadcrumbList. SoftwareApplication rides on / and
+// /platform. No fabricated reviews/ratings/metrics - schema only claims
+// what the pages actually say.
+const JSONLD_ORG = {
+  '@type': 'Organization',
+  '@id': CANONICAL_ORIGIN + '/#organization',
+  name: 'Dscope',
+  url: CANONICAL_ORIGIN + '/',
+  logo: CANONICAL_ORIGIN + '/favicon.svg',
+  description:
+    'Dscope is an enterprise AI automation platform: AI agents for customer support, service, sales and marketing automation with CRM integrations.',
+  sameAs: ['https://app.targetbob.ai/'],
+};
+const JSONLD_WEBSITE = {
+  '@type': 'WebSite',
+  '@id': CANONICAL_ORIGIN + '/#website',
+  url: CANONICAL_ORIGIN + '/',
+  name: 'Dscope - Enterprise AI Automation Platform',
+  publisher: { '@id': CANONICAL_ORIGIN + '/#organization' },
+  inLanguage: 'en',
+};
+const JSONLD_APP = {
+  '@type': 'SoftwareApplication',
+  name: 'Dscope',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  url: CANONICAL_ORIGIN + '/',
+  description:
+    'Enterprise AI automation platform - AI chat, voice and form agents that capture leads, answer customers and integrate with CRM systems such as Salesforce, HubSpot and Zoho.',
+  featureList: [
+    'AI customer support automation',
+    'AI sales and lead-capture agents',
+    'Voice, chat and form agents',
+    'CRM integration (Salesforce, HubSpot, Zoho)',
+    'Page-aware website widgets',
+    'Industry-specific automation flows',
+  ],
+};
+
+const ROUTE_PAGE_TYPE: Record<string, string> = {
+  '/': 'WebPage',
+  '/vision': 'WebPage',
+  '/platform': 'WebPage',
+  '/dashboard': 'WebPage',
+  '/services': 'WebPage',
+  '/industries': 'CollectionPage',
+  '/pricing': 'WebPage',
+  '/about': 'AboutPage',
+  '/case-studies': 'CollectionPage',
+  '/contact': 'ContactPage',
+};
+
+const buildRouteJsonLd = (path: string) => {
+  const pageType = ROUTE_PAGE_TYPE[path];
+  if (!pageType) return null; // hidden/internal routes get no schema
+  const url = CANONICAL_ORIGIN + (path === '/' ? '/' : path);
+  const graph: any[] = [
+    JSONLD_ORG,
+    JSONLD_WEBSITE,
+    {
+      '@type': pageType,
+      '@id': url + '#webpage',
+      url,
+      name: PAGE_TITLES[path],
+      description: PAGE_DESCRIPTIONS[path],
+      isPartOf: { '@id': CANONICAL_ORIGIN + '/#website' },
+      about: { '@id': CANONICAL_ORIGIN + '/#organization' },
+      inLanguage: 'en',
+    },
+  ];
+  if (path === '/' || path === '/platform') graph.push(JSONLD_APP);
+  if (path !== '/') {
+    graph.push({
+      '@type': 'BreadcrumbList',
+      '@id': url + '#breadcrumb',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: CANONICAL_ORIGIN + '/' },
+        { '@type': 'ListItem', position: 2, name: PAGE_TITLES[path].split(' - ')[0].split(' | ')[0], item: url },
+      ],
+    });
+  }
+  return { '@context': 'https://schema.org', '@graph': graph };
 };
 
 const RealisticComet = () => {
@@ -10359,12 +10454,23 @@ function AppContent() {
       if (el) (el as any)[attr] = value;
     };
     setMeta('meta[name="description"]', 'content', desc);
-    setMeta('link[rel="canonical"]', 'href', `https://dscope.targetbob.ai${path === '/' ? '/' : path}`);
+    const canonicalUrl = `${CANONICAL_ORIGIN}${path === '/' ? '/' : path}`;
+    setMeta('link[rel="canonical"]', 'href', canonicalUrl);
     setMeta('meta[property="og:title"]', 'content', title);
     setMeta('meta[property="og:description"]', 'content', desc);
-    setMeta('meta[property="og:url"]', 'content', `https://dscope.targetbob.ai${path === '/' ? '/' : path}`);
+    setMeta('meta[property="og:url"]', 'content', canonicalUrl);
     setMeta('meta[name="twitter:title"]', 'content', title);
     setMeta('meta[name="twitter:description"]', 'content', desc);
+    // per-route JSON-LD: one script tag, replaced on every navigation
+    document.getElementById('route-jsonld')?.remove();
+    const jsonLd = buildRouteJsonLd(path);
+    if (jsonLd) {
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'route-jsonld';
+      script.textContent = JSON.stringify(jsonLd);
+      document.head.appendChild(script);
+    }
   }, [location.pathname]);
 
   // Wrap setActiveTab to navigate (URL is the source of truth)

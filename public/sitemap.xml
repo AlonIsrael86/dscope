@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Launch-ready sitemap. The site is intentionally noindex + robots-blocked
+     until public release; this file is prepared so launch needs zero work.
+     On launch: lift the robots Disallow, remove the noindex meta, and add
+     "Sitemap: https://dscope.ai/sitemap.xml" to robots.txt. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://dscope.ai/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://dscope.ai/platform</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://dscope.ai/services</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://dscope.ai/industries</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://dscope.ai/dashboard</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dscope.ai/pricing</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dscope.ai/case-studies</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://dscope.ai/vision</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://dscope.ai/about</loc><changefreq>yearly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://dscope.ai/contact</loc><changefreq>yearly</changefreq><priority>0.7</priority></url>
+</urlset>
